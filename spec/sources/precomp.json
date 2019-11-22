@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "title": "ID",
+      "description": "Precomp ID",
+      "type": "string"
+    },
+    "layers": {
+      "title": "Layers",
+      "description": "List of Precomp Layers",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "../layers/shape.json"
+          },
+          {
+            "$ref": "../layers/solid.json"
+          },
+          {
+            "$ref": "../layers/image.json"
+          },
+          {
+            "$ref": "../layers/null.json"
+          },
+          {
+            "$ref": "../layers/text.json"
+          }
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  }
+}

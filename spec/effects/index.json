@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "oneOf": [
+    {
+      "$ref": "../effects/slider.json"
+    },
+    {
+      "$ref": "../effects/angle.json"
+    },
+    {
+      "$ref": "../effects/color.json"
+    },
+    {
+      "$ref": "../effects/point.json"
+    },
+    {
+      "$ref": "../effects/checkbox.json"
+    },
+    {
+      "$ref": "../effects/group.json"
+    },
+    {
+      "$ref": "../effects/noValue.json"
+    },
+    {
+      "$ref": "../effects/dropDown.json"
+    },
+    {
+      "$ref": "../effects/customValue.json"
+    },
+    {
+      "$ref": "../effects/layer.json"
+    },
+    {
+      "$ref": "../effects/tint.json"
+    },
+    {
+      "$ref": "../effects/fill.json"
+    },
+    {
+      "$ref": "../effects/stroke.json"
+    },
+    {
+      "$ref": "../effects/tritone.json"
+    },
+    {
+      "$ref": "../effects/proLevels.json"
+    }
+  ]
+}

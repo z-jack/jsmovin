@@ -1,0 +1,14 @@
+{
+  "name": "jsmovin",
+  "version": "1.0.0",
+  "description": "To generate \"AE bodymovin\" JSON format using JavaScript.",
+  "repository": "git@github.com:z-jack/jsmovin.git",
+  "author": "z-jack <emailjiong@126.com>",
+  "license": "GPLv3",
+  "scripts": {
+    "compile": "cd ./spec && node ./compile.js"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^7.1.0"
+  }
+}

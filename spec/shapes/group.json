@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "mn": {
+      "title": "Match Name",
+      "description": "After Effect's Match Name. Used for expressions.",
+      "type": "string"
+    },
+    "nm": {
+      "title": "Name",
+      "description": "After Effect's Name. Used for expressions.",
+      "type": "string"
+    },
+    "ty": {
+      "title": "Type",
+      "description": "Shape content type.",
+      "type": "string",
+      "const": "gr"
+    },
+    "np": {
+      "title": "Number of Properties",
+      "description": "Group number of properties. Used for expressions.",
+      "type": "number"
+    },
+    "it": {
+      "title": "Items",
+      "description": "Group list of items",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "../shapes/shape.json",
+            "value": "sh"
+          },
+          {
+            "$ref": "../shapes/rect.json",
+            "value": "rc"
+          },
+          {
+            "$ref": "../shapes/ellipse.json",
+            "value": "el"
+          },
+          {
+            "$ref": "../shapes/star.json",
+            "value": "sr"
+          },
+          {
+            "$ref": "../shapes/fill.json",
+            "value": "fl"
+          },
+          {
+            "$ref": "../shapes/gFill.json",
+            "value": "gf"
+          },
+          {
+            "$ref": "../shapes/gStroke.json",
+            "value": "gs"
+          },
+          {
+            "$ref": "../shapes/stroke.json",
+            "value": "st"
+          },
+          {
+            "$ref": "../shapes/merge.json",
+            "value": "mm"
+          },
+          {
+            "$ref": "../shapes/trim.json",
+            "value": "tm"
+          },
+          {
+            "$ref": "../shapes/group.json",
+            "value": "gr"
+          },
+          {
+            "$ref": "../shapes/round.json",
+            "value": "rd"
+          },
+          {
+            "$ref": "../shapes/transform.json",
+            "value": "tr"
+          }
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  }
+}
