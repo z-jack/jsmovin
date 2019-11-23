@@ -1,8 +1,12 @@
 import { ShapeLayer, TextLayer, ImageLayer } from './animation';
 import { EasingFunction } from './easing';
-declare type SetableKeys = "width" | "height" | "anchorX" | "anchorY" | "x" | "y" | "skewX" | "skewY" | "rotate" | "opacity" | "value";
+declare type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity";
 export declare class JSMovinLayer {
     readonly root: ShapeLayer | TextLayer | ImageLayer;
+    private getDefaultProperty;
+    private convertToStaticProperty;
+    private convertToAnimatableProperty;
+    private addKeyframe;
     constructor(ref: ShapeLayer | TextLayer | ImageLayer);
     setStaticProperty(key: SetableKeys, value: any): void;
     setAnimatableProperty(key: SetableKeys, startFrame: number, endFrame: number, startValue: any, endValue: any, easing?: EasingFunction): void;
