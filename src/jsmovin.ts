@@ -78,7 +78,6 @@ export default class JSMovin {
         return JSON.stringify(this.root)
     }
 }
-Object.defineProperty(window, 'JSMovin', { get: () => JSMovin })
 
 export { LayerFactory } from './layer'
 export { EasingFactory } from './easing'
