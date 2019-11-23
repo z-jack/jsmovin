@@ -1,5 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MergeShape",
   "type": "object",
   "properties": {
     "mn": {
@@ -16,7 +17,7 @@
       "title": "Type",
       "description": "Shape content type. THIS FEATURE IS NOT SUPPORTED. It's exported because if you export it, they will come.",
       "type": "string",
-      "const": "mm"
+      "enum": [ "mm"]
     },
     "mm": {
       "title": "Merge Mode",

@@ -1,12 +1,13 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ImageLayer",
   "type": "object",
   "properties": {
     "ty": {
       "title": "Type",
       "description": "Type of layer: Image.",
       "type": "number",
-      "const": 2
+      "enum": [ 2]
     },
     "ks": {
       "title": "Transform",

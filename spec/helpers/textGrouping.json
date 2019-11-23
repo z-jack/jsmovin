@@ -1,22 +1,26 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "number",
   "oneOf": [
     {
-      "standsFor": "Characters",
-      "const": 1
+      "type": "number",
+      "description": "Characters",
+      "enum": [ 1]
     },
     {
-      "standsFor": "Word",
-      "const": 2
+      "type": "number",
+      "description": "Word",
+      "enum": [ 2]
     },
     {
-      "standsFor": "Line",
-      "const": 3
+      "type": "number",
+      "description": "Line",
+      "enum": [ 3]
     },
     {
-      "standsFor": "All",
-      "const": 4
+      "type": "number",
+      "description": "All",
+      "enum": [ 4]
     }
   ],
   "default": 1

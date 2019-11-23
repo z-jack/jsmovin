@@ -1,70 +1,86 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "number",
   "oneOf": [
     {
-      "standsFor": "normal",
-      "const": 0
+      "type": "number",
+      "description": "normal",
+      "enum": [0]
     },
     {
-      "standsFor": "multiply",
-      "const": 1
+      "type": "number",
+      "description": "multiply",
+      "enum": [1]
     },
     {
-      "standsFor": "screen",
-      "const": 2
+      "type": "number",
+      "description": "screen",
+      "enum": [ 2]
     },
     {
-      "standsFor": "overlay",
-      "const": 3
+      "type": "number",
+      "description": "overlay",
+      "enum": [ 3]
     },
     {
-      "standsFor": "darken",
-      "const": 4
+      "type": "number",
+      "description": "darken",
+      "enum": [ 4]
     },
     {
-      "standsFor": "lighten",
-      "const": 5
+      "type": "number",
+      "description": "lighten",
+      "enum": [ 5]
     },
     {
-      "standsFor": "colorDodge",
-      "const": 6
+      "type": "number",
+      "description": "colorDodge",
+      "enum": [ 6]
     },
     {
-      "standsFor": "colorBurn",
-      "const": 7
+      "type": "number",
+      "description": "colorBurn",
+      "enum": [ 7]
     },
     {
-      "standsFor": "hardLight",
-      "const": 8
+      "type": "number",
+      "description": "hardLight",
+      "enum": [ 8]
     },
     {
-      "standsFor": "softLight",
-      "const": 9
+      "type": "number",
+      "description": "softLight",
+      "enum": [ 9]
     },
     {
-      "standsFor": "difference",
-      "const": 10
+      "type": "number",
+      "description": "difference",
+      "enum": [ 10]
     },
     {
-      "standsFor": "exclusion",
-      "const": 11
+      "type": "number",
+      "description": "exclusion",
+      "enum": [ 11]
     },
     {
-      "standsFor": "hue",
-      "const": 12
+      "type": "number",
+      "description": "hue",
+      "enum": [ 12]
     },
     {
-      "standsFor": "saturation",
-      "const": 13
+      "type": "number",
+      "description": "saturation",
+      "enum": [ 13]
     },
     {
-      "standsFor": "color",
-      "const": 14
+      "type": "number",
+      "description": "color",
+      "enum": [ 14]
     },
     {
-      "standsFor": "luminosity",
-      "const": 15
+      "type": "number",
+      "description": "luminosity",
+      "enum": [ 15]
     }
   ],
   "default": 0

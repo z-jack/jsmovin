@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
     "inv": {
@@ -46,32 +46,39 @@
       "type": "string",
       "oneOf": [
         {
-          "standsFor": "None",
-          "const": "n"
+          "type": "string",
+          "description": "None",
+          "enum": [ "n"]
         },
         {
-          "standsFor": "Additive",
-          "const": "a"
+          "type": "string",
+          "description": "Additive",
+          "enum": [ "a"]
         },
         {
-          "standsFor": "Subtract",
-          "const": "s"
+          "type": "string",
+          "description": "Subtract",
+          "enum": [ "s"]
         },
         {
-          "standsFor": "Intersect",
-          "const": "i"
+          "type": "string",
+          "description": "Intersect",
+          "enum": [ "i"]
         },
         {
-          "standsFor": "Lighten",
-          "const": "l"
+          "type": "string",
+          "description": "Lighten",
+          "enum": [ "l"]
         },
         {
-          "standsFor": "Darken",
-          "const": "d"
+          "type": "string",
+          "description": "Darken",
+          "enum": [ "d"]
         },
         {
-          "standsFor": "Difference",
-          "const": "f"
+          "type": "string",
+          "description": "Difference",
+          "enum": [ "f"]
         }
       ],
       "default": "a"

@@ -1,5 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RectShape",
   "type": "object",
   "properties": {
     "mn": {
@@ -21,7 +22,7 @@
       "title": "Type",
       "description": "Shape content type.",
       "type": "string",
-      "const": "rc"
+      "enum": [ "rc"]
     },
     "p": {
       "title": "Position",

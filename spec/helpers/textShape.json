@@ -1,30 +1,36 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "number",
   "oneOf": [
     {
-      "standsFor": "Square",
-      "const": 1
+      "type": "number",
+      "description": "Square",
+      "enum": [ 1]
     },
     {
-      "standsFor": "Ramp Up",
-      "const": 2
+      "type": "number",
+      "description": "Ramp Up",
+      "enum": [ 2]
     },
     {
-      "standsFor": "Ramp Down",
-      "const": 3
+      "type": "number",
+      "description": "Ramp Down",
+      "enum": [ 3]
     },
     {
-      "standsFor": "Triangle",
-      "const": 4
+      "type": "number",
+      "description": "Triangle",
+      "enum": [ 4]
     },
     {
-      "standsFor": "Round",
-      "const": 5
+      "type": "number",
+      "description": "Round",
+      "enum": [ 5]
     },
     {
-      "standsFor": "Smooth",
-      "const": 6
+      "type": "number",
+      "description": "Smooth",
+      "enum": [ 6]
     }
   ],
   "default": 1

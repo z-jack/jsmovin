@@ -1,12 +1,13 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SolidLayer",
   "type": "object",
   "properties": {
     "ty": {
       "title": "Type",
       "description": "Type of layer: Solid.",
       "type": "number",
-      "value": 1
+      "enum": [1]
     },
     "ks": {
       "title": "Transform",

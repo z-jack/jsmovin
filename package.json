@@ -4,11 +4,30 @@
   "description": "To generate \"AE bodymovin\" JSON format using JavaScript.",
   "repository": "git@github.com:z-jack/jsmovin.git",
   "author": "z-jack <emailjiong@126.com>",
-  "license": "GPLv3",
+  "license": "MIT",
   "scripts": {
-    "compile": "cd ./spec && node ./compile.js"
+    "spec": "cd ./spec && json2ts -i animation.json -o ../src/animation.d.ts",
+    "build": "npm run build:types && npm run build:js && npm run build:bundle",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
+    "build:bundle": "webpack"
   },
   "devDependencies": {
-    "json-schema-to-typescript": "^7.1.0"
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-proposal-numeric-separator": "^7.7.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-typescript": "^7.7.4",
+    "babel-loader": "8.0.4",
+    "babel-preset-minify": "^0.5.1",
+    "json-schema-to-typescript": "^7.1.0",
+    "typescript": "^3.7.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {
+    "svg-path-parser": "^1.1.0"
   }
 }

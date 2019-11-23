@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
     "ix": {
@@ -21,7 +21,7 @@
       "title": "Type",
       "description": "Effect type.",
       "type": "number",
-      "const": 5
+      "enum": [ 5]
     },
     "ef": {
       "title": "Effects",

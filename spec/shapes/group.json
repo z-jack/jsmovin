@@ -1,5 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GroupShape",
   "type": "object",
   "properties": {
     "mn": {
@@ -16,7 +17,7 @@
       "title": "Type",
       "description": "Shape content type.",
       "type": "string",
-      "const": "gr"
+      "enum": [ "gr"]
     },
     "np": {
       "title": "Number of Properties",
@@ -29,56 +30,43 @@
       "items": {
         "oneOf": [
           {
-            "$ref": "../shapes/shape.json",
-            "value": "sh"
+            "$ref": "../shapes/shape.json"
           },
           {
-            "$ref": "../shapes/rect.json",
-            "value": "rc"
+            "$ref": "../shapes/rect.json"
           },
           {
-            "$ref": "../shapes/ellipse.json",
-            "value": "el"
+            "$ref": "../shapes/ellipse.json"
           },
           {
-            "$ref": "../shapes/star.json",
-            "value": "sr"
+            "$ref": "../shapes/star.json"
           },
           {
-            "$ref": "../shapes/fill.json",
-            "value": "fl"
+            "$ref": "../shapes/fill.json"
           },
           {
-            "$ref": "../shapes/gFill.json",
-            "value": "gf"
+            "$ref": "../shapes/gFill.json"
           },
           {
-            "$ref": "../shapes/gStroke.json",
-            "value": "gs"
+            "$ref": "../shapes/gStroke.json"
           },
           {
-            "$ref": "../shapes/stroke.json",
-            "value": "st"
+            "$ref": "../shapes/stroke.json"
           },
           {
-            "$ref": "../shapes/merge.json",
-            "value": "mm"
+            "$ref": "../shapes/merge.json"
           },
           {
-            "$ref": "../shapes/trim.json",
-            "value": "tm"
+            "$ref": "../shapes/trim.json"
           },
           {
-            "$ref": "../shapes/group.json",
-            "value": "gr"
+            "$ref": "../shapes/group.json"
           },
           {
-            "$ref": "../shapes/round.json",
-            "value": "rd"
+            "$ref": "../shapes/round.json"
           },
           {
-            "$ref": "../shapes/transform.json",
-            "value": "tr"
+            "$ref": "../shapes/transform.json"
           }
         ],
         "type": "object"

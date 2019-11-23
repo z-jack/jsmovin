@@ -1,14 +1,16 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "number",
   "oneOf": [
     {
-      "standsFor": "Above",
-      "const": 1
+      "type": "number",
+      "description": "Above",
+      "enum": [ 1]
     },
     {
-      "standsFor": "Below",
-      "const": 2
+      "type": "number",
+      "description": "Below",
+      "enum": [ 2]
     }
   ],
   "default": 1

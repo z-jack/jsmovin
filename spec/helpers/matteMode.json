@@ -4,24 +4,29 @@
   "oneOf": [
     {
       "type": "number",
-      "description": "Characters",
+      "description": "normal",
+      "enum": [ 0]
+    },
+    {
+      "type": "number",
+      "description": "alpha",
       "enum": [ 1]
     },
     {
       "type": "number",
-      "description": "Character Excluding Spaces",
+      "description": "invertedAlpha",
       "enum": [ 2]
     },
     {
       "type": "number",
-      "description": "Words",
+      "description": "luma",
       "enum": [ 3]
     },
     {
       "type": "number",
-      "description": "Lines",
+      "description": "invertedLuma",
       "enum": [ 4]
     }
   ],
-  "default": 1
+  "default": 0
 }

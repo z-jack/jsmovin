@@ -1,12 +1,13 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PreCompLayer",
   "type": "object",
   "properties": {
     "ty": {
       "title": "Type",
       "description": "Type of layer: Precomp.",
       "type": "number",
-      "const": 0
+      "enum": [ 0]
     },
     "ks": {
       "title": "Transform",

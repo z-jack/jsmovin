@@ -1,5 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GradientStrokeShape",
   "type": "object",
   "properties": {
     "mn": {
@@ -16,7 +17,7 @@
       "title": "Type",
       "description": "Shape content type.",
       "type": "string",
-      "const": "gs"
+      "enum": [ "gs"]
     },
     "o": {
       "title": "Opacity",
@@ -62,12 +63,12 @@
       "description": "Gradient Type",
       "oneOf": [
         {
-          "standsFor": "Linear",
-          "value": 1
+          "description": "Linear",
+          "enum": [1]
         },
         {
-          "standsFor": "Radial",
-          "value": 2
+          "description": "Radial",
+          "enum": [2]
         }
       ],
       "type": "object"

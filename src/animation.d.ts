@@ -40,7 +40,7 @@ export type Name = string;
 /**
  * Type of layer: Shape.
  */
-export type Type = number;
+export type Type = 4;
 /**
  * Transform properties
  */
@@ -706,75 +706,19 @@ export type SkewAxis =
 /**
  * Auto-Orient along path AE property.
  */
-export type AutoOrient =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type AutoOrient = 0 | 1;
 /**
  * Blend Mode
  */
-export type BlendMode =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type BlendMode = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
+/**
+ * Matte mode, the layer will inherit the transparency from the layer above
+ */
+export type MatteMode = 0 | 1 | 2 | 3 | 4;
 /**
  * 3d layer flag
  */
-export type DLayer =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type DLayer = 0 | 1;
 /**
  * Layer index in AE. Used for parenting and expressions.
  */
@@ -820,28 +764,7 @@ export type Name2 = string;
  */
 export type Points =
   | {
-      /**
-       * Property Value
-       */
-      k?: {
-        /**
-         * Closed property of shape
-         */
-        c?: boolean;
-        /**
-         * Bezier curve In points. Array of 2 dimensional arrays.
-         */
-        i?: number[][];
-        /**
-         * Bezier curve Out points. Array of 2 dimensional arrays.
-         */
-        o?: number[][];
-        /**
-         * Bezier curve Vertices. Array of 2 dimensional arrays.
-         */
-        v?: number[][];
-        [k: string]: any;
-      };
+      k?: PathDef;
       /**
        * Property Expression. An AE expression that modifies the value.
        */
@@ -864,25 +787,7 @@ export type Points =
         /**
          * Start value of keyframe segment.
          */
-        s?: {
-          /**
-           * Closed property of shape
-           */
-          c?: boolean;
-          /**
-           * Bezier curve In points. Array of 2 dimensional arrays.
-           */
-          i?: number[][];
-          /**
-           * Bezier curve Out points. Array of 2 dimensional arrays.
-           */
-          o?: number[][];
-          /**
-           * Bezier curve Vertices. Array of 2 dimensional arrays.
-           */
-          v?: number[][];
-          [k: string]: any;
-        }[];
+        s?: PathDef1[];
         /**
          * Start time of keyframe segment.
          */
@@ -996,28 +901,7 @@ export type Opacity1 =
 /**
  * Mask mode. Not all mask types are supported.
  */
-export type Mode =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type Mode = "n" | "a" | "s" | "i" | "l" | "d" | "f";
 /**
  * List of Masks
  */
@@ -1044,7 +928,7 @@ export type Name3 = string;
 /**
  * Effect type.
  */
-export type Type1 = number;
+export type Type1 = 0;
 /**
  * Effect value.
  */
@@ -1118,7 +1002,7 @@ export type Name4 = string;
 /**
  * Effect type.
  */
-export type Type2 = number;
+export type Type2 = 1;
 /**
  * Effect value.
  */
@@ -1192,7 +1076,7 @@ export type Name5 = string;
 /**
  * Effect type.
  */
-export type Type3 = number;
+export type Type3 = 2;
 /**
  * Effect value.
  */
@@ -1288,7 +1172,7 @@ export type Name6 = string;
 /**
  * Effect type.
  */
-export type Type4 = number;
+export type Type4 = 2;
 /**
  * Effect value.
  */
@@ -1385,7 +1269,7 @@ export type Name7 = string;
 /**
  * Effect type.
  */
-export type Type5 = number;
+export type Type5 = 7;
 /**
  * Effect value.
  */
@@ -1459,7 +1343,7 @@ export type Name8 = string;
 /**
  * Effect type.
  */
-export type Type6 = number;
+export type Type6 = 5;
 /**
  * Effect List of properties.
  */
@@ -1592,7 +1476,7 @@ export type Name9 = string;
 /**
  * Effect type.
  */
-export type Type7 = number;
+export type Type7 = 7;
 /**
  * Effect value.
  */
@@ -1666,7 +1550,7 @@ export type Name10 = string;
 /**
  * Effect type.
  */
-export type Type8 = number;
+export type Type8 = 0;
 /**
  * Effect value.
  */
@@ -1700,7 +1584,7 @@ export type Name11 = string;
 /**
  * Effect type.
  */
-export type Type9 = number;
+export type Type9 = 20;
 /**
  * Effect List of properties.
  */
@@ -1745,7 +1629,7 @@ export type Name12 = string;
 /**
  * Effect type.
  */
-export type Type10 = number;
+export type Type10 = 21;
 /**
  * Effect List of properties.
  */
@@ -1822,7 +1706,7 @@ export type Name13 = string;
 /**
  * Effect type.
  */
-export type Type11 = number;
+export type Type11 = 22;
 /**
  * Effect List of properties.
  */
@@ -1931,7 +1815,7 @@ export type Name14 = string;
 /**
  * Effect type.
  */
-export type Type12 = number;
+export type Type12 = 23;
 /**
  * Effect List of properties.
  */
@@ -1984,7 +1868,7 @@ export type Name15 = string;
 /**
  * Effect type.
  */
-export type Type13 = number;
+export type Type13 = 23;
 /**
  * ffect List of properties.
  */
@@ -2344,34 +2228,13 @@ export type Direction = number;
 /**
  * Shape content type.
  */
-export type Type14 = string;
+export type Type14 = "sh";
 /**
  * Shape's vertices
  */
 export type Vertices =
   | {
-      /**
-       * Property Value
-       */
-      k?: {
-        /**
-         * Closed property of shape
-         */
-        c?: boolean;
-        /**
-         * Bezier curve In points. Array of 2 dimensional arrays.
-         */
-        i?: number[][];
-        /**
-         * Bezier curve Out points. Array of 2 dimensional arrays.
-         */
-        o?: number[][];
-        /**
-         * Bezier curve Vertices. Array of 2 dimensional arrays.
-         */
-        v?: number[][];
-        [k: string]: any;
-      };
+      k?: PathDef;
       /**
        * Property Expression. An AE expression that modifies the value.
        */
@@ -2394,25 +2257,7 @@ export type Vertices =
         /**
          * Start value of keyframe segment.
          */
-        s?: {
-          /**
-           * Closed property of shape
-           */
-          c?: boolean;
-          /**
-           * Bezier curve In points. Array of 2 dimensional arrays.
-           */
-          i?: number[][];
-          /**
-           * Bezier curve Out points. Array of 2 dimensional arrays.
-           */
-          o?: number[][];
-          /**
-           * Bezier curve Vertices. Array of 2 dimensional arrays.
-           */
-          v?: number[][];
-          [k: string]: any;
-        }[];
+        s?: PathDef1[];
         /**
          * Start time of keyframe segment.
          */
@@ -2480,7 +2325,7 @@ export type Direction1 = number;
 /**
  * Shape content type.
  */
-export type Type15 = string;
+export type Type15 = "rc";
 /**
  * Rect's position
  */
@@ -2714,7 +2559,7 @@ export type Direction2 = number;
 /**
  * Shape content type.
  */
-export type Type16 = string;
+export type Type16 = "el";
 /**
  * Ellipse's position
  */
@@ -2890,7 +2735,7 @@ export type Direction3 = number;
 /**
  * Shape content type.
  */
-export type Type17 = string;
+export type Type17 = "sr";
 /**
  * Star's position
  */
@@ -3322,13 +3167,7 @@ export type Points1 =
 /**
  * Star's type. Polygon or Star.
  */
-export type StarType =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type StarType = 1 | 2;
 /**
  * After Effect's Match Name. Used for expressions.
  */
@@ -3340,7 +3179,7 @@ export type Name20 = string;
 /**
  * Shape content type.
  */
-export type Type18 = string;
+export type Type18 = "fl";
 /**
  * Fill Opacity
  */
@@ -3490,7 +3329,7 @@ export type Name21 = string;
 /**
  * Shape content type.
  */
-export type Type19 = string;
+export type Type19 = "gf";
 /**
  * Fill Opacity
  */
@@ -3712,13 +3551,7 @@ export type EndPoint =
 /**
  * Gradient Type
  */
-export type Type20 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type Type20 = 1 | 2;
 /**
  * Gradient Highlight Length. Only if type is Radial
  */
@@ -3846,7 +3679,7 @@ export type Name22 = string;
 /**
  * Shape content type.
  */
-export type Type21 = string;
+export type Type21 = "gs";
 /**
  * Stroke Opacity
  */
@@ -4068,13 +3901,7 @@ export type EndPoint1 =
 /**
  * Gradient Type
  */
-export type Type22 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type Type22 = 1 | 2;
 /**
  * Gradient Highlight Length. Only if type is Radial
  */
@@ -4252,29 +4079,11 @@ export type StrokeWidth =
 /**
  * Gradient Stroke Line Cap
  */
-export type LineCap =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type LineCap = 1 | 2 | 3;
 /**
  * Gradient Stroke Line Join
  */
-export type LineJoin =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type LineJoin = 1 | 2 | 3;
 /**
  * Gradient Stroke Miter Limit. Only if Line Join is set to Miter.
  */
@@ -4290,33 +4099,15 @@ export type Name23 = string;
 /**
  * Shape content type.
  */
-export type Type23 = string;
+export type Type23 = "st";
 /**
  * Stroke Line Cap
  */
-export type LineCap1 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type LineCap1 = 1 | 2 | 3;
 /**
  * Stroke Line Join
  */
-export type LineJoin1 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type LineJoin1 = 1 | 2 | 3;
 /**
  * Stroke Miter Limit. Only if Line Join is set to Miter.
  */
@@ -4528,7 +4319,7 @@ export type Name24 = string;
 /**
  * Shape content type. THIS FEATURE IS NOT SUPPORTED. It's exported because if you export it, they will come.
  */
-export type Type24 = string;
+export type Type24 = "mm";
 /**
  * Merge Mode
  */
@@ -4544,7 +4335,7 @@ export type Name25 = string;
 /**
  * Shape content type.
  */
-export type Type25 = string;
+export type Type25 = "tm";
 /**
  * Trim Start.
  */
@@ -4730,7 +4521,7 @@ export type Name26 = string;
 /**
  * Shape content type.
  */
-export type Type26 = string;
+export type Type26 = "gr";
 /**
  * Group number of properties. Used for expressions.
  */
@@ -4746,7 +4537,7 @@ export type Name27 = string;
 /**
  * Shape content type.
  */
-export type Type27 = string;
+export type Type27 = "rd";
 /**
  * Rounded Corner Radius
  */
@@ -5285,140 +5076,19 @@ export type SkewAxis1 =
  * Group list of items
  */
 export type Items = (
-  | {
-      mn?: MatchName13;
-      nm?: Name16;
-      d?: Direction;
-      ty?: Type14;
-      ks?: Vertices;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName14;
-      nm?: Name17;
-      d?: Direction1;
-      ty?: Type15;
-      p?: Position1;
-      s?: Size;
-      r?: RoundedCorners;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName15;
-      nm?: Name18;
-      d?: Direction2;
-      ty?: Type16;
-      p?: Position2;
-      s?: Size1;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName16;
-      nm?: Name19;
-      d?: Direction3;
-      ty?: Type17;
-      p?: Position3;
-      ir?: InnerRadius;
-      is?: InnerRoundness;
-      or?: OuterRadius;
-      os?: OuterRoundness;
-      r?: Rotation1;
-      pt?: Points1;
-      sy?: StarType;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName17;
-      nm?: Name20;
-      ty?: Type18;
-      o?: Opacity2;
-      c?: Color;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName18;
-      nm?: Name21;
-      ty?: Type19;
-      o?: Opacity3;
-      s?: StartPoint;
-      e?: EndPoint;
-      t?: Type20;
-      h?: HighlightLength;
-      a?: HighlightAngle;
-      g?: GradientColors;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName19;
-      nm?: Name22;
-      ty?: Type21;
-      o?: Opacity4;
-      s?: StartPoint1;
-      e?: EndPoint1;
-      t?: Type22;
-      h?: HighlightLength1;
-      a?: HighlightAngle1;
-      g?: GradientColors1;
-      w?: StrokeWidth;
-      lc?: LineCap;
-      lj?: LineJoin;
-      ml?: MiterLimit;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName20;
-      nm?: Name23;
-      ty?: Type23;
-      lc?: LineCap1;
-      lj?: LineJoin1;
-      ml?: MiterLimit1;
-      o?: Opacity5;
-      w?: Width1;
-      c?: Color1;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName21;
-      nm?: Name24;
-      ty?: Type24;
-      mm?: MergeMode;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName22;
-      nm?: Name25;
-      ty?: Type25;
-      s?: Start;
-      e?: End;
-      o?: Offset;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName23;
-      nm?: Name26;
-      ty?: Type26;
-      np?: NumberOfProperties;
-      it?: Items;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName24;
-      nm?: Name27;
-      ty?: Type27;
-      r?: Radius;
-      [k: string]: any;
-    }
-  | {
-      nm?: Name28;
-      a?: AnchorPoint1;
-      p?: Position4;
-      s?: Scale1;
-      r?: Rotation2;
-      o?: Opacity6;
-      sk?: Skew1;
-      sa?: SkewAxis1;
-      [k: string]: any;
-    }
+  | PathShape
+  | RectShape
+  | EllipseShape
+  | StarShape
+  | FillShape
+  | GradientFillShape
+  | GradientStrokeShape
+  | StrokeShape
+  | MergeShape
+  | TrimShape
+  | GroupShape
+  | RoundShape
+  | TransformShape
 )[];
 /**
  * After Effect's Match Name. Used for expressions.
@@ -5431,7 +5101,7 @@ export type Name29 = string;
 /**
  * Shape content type.
  */
-export type Type28 = string;
+export type Type28 = "rp";
 /**
  * Number of Copies
  */
@@ -5551,13 +5221,7 @@ export type Offset1 =
 /**
  * Composite of copies
  */
-export type Composite =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type Composite = 1 | 2;
 /**
  * Transform values for each repeater copy
  */
@@ -5578,144 +5242,24 @@ export type Transform1 = {
  * Shape list of items
  */
 export type Items1 = (
-  | {
-      mn?: MatchName13;
-      nm?: Name16;
-      d?: Direction;
-      ty?: Type14;
-      ks?: Vertices;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName14;
-      nm?: Name17;
-      d?: Direction1;
-      ty?: Type15;
-      p?: Position1;
-      s?: Size;
-      r?: RoundedCorners;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName15;
-      nm?: Name18;
-      d?: Direction2;
-      ty?: Type16;
-      p?: Position2;
-      s?: Size1;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName16;
-      nm?: Name19;
-      d?: Direction3;
-      ty?: Type17;
-      p?: Position3;
-      ir?: InnerRadius;
-      is?: InnerRoundness;
-      or?: OuterRadius;
-      os?: OuterRoundness;
-      r?: Rotation1;
-      pt?: Points1;
-      sy?: StarType;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName17;
-      nm?: Name20;
-      ty?: Type18;
-      o?: Opacity2;
-      c?: Color;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName18;
-      nm?: Name21;
-      ty?: Type19;
-      o?: Opacity3;
-      s?: StartPoint;
-      e?: EndPoint;
-      t?: Type20;
-      h?: HighlightLength;
-      a?: HighlightAngle;
-      g?: GradientColors;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName19;
-      nm?: Name22;
-      ty?: Type21;
-      o?: Opacity4;
-      s?: StartPoint1;
-      e?: EndPoint1;
-      t?: Type22;
-      h?: HighlightLength1;
-      a?: HighlightAngle1;
-      g?: GradientColors1;
-      w?: StrokeWidth;
-      lc?: LineCap;
-      lj?: LineJoin;
-      ml?: MiterLimit;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName20;
-      nm?: Name23;
-      ty?: Type23;
-      lc?: LineCap1;
-      lj?: LineJoin1;
-      ml?: MiterLimit1;
-      o?: Opacity5;
-      w?: Width1;
-      c?: Color1;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName21;
-      nm?: Name24;
-      ty?: Type24;
-      mm?: MergeMode;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName22;
-      nm?: Name25;
-      ty?: Type25;
-      s?: Start;
-      e?: End;
-      o?: Offset;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName23;
-      nm?: Name26;
-      ty?: Type26;
-      np?: NumberOfProperties;
-      it?: Items;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName24;
-      nm?: Name27;
-      ty?: Type27;
-      r?: Radius;
-      [k: string]: any;
-    }
-  | {
-      mn?: MatchName25;
-      nm?: Name29;
-      ty?: Type28;
-      c?: Copies;
-      o?: Offset1;
-      m?: Composite;
-      tr?: Transform1;
-      [k: string]: any;
-    }
+  | PathShape
+  | RectShape
+  | EllipseShape
+  | StarShape
+  | FillShape
+  | GradientFillShape
+  | GradientStrokeShape
+  | StrokeShape
+  | MergeShape
+  | TrimShape
+  | GroupShape
+  | RoundShape
+  | RepeaterShape
 )[];
 /**
  * Type of layer: Solid.
  */
-export type Type29 = number;
+export type Type29 = 1;
 /**
  * Transform properties
  */
@@ -5735,75 +5279,15 @@ export type Transform2 = {
 /**
  * Auto-Orient along path AE property.
  */
-export type AutoOrient1 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type AutoOrient1 = 0 | 1;
 /**
  * Blend Mode
  */
-export type BlendMode1 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type BlendMode1 = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
 /**
  * 3d layer flag
  */
-export type DLayer1 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type DLayer1 = 0 | 1;
 /**
  * Layer index in AE. Used for parenting and expressions.
  */
@@ -5850,13 +5334,7 @@ export type MasksProperties1 = {
 /**
  * Auto-Orient along path AE property.
  */
-export type Effects7 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type Effects7 = 0 | 1;
 /**
  * Layer Time Stretching
  */
@@ -5880,7 +5358,7 @@ export type SolidWidth = number;
 /**
  * Type of layer: Image.
  */
-export type Type30 = number;
+export type Type30 = 2;
 /**
  * Transform properties
  */
@@ -5900,75 +5378,15 @@ export type Transform3 = {
 /**
  * Auto-Orient along path AE property.
  */
-export type AutoOrient2 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type AutoOrient2 = 0 | 1;
 /**
  * Blend Mode
  */
-export type BlendMode2 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type BlendMode2 = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
 /**
  * 3d layer flag
  */
-export type DLayer2 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type DLayer2 = 0 | 1;
 /**
  * Layer index in AE. Used for parenting and expressions.
  */
@@ -6144,7 +5562,7 @@ export type ReferenceID = string;
 /**
  * Type of layer: Null.
  */
-export type Type31 = number;
+export type Type31 = 3;
 /**
  * Transform properties
  */
@@ -6164,23 +5582,11 @@ export type Transform4 = {
 /**
  * Auto-Orient along path AE property.
  */
-export type AutoOrient3 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type AutoOrient3 = 0 | 1;
 /**
  * 3d layer flag
  */
-export type DLayer3 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type DLayer3 = 0 | 1;
 /**
  * Layer index in AE. Used for parenting and expressions.
  */
@@ -6337,7 +5743,7 @@ export type Parent3 = number;
 /**
  * Type of layer: Text.
  */
-export type Type32 = number;
+export type Type32 = 5;
 /**
  * Transform properties
  */
@@ -6357,75 +5763,15 @@ export type Transform5 = {
 /**
  * Auto-Orient along path AE property.
  */
-export type AutoOrient4 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type AutoOrient4 = 0 | 1;
 /**
  * Blend Mode
  */
-export type BlendMode3 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type BlendMode3 = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
 /**
  * 3d layer flag
  */
-export type DLayer4 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type DLayer4 = 0 | 1;
 /**
  * Layer index in AE. Used for parenting and expressions.
  */
@@ -6472,13 +5818,7 @@ export type MasksProperties3 = {
 /**
  * Auto-Orient along path AE property.
  */
-export type Effects10 =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type Effects10 = 0 | 1;
 /**
  * Layer Time Stretching
  */
@@ -7410,433 +6750,29 @@ export type Tracking =
       [k: string]: any;
     };
 /**
- * Selector Type. Expressible, or Normal.
- */
-export type Type33 = number;
-/**
- * Selector Max Amount
- */
-export type MaxAmount =
-  | {
-      /**
-       * Property Value
-       */
-      k?: number;
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    }
-  | {
-      /**
-       * Property Value keyframes
-       */
-      k?: {
-        /**
-         * Start value of keyframe segment.
-         */
-        s?: number;
-        /**
-         * Start time of keyframe segment.
-         */
-        t?: number;
-        /**
-         * Bezier curve interpolation in value.
-         */
-        i?: {
-          /**
-           * bezier x axis
-           */
-          x?: number;
-          /**
-           * bezier y axis
-           */
-          y?: number;
-          [k: string]: any;
-        };
-        [k: string]: any;
-      }[];
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    };
-/**
- * Levels Min Ease
- */
-export type MinEase =
-  | {
-      /**
-       * Property Value
-       */
-      k?: number;
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    }
-  | {
-      /**
-       * Property Value keyframes
-       */
-      k?: {
-        /**
-         * Start value of keyframe segment.
-         */
-        s?: number;
-        /**
-         * Start time of keyframe segment.
-         */
-        t?: number;
-        /**
-         * Bezier curve interpolation in value.
-         */
-        i?: {
-          /**
-           * bezier x axis
-           */
-          x?: number;
-          /**
-           * bezier y axis
-           */
-          y?: number;
-          [k: string]: any;
-        };
-        [k: string]: any;
-      }[];
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    };
-/**
- * Levels Max Ease
- */
-export type MaxEase =
-  | {
-      /**
-       * Property Value
-       */
-      k?: number;
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    }
-  | {
-      /**
-       * Property Value keyframes
-       */
-      k?: {
-        /**
-         * Start value of keyframe segment.
-         */
-        s?: number;
-        /**
-         * Start time of keyframe segment.
-         */
-        t?: number;
-        /**
-         * Bezier curve interpolation in value.
-         */
-        i?: {
-          /**
-           * bezier x axis
-           */
-          x?: number;
-          /**
-           * bezier y axis
-           */
-          y?: number;
-          [k: string]: any;
-        };
-        [k: string]: any;
-      }[];
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    };
-/**
- * Selector Randomize Order
- */
-export type Randomize =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
-/**
- * Selector Shape
- */
-export type Shape =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
-/**
- * Selector Based On
- */
-export type BasedOn =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
-/**
- * Selector Range Units. Percentage or Index.
- */
-export type RangeUnits = number;
-/**
- * Selector Start
- */
-export type Start1 =
-  | {
-      /**
-       * Property Value
-       */
-      k?: number;
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    }
-  | {
-      /**
-       * Property Value keyframes
-       */
-      k?: {
-        /**
-         * Start value of keyframe segment.
-         */
-        s?: number;
-        /**
-         * Start time of keyframe segment.
-         */
-        t?: number;
-        /**
-         * Bezier curve interpolation in value.
-         */
-        i?: {
-          /**
-           * bezier x axis
-           */
-          x?: number;
-          /**
-           * bezier y axis
-           */
-          y?: number;
-          [k: string]: any;
-        };
-        [k: string]: any;
-      }[];
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    };
-/**
- * Selector End
- */
-export type End1 =
-  | {
-      /**
-       * Property Value
-       */
-      k?: number;
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    }
-  | {
-      /**
-       * Property Value keyframes
-       */
-      k?: {
-        /**
-         * Start value of keyframe segment.
-         */
-        s?: number;
-        /**
-         * Start time of keyframe segment.
-         */
-        t?: number;
-        /**
-         * Bezier curve interpolation in value.
-         */
-        i?: {
-          /**
-           * bezier x axis
-           */
-          x?: number;
-          /**
-           * bezier y axis
-           */
-          y?: number;
-          [k: string]: any;
-        };
-        [k: string]: any;
-      }[];
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    };
-/**
- * Selector Offset
- */
-export type Offset2 =
-  | {
-      /**
-       * Property Value
-       */
-      k?: number;
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    }
-  | {
-      /**
-       * Property Value keyframes
-       */
-      k?: {
-        /**
-         * Start value of keyframe segment.
-         */
-        s?: number;
-        /**
-         * Start time of keyframe segment.
-         */
-        t?: number;
-        /**
-         * Bezier curve interpolation in value.
-         */
-        i?: {
-          /**
-           * bezier x axis
-           */
-          x?: number;
-          /**
-           * bezier y axis
-           */
-          y?: number;
-          [k: string]: any;
-        };
-        [k: string]: any;
-      }[];
-      /**
-       * Property Expression. An AE expression that modifies the value.
-       */
-      x?: string;
-      /**
-       * Property Index. Used for expressions.
-       */
-      ix?: string;
-      [k: string]: any;
-    };
-/**
  * Text animators
  */
 export type Animators = {
-  0?: AnimatedProperties;
-  1?: RangeSelecton;
+  p?: Position5;
+  a?: AnchorPoint2;
+  s?: Scale2;
+  sk?: Skew2;
+  sa?: SkewAxis2;
+  r?: Rotation3;
+  o?: Opacity7;
+  sw?: StrokeWidth1;
+  sc?: StrokeColor;
+  fc?: FillColor;
+  fh?: FillHue;
+  fs?: FillSaturation;
+  fb?: FillBrightness;
+  t?: Tracking;
   [k: string]: any;
 }[];
 /**
  * Text Anchor Point Grouping
  */
-export type AnchorPointGrouping =
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    }
-  | {
-      [k: string]: any;
-    };
+export type AnchorPointGrouping = 1 | 2 | 3 | 4;
 /**
  * Text Grouping Alignment
  */
@@ -7918,10 +6854,6 @@ export type GroupingAlignment =
       [k: string]: any;
     };
 /**
- * Text Path
- */
-export type TextPath = number;
-/**
  * Keyframe Time
  */
 export type Time = number;
@@ -7957,118 +6889,14 @@ export type Tracking1 = number;
  * Text Document Data Keyframes
  */
 export type Keyframes = {
-  0?: Time;
-  1?: TextProperties;
+  t?: Time;
+  s?: TextProperties;
   [k: string]: any;
 }[];
 /**
  * List of Composition Layers
  */
-export type Layers = (
-  | {
-      ty?: Type;
-      ks?: Transform;
-      ao?: AutoOrient;
-      bm?: BlendMode;
-      ddd?: DLayer;
-      ind?: Index;
-      cl?: Class;
-      ln?: LayerHTMLID;
-      ip?: InPoint1;
-      op?: OutPoint1;
-      st?: StartTime;
-      nm?: Name1;
-      hasMask?: HasMasks;
-      masksProperties?: MasksProperties;
-      ef?: Effects6;
-      sr?: Stretch;
-      parent?: Parent;
-      it?: Items1;
-      [k: string]: any;
-    }
-  | {
-      ty?: Type29;
-      ks?: Transform2;
-      ao?: AutoOrient1;
-      bm?: BlendMode1;
-      ddd?: DLayer1;
-      ind?: Index1;
-      cl?: Class1;
-      ln?: LayerHTMLID1;
-      ip?: InPoint2;
-      op?: OutPoint2;
-      st?: StartTime1;
-      nm?: Name30;
-      hasMask?: HasMasks1;
-      masksProperties?: MasksProperties1;
-      ef?: Effects7;
-      sr?: Stretch1;
-      parent?: Parent1;
-      sc?: SolidColor;
-      sh?: SolidHeight;
-      sw?: SolidWidth;
-      [k: string]: any;
-    }
-  | {
-      ty?: Type30;
-      ks?: Transform3;
-      ao?: AutoOrient2;
-      bm?: BlendMode2;
-      ddd?: DLayer2;
-      ind?: Index2;
-      cl?: Class2;
-      ln?: LayerHTMLID2;
-      ip?: InPoint3;
-      op?: OutPoint3;
-      st?: StartTime2;
-      nm?: Name31;
-      hasMask?: HasMasks2;
-      masksProperties?: MasksProperties2;
-      ef?: Effects8;
-      sr?: Stretch2;
-      parent?: Parent2;
-      refId?: ReferenceID;
-      [k: string]: any;
-    }
-  | {
-      ty?: Type31;
-      ks?: Transform4;
-      ao?: AutoOrient3;
-      ddd?: DLayer3;
-      ind?: Index3;
-      cl?: Class3;
-      ln?: LayerHTMLID3;
-      ip?: InPoint4;
-      op?: OutPoint4;
-      st?: StartTime3;
-      nm?: Name32;
-      ef?: Effects9;
-      sr?: Stretch3;
-      parent?: Parent3;
-      [k: string]: any;
-    }
-  | {
-      ty?: Type32;
-      ks?: Transform5;
-      ao?: AutoOrient4;
-      bm?: BlendMode3;
-      ddd?: DLayer4;
-      ind?: Index4;
-      cl?: Class4;
-      ln?: LayerHTMLID4;
-      ip?: InPoint5;
-      op?: OutPoint5;
-      st?: StartTime4;
-      nm?: Name33;
-      hasMask?: HasMasks3;
-      masksProperties?: MasksProperties3;
-      ef?: Effects10;
-      sr?: Stretch4;
-      parent?: Parent4;
-      t?: TextData;
-      [k: string]: any;
-    }
-)[];
+export type Layers = (ShapeLayer | SolidLayer | ImageLayer | NullLayer | TextLayer)[];
 /**
  * Image Height
  */
@@ -8096,111 +6924,7 @@ export type ID1 = string;
 /**
  * List of Precomp Layers
  */
-export type Layers1 = (
-  | {
-      ty?: Type;
-      ks?: Transform;
-      ao?: AutoOrient;
-      bm?: BlendMode;
-      ddd?: DLayer;
-      ind?: Index;
-      cl?: Class;
-      ln?: LayerHTMLID;
-      ip?: InPoint1;
-      op?: OutPoint1;
-      st?: StartTime;
-      nm?: Name1;
-      hasMask?: HasMasks;
-      masksProperties?: MasksProperties;
-      ef?: Effects6;
-      sr?: Stretch;
-      parent?: Parent;
-      it?: Items1;
-      [k: string]: any;
-    }
-  | {
-      ty?: Type29;
-      ks?: Transform2;
-      ao?: AutoOrient1;
-      bm?: BlendMode1;
-      ddd?: DLayer1;
-      ind?: Index1;
-      cl?: Class1;
-      ln?: LayerHTMLID1;
-      ip?: InPoint2;
-      op?: OutPoint2;
-      st?: StartTime1;
-      nm?: Name30;
-      hasMask?: HasMasks1;
-      masksProperties?: MasksProperties1;
-      ef?: Effects7;
-      sr?: Stretch1;
-      parent?: Parent1;
-      sc?: SolidColor;
-      sh?: SolidHeight;
-      sw?: SolidWidth;
-      [k: string]: any;
-    }
-  | {
-      ty?: Type30;
-      ks?: Transform3;
-      ao?: AutoOrient2;
-      bm?: BlendMode2;
-      ddd?: DLayer2;
-      ind?: Index2;
-      cl?: Class2;
-      ln?: LayerHTMLID2;
-      ip?: InPoint3;
-      op?: OutPoint3;
-      st?: StartTime2;
-      nm?: Name31;
-      hasMask?: HasMasks2;
-      masksProperties?: MasksProperties2;
-      ef?: Effects8;
-      sr?: Stretch2;
-      parent?: Parent2;
-      refId?: ReferenceID;
-      [k: string]: any;
-    }
-  | {
-      ty?: Type31;
-      ks?: Transform4;
-      ao?: AutoOrient3;
-      ddd?: DLayer3;
-      ind?: Index3;
-      cl?: Class3;
-      ln?: LayerHTMLID3;
-      ip?: InPoint4;
-      op?: OutPoint4;
-      st?: StartTime3;
-      nm?: Name32;
-      ef?: Effects9;
-      sr?: Stretch3;
-      parent?: Parent3;
-      [k: string]: any;
-    }
-  | {
-      ty?: Type32;
-      ks?: Transform5;
-      ao?: AutoOrient4;
-      bm?: BlendMode3;
-      ddd?: DLayer4;
-      ind?: Index4;
-      cl?: Class4;
-      ln?: LayerHTMLID4;
-      ip?: InPoint5;
-      op?: OutPoint5;
-      st?: StartTime4;
-      nm?: Name33;
-      hasMask?: HasMasks3;
-      masksProperties?: MasksProperties3;
-      ef?: Effects10;
-      sr?: Stretch4;
-      parent?: Parent4;
-      t?: TextData;
-      [k: string]: any;
-    }
-)[];
+export type Layers1 = (ShapeLayer | SolidLayer | ImageLayer | NullLayer | TextLayer)[];
 /**
  * source items that can be used in multiple places. Comps and Images for now.
  */
@@ -8243,28 +6967,7 @@ export type Width3 = number;
  * Character Items Keys
  */
 export type Keys = {
-  /**
-   * Property Value
-   */
-  k?: {
-    /**
-     * Closed property of shape
-     */
-    c?: boolean;
-    /**
-     * Bezier curve In points. Array of 2 dimensional arrays.
-     */
-    i?: number[][];
-    /**
-     * Bezier curve Out points. Array of 2 dimensional arrays.
-     */
-    o?: number[][];
-    /**
-     * Bezier curve Vertices. Array of 2 dimensional arrays.
-     */
-    v?: number[][];
-    [k: string]: any;
-  };
+  k?: PathDef;
   /**
    * Property Expression. An AE expression that modifies the value.
    */
@@ -8313,10 +7016,153 @@ export interface Animation {
   chars?: Chars;
   [k: string]: any;
 }
+export interface ShapeLayer {
+  ty?: Type;
+  ks?: Transform;
+  ao?: AutoOrient;
+  bm?: BlendMode;
+  tt?: MatteMode;
+  ddd?: DLayer;
+  ind?: Index;
+  cl?: Class;
+  ln?: LayerHTMLID;
+  ip?: InPoint1;
+  op?: OutPoint1;
+  st?: StartTime;
+  nm?: Name1;
+  hasMask?: HasMasks;
+  masksProperties?: MasksProperties;
+  ef?: Effects6;
+  sr?: Stretch;
+  parent?: Parent;
+  shapes?: Items1;
+  [k: string]: any;
+}
+/**
+ * Property Value
+ */
+export interface PathDef {
+  /**
+   * Closed property of shape
+   */
+  c?: boolean;
+  /**
+   * Bezier curve In points. Array of 2 dimensional arrays.
+   */
+  i?: number[][];
+  /**
+   * Bezier curve Out points. Array of 2 dimensional arrays.
+   */
+  o?: number[][];
+  /**
+   * Bezier curve Vertices. Array of 2 dimensional arrays.
+   */
+  v?: number[][];
+  [k: string]: any;
+}
+export interface PathDef1 {
+  /**
+   * Closed property of shape
+   */
+  c?: boolean;
+  /**
+   * Bezier curve In points. Array of 2 dimensional arrays.
+   */
+  i?: number[][];
+  /**
+   * Bezier curve Out points. Array of 2 dimensional arrays.
+   */
+  o?: number[][];
+  /**
+   * Bezier curve Vertices. Array of 2 dimensional arrays.
+   */
+  v?: number[][];
+  [k: string]: any;
+}
+export interface PathShape {
+  mn?: MatchName13;
+  nm?: Name16;
+  d?: Direction;
+  ty?: Type14;
+  ks?: Vertices;
+  [k: string]: any;
+}
+export interface RectShape {
+  mn?: MatchName14;
+  nm?: Name17;
+  d?: Direction1;
+  ty?: Type15;
+  p?: Position1;
+  s?: Size;
+  r?: RoundedCorners;
+  [k: string]: any;
+}
+export interface EllipseShape {
+  mn?: MatchName15;
+  nm?: Name18;
+  d?: Direction2;
+  ty?: Type16;
+  p?: Position2;
+  s?: Size1;
+  [k: string]: any;
+}
+export interface StarShape {
+  mn?: MatchName16;
+  nm?: Name19;
+  d?: Direction3;
+  ty?: Type17;
+  p?: Position3;
+  ir?: InnerRadius;
+  is?: InnerRoundness;
+  or?: OuterRadius;
+  os?: OuterRoundness;
+  r?: Rotation1;
+  pt?: Points1;
+  sy?: StarType;
+  [k: string]: any;
+}
+export interface FillShape {
+  mn?: MatchName17;
+  nm?: Name20;
+  ty?: Type18;
+  o?: Opacity2;
+  c?: Color;
+  [k: string]: any;
+}
+export interface GradientFillShape {
+  mn?: MatchName18;
+  nm?: Name21;
+  ty?: Type19;
+  o?: Opacity3;
+  s?: StartPoint;
+  e?: EndPoint;
+  t?: Type20;
+  h?: HighlightLength;
+  a?: HighlightAngle;
+  g?: GradientColors;
+  [k: string]: any;
+}
 /**
  * Gradient Colors
  */
 export interface GradientColors {
+  [k: string]: any;
+}
+export interface GradientStrokeShape {
+  mn?: MatchName19;
+  nm?: Name22;
+  ty?: Type21;
+  o?: Opacity4;
+  s?: StartPoint1;
+  e?: EndPoint1;
+  t?: Type22;
+  h?: HighlightLength1;
+  a?: HighlightAngle1;
+  g?: GradientColors1;
+  w?: StrokeWidth;
+  lc?: LineCap;
+  lj?: LineJoin;
+  ml?: MiterLimit;
   [k: string]: any;
 }
 /**
@@ -8325,79 +7171,194 @@ export interface GradientColors {
 export interface GradientColors1 {
   [k: string]: any;
 }
+export interface StrokeShape {
+  mn?: MatchName20;
+  nm?: Name23;
+  ty?: Type23;
+  lc?: LineCap1;
+  lj?: LineJoin1;
+  ml?: MiterLimit1;
+  o?: Opacity5;
+  w?: Width1;
+  c?: Color1;
+  [k: string]: any;
+}
+export interface MergeShape {
+  mn?: MatchName21;
+  nm?: Name24;
+  ty?: Type24;
+  mm?: MergeMode;
+  [k: string]: any;
+}
+export interface TrimShape {
+  mn?: MatchName22;
+  nm?: Name25;
+  ty?: Type25;
+  s?: Start;
+  e?: End;
+  o?: Offset;
+  [k: string]: any;
+}
+export interface GroupShape {
+  mn?: MatchName23;
+  nm?: Name26;
+  ty?: Type26;
+  np?: NumberOfProperties;
+  it?: Items;
+  [k: string]: any;
+}
+export interface RoundShape {
+  mn?: MatchName24;
+  nm?: Name27;
+  ty?: Type27;
+  r?: Radius;
+  [k: string]: any;
+}
+export interface TransformShape {
+  nm?: Name28;
+  a?: AnchorPoint1;
+  p?: Position4;
+  s?: Scale1;
+  r?: Rotation2;
+  o?: Opacity6;
+  sk?: Skew1;
+  sa?: SkewAxis1;
+  [k: string]: any;
+}
+export interface RepeaterShape {
+  mn?: MatchName25;
+  nm?: Name29;
+  ty?: Type28;
+  c?: Copies;
+  o?: Offset1;
+  m?: Composite;
+  tr?: Transform1;
+  [k: string]: any;
+}
+export interface SolidLayer {
+  ty?: Type29;
+  ks?: Transform2;
+  ao?: AutoOrient1;
+  bm?: BlendMode1;
+  ddd?: DLayer1;
+  ind?: Index1;
+  cl?: Class1;
+  ln?: LayerHTMLID1;
+  ip?: InPoint2;
+  op?: OutPoint2;
+  st?: StartTime1;
+  nm?: Name30;
+  hasMask?: HasMasks1;
+  masksProperties?: MasksProperties1;
+  ef?: Effects7;
+  sr?: Stretch1;
+  parent?: Parent1;
+  sc?: SolidColor;
+  sh?: SolidHeight;
+  sw?: SolidWidth;
+  [k: string]: any;
+}
+export interface ImageLayer {
+  ty?: Type30;
+  ks?: Transform3;
+  ao?: AutoOrient2;
+  bm?: BlendMode2;
+  ddd?: DLayer2;
+  ind?: Index2;
+  cl?: Class2;
+  ln?: LayerHTMLID2;
+  ip?: InPoint3;
+  op?: OutPoint3;
+  st?: StartTime2;
+  nm?: Name31;
+  hasMask?: HasMasks2;
+  masksProperties?: MasksProperties2;
+  ef?: Effects8;
+  sr?: Stretch2;
+  parent?: Parent2;
+  refId?: ReferenceID;
+  [k: string]: any;
+}
+export interface NullLayer {
+  ty?: Type31;
+  ks?: Transform4;
+  ao?: AutoOrient3;
+  ddd?: DLayer3;
+  ind?: Index3;
+  cl?: Class3;
+  ln?: LayerHTMLID3;
+  ip?: InPoint4;
+  op?: OutPoint4;
+  st?: StartTime3;
+  nm?: Name32;
+  ef?: Effects9;
+  sr?: Stretch3;
+  parent?: Parent3;
+  [k: string]: any;
+}
+export interface TextLayer {
+  ty?: Type32;
+  ks?: Transform5;
+  ao?: AutoOrient4;
+  bm?: BlendMode3;
+  ddd?: DLayer4;
+  ind?: Index4;
+  cl?: Class4;
+  ln?: LayerHTMLID4;
+  ip?: InPoint5;
+  op?: OutPoint5;
+  st?: StartTime4;
+  nm?: Name33;
+  hasMask?: HasMasks3;
+  masksProperties?: MasksProperties3;
+  ef?: Effects10;
+  sr?: Stretch4;
+  parent?: Parent4;
+  t?: TextData;
+  [k: string]: any;
+}
 /**
  * Text Data
  */
 export interface TextData {
-  0?: Animators;
-  1?: MoreOptions;
-  2?: TextPath;
-  3?: Document;
-  [k: string]: any;
-}
-/**
- * Text animator animated properties
- */
-export interface AnimatedProperties {
-  0?: Position5;
-  1?: AnchorPoint2;
-  2?: Scale2;
-  3?: Skew2;
-  4?: SkewAxis2;
-  5?: Rotation3;
-  6?: Opacity7;
-  7?: StrokeWidth1;
-  8?: StrokeColor;
-  9?: FillColor;
-  10?: FillHue;
-  11?: FillSaturation;
-  12?: FillBrightness;
-  13?: Tracking;
-  [k: string]: any;
-}
-/**
- * Animators Range Selecton
- */
-export interface RangeSelecton {
-  0?: Type33;
-  1?: MaxAmount;
-  2?: MinEase;
-  3?: MaxEase;
-  4?: Randomize;
-  5?: Shape;
-  6?: BasedOn;
-  7?: RangeUnits;
-  8?: Start1;
-  9?: End1;
-  10?: Offset2;
+  a?: Animators;
+  m?: MoreOptions;
+  p?: TextPath;
+  d?: Document;
   [k: string]: any;
 }
 /**
  * Text More Options
  */
 export interface MoreOptions {
-  0?: AnchorPointGrouping;
-  1?: GroupingAlignment;
+  a?: AnchorPointGrouping;
+  g?: GroupingAlignment;
+  [k: string]: any;
+}
+/**
+ * Text Path
+ */
+export interface TextPath {
   [k: string]: any;
 }
 /**
  * Text Document Data
  */
 export interface Document {
-  0?: Keyframes;
+  k?: Keyframes;
   [k: string]: any;
 }
 /**
  * Text Properties
  */
 export interface TextProperties {
-  0?: Font;
-  1?: FontColor;
-  2?: Justificaiton;
-  3?: LineHeight;
-  4?: Size2;
-  5?: Text;
-  6?: Tracking1;
+  f?: Font;
+  fc?: FontColor;
+  j?: Justificaiton;
+  lh?: LineHeight;
+  s?: Size2;
+  t?: Text;
+  tr?: Tracking1;
   [k: string]: any;
 }
 /**

@@ -1,5 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StarShape",
   "type": "object",
   "properties": {
     "mn": {
@@ -21,7 +22,7 @@
       "title": "Type",
       "description": "Shape content type.",
       "type": "string",
-      "const": "sr"
+      "enum": [ "sr"]
     },
     "p": {
       "title": "Position",
@@ -120,12 +121,12 @@
       "type": "object",
       "oneOf": [
         {
-          "standsFor": "Star",
-          "value": 1
+          "description": "Star",
+          "enum": [1]
         },
         {
-          "standsFor": "Polygon",
-          "value": 2
+          "description": "Polygon",
+          "enum": [2]
         }
       ]
     }

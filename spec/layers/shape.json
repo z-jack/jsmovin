@@ -1,12 +1,13 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ShapeLayer",
   "type": "object",
   "properties": {
     "ty": {
       "title": "Type",
       "description": "Type of layer: Shape.",
       "type": "number",
-      "const": 4
+      "enum": [ 4]
     },
     "ks": {
       "title": "Transform",
@@ -35,6 +36,17 @@
       "oneOf": [
         {
           "$ref": "../helpers/blendMode.json"
+        }
+      ],
+      "type": "number",
+      "default": 0
+    },
+    "tt": {
+      "title": "MatteMode",
+      "description": "Matte mode, the layer will inherit the transparency from the layer above",
+      "oneOf": [
+        {
+          "$ref": "../helpers/matteMode.json"
         }
       ],
       "type": "number",
@@ -128,7 +140,7 @@
       "description": "Layer Parent. Uses ind of parent.",
       "type": "number"
     },
-    "it": {
+    "shapes": {
       "title": "Items",
       "description": "Shape list of items",
       "items": {
