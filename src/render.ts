@@ -242,6 +242,7 @@ function renderGlyph(dom: SVGGraphicsElement): GroupShape {
                     throw new Error('No implementation found for this path command.')
             }
         })
+        postActions(pathMaker)
     } else if (dom instanceof SVGPolygonElement || dom instanceof SVGPolylineElement) {
         const points = dom.points
         if (points.length) {

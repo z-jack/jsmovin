@@ -53,13 +53,27 @@ export default class JSMovin {
         return layer
     }
 
-    addMask(mask: JSMovinLayer, layerRef: JSMovinLayer) {
-        const layerIndex = this.root.layers!.indexOf(layerRef.root)
+    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number| JSMovinLayer) {
+        let layerRef: JSMovinLayer
+        let layerIndex: number
+        if(layerRefOrIndex instanceof JSMovinLayer){
+            layerRef=layerRefOrIndex
+        layerIndex = this.root.layers!.indexOf(layerRef.root)
+        layerRef.root.tt=1
+        }else{
+            layerIndex=layerRefOrIndex
+            this.root.layers![layerIndex].tt = 1
+        }
         if (layerIndex < 0) {
             throw new Error('Given layer is not a member of this JSMovin.')
         }
-        layerRef.root.tt = 1
-        this.root.layers!.splice(layerIndex, 0, mask.root)
+        let maskLayer: JSMovinLayer
+        if (maskOrDom instanceof SVGGraphicsElement){
+            maskLayer=LayerFactory.hierarchy(maskOrDom)
+        }else {
+            maskLayer=maskOrDom
+        }
+        this.root.layers!.splice(layerIndex, 0, maskLayer.root)
     }
 
     uniform() {

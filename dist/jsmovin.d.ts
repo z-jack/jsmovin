@@ -18,7 +18,7 @@ export default class JSMovin {
      */
     setViewport(width: number, height: number): void;
     addLayer(domOrLayer: SVGGraphicsElement | JSMovinLayer): JSMovinLayer;
-    addMask(mask: JSMovinLayer, layerRef: JSMovinLayer): void;
+    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer): void;
     uniform(): void;
     toObject(): any;
     toJSON(): string;
