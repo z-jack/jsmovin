@@ -1,0 +1,31 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Font",
+    "type": "object",
+    "properties": {
+        "origin": {
+            "type": "number"
+        },
+        "fPath": {
+            "type": "string"
+        },
+        "fClass": {
+            "type": "string"
+        },
+        "fFamily": {
+            "type": "string"
+        },
+        "fWeight": {
+            "type": "string"
+        },
+        "fStyle": {
+            "type": "string"
+        },
+        "fName": {
+            "type": "string"
+        },
+        "ascent": {
+            "type": "number"
+        }
+    }
+}

@@ -21,6 +21,7 @@ export default class JSMovin {
             ddd: 0,
             layers: [],
             assets: [],
+            fonts: [],
             ip: 0,
             op: 0
         }
@@ -45,7 +46,7 @@ export default class JSMovin {
     addLayer(domOrLayer: SVGGraphicsElement | JSMovinLayer): JSMovinLayer {
         let layer: JSMovinLayer;
         if (domOrLayer instanceof SVGGraphicsElement) {
-            layer = LayerFactory.hierarchy(domOrLayer)
+            layer = LayerFactory.hierarchy(domOrLayer, this.root.assets!, this.root.fonts!)
         } else {
             layer = domOrLayer
         }
@@ -53,25 +54,25 @@ export default class JSMovin {
         return layer
     }
 
-    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number| JSMovinLayer) {
+    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer) {
         let layerRef: JSMovinLayer
         let layerIndex: number
-        if(layerRefOrIndex instanceof JSMovinLayer){
-            layerRef=layerRefOrIndex
-        layerIndex = this.root.layers!.indexOf(layerRef.root)
-        layerRef.root.tt=1
-        }else{
-            layerIndex=layerRefOrIndex
+        if (layerRefOrIndex instanceof JSMovinLayer) {
+            layerRef = layerRefOrIndex
+            layerIndex = this.root.layers!.indexOf(layerRef.root)
+            layerRef.root.tt = 1
+        } else {
+            layerIndex = layerRefOrIndex
             this.root.layers![layerIndex].tt = 1
         }
         if (layerIndex < 0) {
             throw new Error('Given layer is not a member of this JSMovin.')
         }
         let maskLayer: JSMovinLayer
-        if (maskOrDom instanceof SVGGraphicsElement){
-            maskLayer=LayerFactory.hierarchy(maskOrDom)
-        }else {
-            maskLayer=maskOrDom
+        if (maskOrDom instanceof SVGGraphicsElement) {
+            maskLayer = LayerFactory.hierarchy(maskOrDom, this.root.assets!, this.root.fonts!)
+        } else {
+            maskLayer = maskOrDom
         }
         this.root.layers!.splice(layerIndex, 0, maskLayer.root)
     }

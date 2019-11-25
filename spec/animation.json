@@ -25,7 +25,10 @@
     "ddd": {
       "title": "3-D",
       "description": "Composition has 3-D layers",
-      "enum": [0, 1],
+      "enum": [
+        0,
+        1
+      ],
       "type": "number"
     },
     "h": {
@@ -96,6 +99,24 @@
         "type": "object"
       },
       "type": "array"
+    },
+    "fonts": {
+      "title": "Fonts",
+      "description": "Available fonts.",
+      "properties": {
+        "list": {
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "./sources/font.json"
+              }
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
     }
   }
 }

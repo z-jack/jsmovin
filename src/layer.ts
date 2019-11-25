@@ -1,8 +1,8 @@
-import { ShapeLayer, TextLayer, ImageLayer, Transform } from './animation'
+import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts } from './animation'
 import { EasingFunction } from './easing'
 import { renderText, render, renderImage } from './render';
 
-type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity"
+type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape'
 
 export class JSMovinLayer {
     public readonly root: ShapeLayer | TextLayer | ImageLayer;
@@ -17,6 +17,7 @@ export class JSMovinLayer {
                 return 100
             case 'r':
                 return 0
+
             default:
                 return 0
         }
@@ -222,11 +223,16 @@ export class LayerFactory {
         }
         const rootBBox = svgRoot.getBoundingClientRect()
         const refBBox = dom.getBoundingClientRect()
-        const coordinate = [refBBox.left - rootBBox.left, refBBox.top - rootBBox.top, refBBox.width + 1, refBBox.height + 1]
+        const coordinate: [number, number, number, number] = [refBBox.left - rootBBox.left, refBBox.top - rootBBox.top, refBBox.width + 1, refBBox.height + 1]
         return coordinate
     }
 
     static boundingBox(dom: SVGGraphicsElement) {
+        const coordinate = this.getBoundingBox(dom)
+        return this.rect(...coordinate)
+    }
+
+    static shape(dom: SVGPathElement) {
         const coordinate = this.getBoundingBox(dom)
         const layer: ShapeLayer = {
             ty: 4,
@@ -239,14 +245,10 @@ export class LayerFactory {
             st: 0,
             bm: 0,
             shapes: [
-
+                render(dom)
             ]
         }
-        return new JSMovinLayer({})
-    }
-
-    static shape(dom: SVGPathElement) {
-        return new JSMovinLayer({})
+        return new JSMovinLayer(layer)
     }
 
     static rect(left: number, top: number, width: number, height: number) {
@@ -257,7 +259,7 @@ export class LayerFactory {
 
     }
 
-    static hierarchy(dom: SVGGraphicsElement) {
+    static hierarchy(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts) {
         const coordinate = this.getBoundingBox(dom)
         let domType: 2 | 4 | 5;
         if (dom instanceof SVGTextElement) {
@@ -280,8 +282,12 @@ export class LayerFactory {
         }
         switch (domType) {
             case 2:
-                const imageLayer = layer as ImageLayer
-                imageLayer.refId = renderImage(dom as SVGImageElement)
+                if (assetList) {
+                    const imageLayer = layer as ImageLayer
+                    const [refId, asset] = renderImage(dom as SVGImageElement)
+                    imageLayer.refId = refId
+                    assetList.push(asset)
+                }
                 break
             case 4:
                 const shapeLayer = layer as ShapeLayer
@@ -290,7 +296,9 @@ export class LayerFactory {
                 break
             case 5:
                 const textLayer = layer as TextLayer
-                textLayer.t = renderText(dom as SVGTextElement)
+                const [textData, font] = renderText(dom as SVGTextElement)
+                textLayer.t = textData
+                fontList.list!.push(font)
                 break
         }
 

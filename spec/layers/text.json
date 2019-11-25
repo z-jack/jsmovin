@@ -391,7 +391,7 @@
                           "j": {
                             "title": "Justificaiton",
                             "description": "Text Justification",
-                            "type": "string"
+                            "type": "number"
                           },
                           "lh": {
                             "title": "Line Height",

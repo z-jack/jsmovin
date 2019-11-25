@@ -1,38 +1,8 @@
-import { GroupShape, TextData, ReferenceID, PathShape, FillShape, StrokeShape, TransformShape } from './animation'
+import { GroupShape, TextData, ReferenceID, PathShape, FillShape, StrokeShape, TransformShape, ImageAsset, Font1 } from './animation'
 import { PathMaker } from './path'
+import uuid from 'uuid/v4'
+import { parseSVG, MoveToCommand, LineToCommand, HorizontalLineToCommand, VerticalLineToCommand, CurveToCommand, QuadraticCurveToCommand, EllipticalArcCommand } from 'svg-path-parser'
 
-const parseSVG = require('svg-path-parser')
-type PathParserResult = {
-    code: 'M' | 'L' | 'H' | 'V' | 'm' | 'l' | 'h' | 'v',
-    command: string,
-    x: number,
-    y: number,
-    relative: boolean
-} | {
-    code: 'C' | 'c' | 'S' | 's' | 'Q' | 'q' | 'T' | 't',
-    command: string,
-    x: number,
-    y: number,
-    relative: boolean,
-    x1: number,
-    x2: number,
-    y1: number,
-    y2: number
-} | {
-    code: 'A' | 'a',
-    command: string,
-    x: number,
-    y: number,
-    relative: boolean,
-    rx: number,
-    ry: number,
-    xAsisRotation: number,
-    largeArc: boolean,
-    sweep: boolean
-} | {
-    code: 'Z' | 'z',
-    command: string
-}
 
 export function render(dom: SVGGraphicsElement): GroupShape {
     if (dom instanceof SVGTextElement || dom instanceof SVGImageElement) {
@@ -189,49 +159,63 @@ function renderGlyph(dom: SVGGraphicsElement): GroupShape {
         pathMaker.lineTo(x2 - offsetX, y2 - offsetY)
         postActions(pathMaker)
     } else if (dom instanceof SVGPathElement) {
-        const pathData = dom.getAttribute('d')
-        const pathDataSeries: PathParserResult[] = parseSVG(pathData)
+        const pathData = dom.getAttribute('d') || ''
+        const pathDataSeries = parseSVG(pathData)
         const pathMaker = new PathMaker()
+        let pathDataWithType;
         pathDataSeries.forEach(pathDataItem => {
             switch (pathDataItem.code) {
                 case 'M':
-                    pathMaker.moveTo(pathDataItem.x, pathDataItem.y)
+                    pathDataWithType = pathDataItem as MoveToCommand
+                    pathMaker.moveTo(pathDataWithType.x, pathDataWithType.y)
                     break
                 case 'L':
-                    pathMaker.lineTo(pathDataItem.x, pathDataItem.y)
+                    pathDataWithType = pathDataItem as LineToCommand
+                    pathMaker.lineTo(pathDataWithType.x, pathDataWithType.y)
                     break
                 case 'l':
-                    pathMaker.lineToRelative(pathDataItem.x, pathDataItem.y)
+                    pathDataWithType = pathDataItem as LineToCommand
+                    pathMaker.lineToRelative(pathDataWithType.x, pathDataWithType.y)
                     break
                 case 'H':
-                    pathMaker.horizontalTo(pathDataItem.x)
+                    pathDataWithType = pathDataItem as HorizontalLineToCommand
+                    pathMaker.horizontalTo(pathDataWithType.x)
                     break
                 case 'h':
-                    pathMaker.horizontalToRelative(pathDataItem.x)
+                    pathDataWithType = pathDataItem as HorizontalLineToCommand
+                    pathMaker.horizontalToRelative(pathDataWithType.x)
                     break
                 case 'V':
-                    pathMaker.verticalTo(pathDataItem.y)
+                    pathDataWithType = pathDataItem as VerticalLineToCommand
+                    pathMaker.verticalTo(pathDataWithType.y)
                     break
                 case 'v':
-                    pathMaker.verticalToRelative(pathDataItem.y)
+                    pathDataWithType = pathDataItem as VerticalLineToCommand
+                    pathMaker.verticalToRelative(pathDataWithType.y)
                     break
                 case 'C':
-                    pathMaker.cubicBezierCurveTo(pathDataItem.x1, pathDataItem.y1, pathDataItem.x2, pathDataItem.y2, pathDataItem.x, pathDataItem.y)
+                    pathDataWithType = pathDataItem as CurveToCommand
+                    pathMaker.cubicBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y)
                     break
                 case 'c':
-                    pathMaker.cubicBezierCurveToRelative(pathDataItem.x1, pathDataItem.y1, pathDataItem.x2, pathDataItem.y2, pathDataItem.x, pathDataItem.y)
+                    pathDataWithType = pathDataItem as CurveToCommand
+                    pathMaker.cubicBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y)
                     break
                 case 'Q':
-                    pathMaker.quadraticBezierCurveTo(pathDataItem.x1, pathDataItem.y1, pathDataItem.x, pathDataItem.y)
+                    pathDataWithType = pathDataItem as QuadraticCurveToCommand
+                    pathMaker.quadraticBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y)
                     break
                 case 'q':
-                    pathMaker.quadraticBezierCurveToRelative(pathDataItem.x1, pathDataItem.y1, pathDataItem.x, pathDataItem.y)
+                    pathDataWithType = pathDataItem as QuadraticCurveToCommand
+                    pathMaker.quadraticBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y)
                     break
                 case 'A':
-                    pathMaker.arcTo(pathDataItem.rx, pathDataItem.ry, pathDataItem.xAsisRotation, ~~pathDataItem.largeArc, ~~pathDataItem.sweep, pathDataItem.x, pathDataItem.y)
+                    pathDataWithType = pathDataItem as EllipticalArcCommand
+                    pathMaker.arcTo(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y)
                     break
                 case 'a':
-                    pathMaker.arcToRelative(pathDataItem.rx, pathDataItem.ry, pathDataItem.xAsisRotation, ~~pathDataItem.largeArc, ~~pathDataItem.sweep, pathDataItem.x, pathDataItem.y)
+                    pathDataWithType = pathDataItem as EllipticalArcCommand
+                    pathMaker.arcToRelative(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y)
                     break
                 case 'Z':
                 case 'z':
@@ -300,10 +284,69 @@ function renderGroup(dom: SVGGElement): GroupShape {
     return group
 }
 
-export function renderText(dom: SVGTextElement): TextData {
-    return {}
+export function renderText(dom: SVGTextElement): [TextData, Font1] {
+    const computedStyle = getComputedStyle(dom)
+    const fontSize = parseFloat(computedStyle.fontSize),
+        fontFamily = computedStyle.fontFamily.split(',')[0].trim(),
+        fontStyle = computedStyle.fontStyle,
+        fontName = `${fontFamily}-${fontStyle}`,
+        fontAscent = parseFloat(computedStyle.lineHeight || `${fontSize}`),
+        fontColor = (computedStyle.color || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(i => parseInt(i) / 255)
+    const textData: TextData = {
+        d: {
+            k: [
+                {
+                    t: 0,
+                    s: {
+                        s: fontSize,
+                        f: fontName,
+                        t: dom.innerHTML,
+                        j: 0,
+                        tr: 0,
+                        lh: fontAscent,
+                        ls: 0,
+                        fc: fontColor
+                    }
+                }
+            ]
+        },
+        p: {},
+        m: {},
+        a: []
+    }
+    const fontDef: Font1 = {
+        origin: 0,
+        fPath: '',
+        fClass: '',
+        fFamily: fontFamily,
+        fWeight: '',
+        fStyle: fontStyle,
+        fName: fontName,
+        ascent: fontAscent
+    }
+    return [textData, fontDef]
 }
 
-export function renderImage(dom: SVGImageElement): ReferenceID {
-    return ""
+export function renderImage(dom: SVGImageElement): [ReferenceID, ImageAsset] {
+    const id = uuid()
+    const domHeightVal = dom.height.baseVal
+    domHeightVal.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX)
+    const domWidthVal = dom.width.baseVal
+    domWidthVal.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX)
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+
+    canvas.width = domWidthVal.valueInSpecifiedUnits
+    canvas.height = domHeightVal.valueInSpecifiedUnits
+    ctx!.drawImage(dom, 0, 0)
+
+    const dataUrl = canvas.toDataURL()
+    const asset = {
+        h: domHeightVal.valueInSpecifiedUnits,
+        w: domWidthVal.valueInSpecifiedUnits,
+        id: uuid(),
+        u: dataUrl,
+        e: 1
+    }
+    return [id, asset]
 }

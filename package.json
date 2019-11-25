@@ -28,6 +28,9 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "svg-path-parser": "^1.1.0"
+    "@types/svg-path-parser": "^1.1.0",
+    "@types/uuid": "^3.4.6",
+    "svg-path-parser": "^1.1.0",
+    "uuid": "^3.3.3"
   }
 }

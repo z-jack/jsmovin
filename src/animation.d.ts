@@ -6868,7 +6868,7 @@ export type FontColor = any[];
 /**
  * Text Justification
  */
-export type Justificaiton = string;
+export type Justificaiton = number;
 /**
  * Text Line Height
  */
@@ -6928,21 +6928,7 @@ export type Layers1 = (ShapeLayer | SolidLayer | ImageLayer | NullLayer | TextLa
 /**
  * source items that can be used in multiple places. Comps and Images for now.
  */
-export type Assets = (
-  | {
-      h?: Height1;
-      w?: Width2;
-      id?: ID;
-      p?: ImageName;
-      u?: ImagePath;
-      [k: string]: any;
-    }
-  | {
-      id?: ID1;
-      layers?: Layers1;
-      [k: string]: any;
-    }
-)[];
+export type Assets = (ImageAsset | PreCompAsset)[];
 /**
  * Character Value
  */
@@ -7014,6 +7000,7 @@ export interface Animation {
   layers?: Layers;
   assets?: Assets;
   chars?: Chars;
+  fonts?: Fonts;
   [k: string]: any;
 }
 export interface ShapeLayer {
@@ -7361,6 +7348,19 @@ export interface TextProperties {
   tr?: Tracking1;
   [k: string]: any;
 }
+export interface ImageAsset {
+  h?: Height1;
+  w?: Width2;
+  id?: ID;
+  p?: ImageName;
+  u?: ImagePath;
+  [k: string]: any;
+}
+export interface PreCompAsset {
+  id?: ID1;
+  layers?: Layers1;
+  [k: string]: any;
+}
 /**
  * Character Data
  */
@@ -7373,5 +7373,23 @@ export interface CharacterData {
  */
 export interface Items2 {
   0?: Keys;
+  [k: string]: any;
+}
+/**
+ * Available fonts.
+ */
+export interface Fonts {
+  list?: Font1[];
+  [k: string]: any;
+}
+export interface Font1 {
+  origin?: number;
+  fPath?: string;
+  fClass?: string;
+  fFamily?: string;
+  fWeight?: string;
+  fStyle?: string;
+  fName?: string;
+  ascent?: number;
   [k: string]: any;
 }
