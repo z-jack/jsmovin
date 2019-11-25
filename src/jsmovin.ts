@@ -21,7 +21,9 @@ export default class JSMovin {
             ddd: 0,
             layers: [],
             assets: [],
-            fonts: [],
+            fonts: {
+                list: []
+            },
             ip: 0,
             op: 0
         }

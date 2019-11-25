@@ -1,5 +1,5 @@
 import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts } from './animation'
-import { EasingFunction } from './easing'
+import { EasingFunction, EasingFactory } from './easing'
 import { renderText, render, renderImage } from './render';
 
 type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape'
@@ -45,7 +45,7 @@ export class JSMovinLayer {
             }
         }
     }
-    private addKeyframe(transform: Transform, key: string, idx: number = -1, time: number, value: any) {
+    private addKeyframe(transform: Transform, key: string, idx: number = -1, time: number, value: Array<any>, easing?: EasingFunction) {
         const existKeyframe = transform[key].k.filter((x: any) => x.t == time) as any[]
         let readyToSet;
         if (existKeyframe.length) {
@@ -58,10 +58,20 @@ export class JSMovinLayer {
             const previousKeyframeCount = transform[key].k.reduce((p: number, x: any) => x.t < time ? p + 1 : p, 0)
             transform[key].k.splice(previousKeyframeCount, 0, readyToSet)
         }
+        if (easing) {
+            readyToSet.o = {
+                x: easing[0][0],
+                y: easing[0][1]
+            }
+            readyToSet.i = {
+                x: easing[1][0],
+                y: easing[1][1]
+            }
+        }
         if (idx >= 0) {
             readyToSet.s[idx] = value
         } else {
-            readyToSet.s = value
+            readyToSet.s = [value]
         }
     }
 
@@ -70,6 +80,7 @@ export class JSMovinLayer {
     }
 
     setStaticProperty(key: SetableKeys, value: any) {
+        this.root.op = 1
         switch (key) {
             case 'scaleX':
                 this.convertToStaticProperty(this.root.ks!, 's')
@@ -119,36 +130,39 @@ export class JSMovinLayer {
         if (endFrame <= startFrame) {
             throw new Error('End frame should be larger than start frame.')
         }
-
+        this.root.op = endFrame
+        if (!easing) {
+            easing = EasingFactory.linear()
+        }
         switch (key) {
             case 'scaleX':
                 this.convertToAnimatableProperty(this.root.ks!, 's')
-                this.addKeyframe(this.root.ks!, 's', 0, startFrame, startValue)
+                this.addKeyframe(this.root.ks!, 's', 0, startFrame, startValue, easing)
                 this.addKeyframe(this.root.ks!, 's', 0, endFrame, endValue)
                 break
             case 'scaleY':
                 this.convertToAnimatableProperty(this.root.ks!, 's')
-                this.addKeyframe(this.root.ks!, 's', 1, startFrame, startValue)
+                this.addKeyframe(this.root.ks!, 's', 1, startFrame, startValue, easing)
                 this.addKeyframe(this.root.ks!, 's', 1, endFrame, endValue)
                 break
             case 'anchorX':
                 this.convertToAnimatableProperty(this.root.ks!, 'a')
-                this.addKeyframe(this.root.ks!, 'a', 0, startFrame, startValue)
+                this.addKeyframe(this.root.ks!, 'a', 0, startFrame, startValue, easing)
                 this.addKeyframe(this.root.ks!, 'a', 0, endFrame, endValue)
                 break
             case 'anchorY':
                 this.convertToAnimatableProperty(this.root.ks!, 'a')
-                this.addKeyframe(this.root.ks!, 'a', 1, startFrame, startValue)
+                this.addKeyframe(this.root.ks!, 'a', 1, startFrame, startValue, easing)
                 this.addKeyframe(this.root.ks!, 'a', 1, endFrame, endValue)
                 break
             case 'x':
                 this.convertToAnimatableProperty(this.root.ks!, 'p')
-                this.addKeyframe(this.root.ks!, 'p', 0, startFrame, startValue)
+                this.addKeyframe(this.root.ks!, 'p', 0, startFrame, startValue, easing)
                 this.addKeyframe(this.root.ks!, 'p', 0, endFrame, endValue)
                 break
             case 'y':
                 this.convertToAnimatableProperty(this.root.ks!, 'p')
-                this.addKeyframe(this.root.ks!, 'p', 1, startFrame, startValue)
+                this.addKeyframe(this.root.ks!, 'p', 1, startFrame, startValue, easing)
                 this.addKeyframe(this.root.ks!, 'p', 1, endFrame, endValue)
                 break
             // case 'skew':
@@ -159,12 +173,12 @@ export class JSMovinLayer {
             //     break
             case 'rotate':
                 this.convertToAnimatableProperty(this.root.ks!, 'r')
-                this.addKeyframe(this.root.ks!, 'r', -1, startFrame, startValue)
+                this.addKeyframe(this.root.ks!, 'r', -1, startFrame, startValue, easing)
                 this.addKeyframe(this.root.ks!, 'r', -1, endFrame, endValue)
                 break
             case 'opacity':
                 this.convertToAnimatableProperty(this.root.ks!, 'o')
-                this.addKeyframe(this.root.ks!, 'o', -1, startFrame, startValue)
+                this.addKeyframe(this.root.ks!, 'o', -1, startFrame, startValue, easing)
                 this.addKeyframe(this.root.ks!, 'o', -1, endFrame, endValue)
                 break
             default:
