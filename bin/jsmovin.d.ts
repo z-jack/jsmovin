@@ -1,7 +1,6 @@
 import { JSMovinLayer } from './layer';
 export default class JSMovin {
     private root;
-    private addProperty;
     /**
      * @param fps number of frames per second
      * @param width width of viewport (px)
@@ -17,10 +16,39 @@ export default class JSMovin {
      * @param height height of viewport (px)
      */
     setViewport(width: number, height: number): void;
+    /**
+     * @param domOrLayer a SVG element DOM or JSMovinLayer needs to be inserted
+     */
     addLayer(domOrLayer: SVGGraphicsElement | JSMovinLayer): JSMovinLayer;
+    /**
+     * @param maskOrDom a SVG element DOM or JSMovinLayer to be the mask
+     * @param layerRefOrIndex a JSMovinLayer or index of layer to be the masked layer
+     * @param maskType which type of mask to use, use `MaskType.*` to specify
+     */
     addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer, maskType?: MaskType): void;
+    /**
+     * @param layerRefOrIndex a JSMovinLayer or index of layer to remove
+     */
+    removeLayer(layerRefOrIndex: number | JSMovinLayer): void;
+    /**
+     * @param layerRefOrIndex a JSMovinLayer or index of mask or masked layer to remove
+     */
+    removeMask(layerRefOrIndex: number | JSMovinLayer): void;
+    /**
+     * clear all layers
+     */
+    clearLayers(): void;
+    /**
+     * make all layers end at same time
+     */
     uniform(): void;
+    /**
+     * export Lottie as JavaScript Object
+     */
     toObject(): any;
+    /**
+     * export Lottie as JSON text
+     */
     toJSON(): string;
 }
 export { LayerFactory } from './layer';

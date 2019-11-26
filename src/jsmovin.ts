@@ -1,12 +1,8 @@
 import { Animation, ShapeLayer, ImageLayer, TextLayer, Transform } from "./animation";
 import { JSMovinLayer, LayerFactory } from './layer'
-import { render, renderImage, renderText } from './render'
 
 export default class JSMovin {
     private root: Animation;
-    private addProperty(obj: any, key: string | symbol, value: any) {
-        Object.defineProperty(obj, key, { value, writable: true, enumerable: false })
-    }
 
     /**
      * @param fps number of frames per second
@@ -45,6 +41,9 @@ export default class JSMovin {
         this.root.h = height
     }
 
+    /**
+     * @param domOrLayer a SVG element DOM or JSMovinLayer needs to be inserted
+     */
     addLayer(domOrLayer: SVGGraphicsElement | JSMovinLayer): JSMovinLayer {
         let layer: JSMovinLayer;
         if (domOrLayer instanceof SVGGraphicsElement) {
@@ -56,6 +55,11 @@ export default class JSMovin {
         return layer
     }
 
+    /**
+     * @param maskOrDom a SVG element DOM or JSMovinLayer to be the mask
+     * @param layerRefOrIndex a JSMovinLayer or index of layer to be the masked layer
+     * @param maskType which type of mask to use, use `MaskType.*` to specify
+     */
     addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer, maskType: MaskType = MaskType.Alpha) {
         let layerRef: JSMovinLayer
         let layerIndex: number
@@ -79,6 +83,9 @@ export default class JSMovin {
         this.root.layers!.splice(layerIndex, 0, maskLayer.root)
     }
 
+    /**
+     * @param layerRefOrIndex a JSMovinLayer or index of layer to remove
+     */
     removeLayer(layerRefOrIndex: number | JSMovinLayer) {
         let layerRef: JSMovinLayer
         let layerIndex: number
@@ -91,6 +98,9 @@ export default class JSMovin {
         this.root.layers!.splice(layerIndex, 1)
     }
 
+    /**
+     * @param layerRefOrIndex a JSMovinLayer or index of mask or masked layer to remove
+     */
     removeMask(layerRefOrIndex: number | JSMovinLayer) {
         let layerRef: JSMovinLayer
         let layerIndex: number
@@ -112,21 +122,33 @@ export default class JSMovin {
         }
     }
 
+    /**
+     * clear all layers
+     */
     clearLayers() {
         this.root.layers = []
     }
 
+    /**
+     * make all layers end at same time
+     */
     uniform() {
         let maxTime = this.root.layers!.reduce((p, v) => p < v.op! ? v.op! : p, 0)
         this.root.op = maxTime
         this.root.layers!.forEach(layer => layer.op = maxTime)
     }
 
+    /**
+     * export Lottie as JavaScript Object 
+     */
     toObject() {
         this.uniform()
         return JSON.parse(this.toJSON())
     }
 
+    /**
+     * export Lottie as JSON text
+     */
     toJSON() {
         this.uniform()
         return JSON.stringify(this.root)
