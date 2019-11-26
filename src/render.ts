@@ -284,6 +284,84 @@ function renderGroup(dom: SVGGElement): GroupShape {
     return group
 }
 
+export function renderPlainGlyph(type: 'rect' | 'ellipse', args: number[]): GroupShape {
+    const group: GroupShape = {
+        ty: "gr",
+        it: [
+            {
+                ty: 'sh',
+                ks: {
+                    k: null,
+                    a: 0
+                },
+                hd: false
+            },
+            {
+                ty: 'fl',
+                c: {
+                    k: [1, 1, 1, 1]
+                },
+                o: {
+                    k: 100
+                }
+            },
+            {
+                ty: 'tr',
+                p: {
+                    k: [
+                        0,
+                        0
+                    ]
+                },
+                a: {
+                    k: [
+                        0,
+                        0
+                    ]
+                },
+                s: {
+                    k: [
+                        100,
+                        100
+                    ]
+                },
+                r: {
+                    k: 0
+                },
+                o: {
+                    k: 100
+                },
+                sk: {
+                    k: 0
+                },
+                sa: {
+                    k: 0
+                }
+            }
+        ],
+        bm: 0,
+        hd: false
+    }
+    const pathMaker = new PathMaker()
+    switch (type) {
+        case 'rect':
+            pathMaker.moveTo(0, 0)
+            pathMaker.lineTo(args[0], 0)
+            pathMaker.lineTo(args[0], args[1])
+            pathMaker.lineTo(0, args[1])
+            pathMaker.closePath()
+            break
+        case 'ellipse':
+            pathMaker.moveTo(args[0], 0)
+            pathMaker.arcTo(args[0], args[1], 0, 1, 0, args[0], 2 * args[1])
+            pathMaker.arcTo(args[0], args[1], 0, 1, 0, args[0], 0)
+            pathMaker.closePath()
+    }
+    pathMaker.uniform();
+    (group.it![0] as PathShape).ks!.k = pathMaker.path
+    return group
+}
+
 export function renderText(dom: SVGTextElement): [TextData, Font1] {
     const computedStyle = getComputedStyle(dom)
     const fontSize = parseFloat(computedStyle.fontSize),

@@ -56,16 +56,16 @@ export default class JSMovin {
         return layer
     }
 
-    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer) {
+    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer, maskType: MaskType = MaskType.Alpha) {
         let layerRef: JSMovinLayer
         let layerIndex: number
         if (layerRefOrIndex instanceof JSMovinLayer) {
             layerRef = layerRefOrIndex
             layerIndex = this.root.layers!.indexOf(layerRef.root)
-            layerRef.root.tt = 1
+            layerRef.root.tt = maskType
         } else {
             layerIndex = layerRefOrIndex
-            this.root.layers![layerIndex].tt = 1
+            this.root.layers![layerIndex].tt = maskType
         }
         if (layerIndex < 0) {
             throw new Error('Given layer is not a member of this JSMovin.')
@@ -77,6 +77,43 @@ export default class JSMovin {
             maskLayer = maskOrDom
         }
         this.root.layers!.splice(layerIndex, 0, maskLayer.root)
+    }
+
+    removeLayer(layerRefOrIndex: number | JSMovinLayer) {
+        let layerRef: JSMovinLayer
+        let layerIndex: number
+        if (layerRefOrIndex instanceof JSMovinLayer) {
+            layerRef = layerRefOrIndex
+            layerIndex = this.root.layers!.indexOf(layerRef.root)
+        } else {
+            layerIndex = layerRefOrIndex
+        }
+        this.root.layers!.splice(layerIndex, 1)
+    }
+
+    removeMask(layerRefOrIndex: number | JSMovinLayer) {
+        let layerRef: JSMovinLayer
+        let layerIndex: number
+        if (layerRefOrIndex instanceof JSMovinLayer) {
+            layerRef = layerRefOrIndex
+            layerIndex = this.root.layers!.indexOf(layerRef.root)
+        } else {
+            layerIndex = layerRefOrIndex
+            layerRef = new JSMovinLayer(this.root.layers![layerIndex] as ShapeLayer)
+        }
+        if (layerRef.root.tt) {
+            layerRef.root.tt = 0
+            this.root.layers!.splice(layerIndex - 1, 1)
+        } else if (this.root.layers![layerIndex + 1].tt) {
+            this.root.layers![layerIndex + 1].tt = 0
+            this.root.layers!.splice(layerIndex, 1)
+        } else {
+            throw new Error('The input layer is not a mask or a masked layer.')
+        }
+    }
+
+    clearLayers() {
+        this.root.layers = []
     }
 
     uniform() {
@@ -98,3 +135,9 @@ export default class JSMovin {
 
 export { LayerFactory } from './layer'
 export { EasingFactory } from './easing'
+export enum MaskType {
+    Alpha = 1,
+    InvertAlpha = 2,
+    Luma = 3,
+    InvertLuma = 4
+}

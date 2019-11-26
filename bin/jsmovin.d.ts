@@ -18,10 +18,16 @@ export default class JSMovin {
      */
     setViewport(width: number, height: number): void;
     addLayer(domOrLayer: SVGGraphicsElement | JSMovinLayer): JSMovinLayer;
-    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer): void;
+    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer, maskType?: MaskType): void;
     uniform(): void;
     toObject(): any;
     toJSON(): string;
 }
 export { LayerFactory } from './layer';
 export { EasingFactory } from './easing';
+export declare enum MaskType {
+    Alpha = 1,
+    InvertAlpha = 2,
+    Luma = 3,
+    InvertLuma = 4
+}

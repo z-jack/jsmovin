@@ -1,8 +1,8 @@
 import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts } from './animation'
 import { EasingFunction, EasingFactory } from './easing'
-import { renderText, render, renderImage } from './render';
+import { renderText, render, renderImage, renderPlainGlyph } from './render';
 
-type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape'
+type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trim' | 'strokeColor' | 'strokeWidth'
 
 export class JSMovinLayer {
     public readonly root: ShapeLayer | TextLayer | ImageLayer;
@@ -202,16 +202,16 @@ export class LayerFactory {
             p: {
                 a: 0,
                 k: [
-                    coordinate[0],
-                    coordinate[1],
+                    0,
+                    0,
                     0
                 ]
             },
             a: {
                 a: 0,
                 k: [
-                    0,
-                    0,
+                    coordinate[0],
+                    coordinate[1],
                     0
                 ]
             },
@@ -266,11 +266,39 @@ export class LayerFactory {
     }
 
     static rect(left: number, top: number, width: number, height: number) {
-
+        const layer: ShapeLayer = {
+            ty: 4,
+            ddd: 0,
+            sr: 1,
+            ao: 0,
+            ks: this.generateTransform([left, top, width, height]),
+            ip: 0,
+            op: 1,
+            st: 0,
+            bm: 0,
+            shapes: [
+                renderPlainGlyph('rect', [width, height])
+            ]
+        }
+        return new JSMovinLayer(layer)
     }
 
-    static ellipse(cx: number, cy: number, rx: number, ry: number, rotate: number) {
-
+    static ellipse(cx: number, cy: number, rx: number, ry: number) {
+        const layer: ShapeLayer = {
+            ty: 4,
+            ddd: 0,
+            sr: 1,
+            ao: 0,
+            ks: this.generateTransform([cx - rx, cy - ry, 2 * rx, 2 * ry]),
+            ip: 0,
+            op: 1,
+            st: 0,
+            bm: 0,
+            shapes: [
+                renderPlainGlyph('ellipse', [rx, ry])
+            ]
+        }
+        return new JSMovinLayer(layer)
     }
 
     static hierarchy(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts) {
