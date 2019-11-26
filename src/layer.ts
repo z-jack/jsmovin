@@ -202,16 +202,16 @@ export class LayerFactory {
             p: {
                 a: 0,
                 k: [
-                    0,
-                    0,
+                    coordinate[0],
+                    coordinate[1],
                     0
                 ]
             },
             a: {
                 a: 0,
                 k: [
-                    coordinate[0],
-                    coordinate[1],
+                    0,
+                    0,
                     0
                 ]
             },
