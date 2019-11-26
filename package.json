@@ -1,8 +1,8 @@
 {
   "name": "jsmovin",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "To generate \"AE bodymovin\" JSON format using JavaScript.",
-  "repository": "git@github.com:z-jack/jsmovin.git",
+  "repository": "github:z-jack/jsmovin",
   "author": "z-jack <emailjiong@126.com>",
   "license": "MIT",
   "main": "bin/jsmovin.js",
@@ -21,6 +21,8 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
     "@babel/preset-typescript": "^7.7.4",
+    "@types/svg-path-parser": "^1.1.0",
+    "@types/uuid": "^3.4.6",
     "babel-loader": "8.0.4",
     "babel-preset-minify": "^0.5.1",
     "copy": "^0.3.2",
@@ -30,13 +32,15 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "@types/svg-path-parser": "^1.1.0",
-    "@types/uuid": "^3.4.6",
     "svg-path-parser": "^1.1.0",
     "uuid": "^3.3.3"
   },
   "keywords": [
     "bodymovin",
     "javascript"
-  ]
+  ],
+  "homepage": "https://github.com/z-jack/jsmovin",
+  "bugs": {
+    "url": "https://github.com/z-jack/jsmovin/issues"
+  }
 }
