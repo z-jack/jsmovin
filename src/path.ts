@@ -240,5 +240,11 @@ export class PathMaker {
     public uniform() {
         while (this.path.o!.length < this.path.i!.length)
             this.path.o!.push([0, 0])
+        this.path.v!.forEach(value => {
+            value[0] -= this.offsetX
+            value[1] -= this.offsetY
+        })
+        this.offsetX = 0
+        this.offsetY = 0
     }
 }
