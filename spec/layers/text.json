@@ -326,7 +326,7 @@
           "title": "More Options",
           "description": "Text More Options",
           "properties": {
-            "a": {
+            "g": {
               "title": "Anchor Point Grouping",
               "description": "Text Anchor Point Grouping",
               "oneOf": [
@@ -336,7 +336,7 @@
               ],
               "type": "number"
             },
-            "g": {
+            "a": {
               "title": "Grouping Alignment",
               "description": "Text Grouping Alignment",
               "oneOf": [
@@ -347,7 +347,7 @@
                   "$ref": "../properties/multiDimensionalKeyframed.json"
                 }
               ],
-              "type": "number"
+              "type": "object"
             }
           },
           "type": "object"

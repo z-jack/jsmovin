@@ -1,8 +1,12 @@
 import { PathDef } from './animation';
 export declare class PathMaker {
     path: PathDef;
-    currentX: number;
-    currentY: number;
+    private currentX;
+    private currentY;
+    private offsetX;
+    private offsetY;
+    private updateXY;
+    private calculateBezierMinMax;
     moveTo(x: number, y: number): void;
     lineTo(x: number, y: number): void;
     lineToRelative(x: number, y: number): void;

@@ -367,7 +367,7 @@ export function renderText(dom: SVGTextElement): [TextData, Font1] {
     const fontSize = parseFloat(computedStyle.fontSize),
         fontFamily = computedStyle.fontFamily.split(',')[0].trim(),
         fontStyle = computedStyle.fontStyle,
-        fontName = `${fontFamily}-${fontStyle}`,
+        fontName = uuid(),
         fontAscent = parseFloat(computedStyle.lineHeight || `${fontSize}`),
         fontColor = (computedStyle.color || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(i => parseInt(i) / 255)
     const textData: TextData = {
@@ -389,7 +389,14 @@ export function renderText(dom: SVGTextElement): [TextData, Font1] {
             ]
         },
         p: {},
-        m: {},
+        m: {
+            a: {
+                k: [
+                    0,
+                    0
+                ]
+            }
+        },
         a: []
     }
     const fontDef: Font1 = {

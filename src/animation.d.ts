@@ -7318,8 +7318,8 @@ export interface TextData {
  * Text More Options
  */
 export interface MoreOptions {
-  a?: AnchorPointGrouping;
-  g?: GroupingAlignment;
+  g?: AnchorPointGrouping;
+  a?: GroupingAlignment;
   [k: string]: any;
 }
 /**

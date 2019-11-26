@@ -237,13 +237,13 @@ export class LayerFactory {
         }
         const rootBBox = svgRoot.getBoundingClientRect()
         const refBBox = dom.getBoundingClientRect()
-        const coordinate: [number, number, number, number] = [refBBox.left - rootBBox.left, refBBox.top - rootBBox.top, refBBox.width + 1, refBBox.height + 1]
+        const refWHBox = dom.getBBox()
+        const coordinate: [number, number, number, number] = [refBBox.left - rootBBox.left, refBBox.top - rootBBox.top, refWHBox.width + 1, refWHBox.height + 1]
         return coordinate
     }
 
     static boundingBox(dom: SVGGraphicsElement) {
-        const coordinate = this.getBoundingBox(dom)
-        return this.rect(...coordinate)
+        return this.rect(...this.getBoundingBox(dom))
     }
 
     static shape(dom: SVGPathElement) {

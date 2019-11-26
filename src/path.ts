@@ -8,8 +8,38 @@ export class PathMaker {
         v: []
     };
 
-    public currentX: number = 0;
-    public currentY: number = 0;
+    private currentX: number = 0;
+    private currentY: number = 0;
+    private offsetX: number = Infinity;
+    private offsetY: number = Infinity;
+
+    private updateXY(x: number, y: number) {
+        this.currentX = x
+        this.currentY = y
+        this.offsetX = Math.min(this.offsetX, x)
+        this.offsetY = Math.min(this.offsetY, x)
+    }
+
+    private calculateBezierMinMax(p0: number, p1: number, p2: number, p3: number): [number, number] {
+        const a = 3 * (p3 - 3 * p2 + 3 * p1 - p0)
+        const b = 2 * (3 * p2 - 6 * p1 + 3 * p0)
+        const c = 3 * p1
+        let min = Infinity, max = -Infinity
+        if (b * b - 4 * a * c >= 0) {
+            const sqrt = Math.sqrt(b * b - 4 * a * c)
+            const roots = [1, -1].map(multi => (multi * sqrt - b) / 2 / a)
+            roots.forEach(root => {
+                if (root > 0 && root < 1) {
+                    const value = Math.pow(1 - root, 3) * p0 + 3 * Math.pow(1 - root, 2) * root * p1 + 3 * (1 - root) * root * root * p2 + Math.pow(root, 3) * p3
+                    min = Math.min(min, value)
+                    max = Math.max(max, value)
+                }
+            })
+        }
+        min = Math.min(min, p0, p3)
+        max = Math.max(max, p0, p3)
+        return [min, max]
+    }
 
     public moveTo(x: number, y: number) {
         this.path.c = false
@@ -18,13 +48,14 @@ export class PathMaker {
         this.path.v = [[x, y]]
         this.currentX = x
         this.currentY = y
+        this.offsetX = x
+        this.offsetY = y
     }
     public lineTo(x: number, y: number) {
         this.path.i!.push([0, 0])
         this.path.o!.push([0, 0])
         this.path.v!.push([x, y])
-        this.currentX = x
-        this.currentY = y
+        this.updateXY(x, y)
     }
     public lineToRelative(x: number, y: number) {
         this.lineTo(this.currentX + x, this.currentY + y)
@@ -52,8 +83,9 @@ export class PathMaker {
         this.path.i!.push([c2x - x, c2y - y])
         this.path.o!.push([c1x - this.currentX, c1y - this.currentY])
         this.path.v!.push([x, y])
-        this.currentX = x
-        this.currentY = y
+        this.offsetX = Math.min(this.offsetX, ...this.calculateBezierMinMax(this.currentX, c1x, c2x, x))
+        this.offsetY = Math.min(this.offsetY, ...this.calculateBezierMinMax(this.currentY, c1y, c2y, y))
+        this.updateXY(x, y)
     }
     public cubicBezierCurveToRelative(
         c1x: number,
@@ -69,8 +101,9 @@ export class PathMaker {
         this.path.i!.push([cx - x, cy - y])
         this.path.o!.push([cx - this.currentX, cy - this.currentY])
         this.path.v!.push([x, y])
-        this.currentX = x
-        this.currentY = y
+        this.offsetX = Math.min(this.offsetX, ...this.calculateBezierMinMax(this.currentX, cx, cx, x))
+        this.offsetY = Math.min(this.offsetY, ...this.calculateBezierMinMax(this.currentY, cy, cy, y))
+        this.updateXY(x, y)
     }
     public quadraticBezierCurveToRelative(cx: number, cy: number, x: number, y: number) {
         this.quadraticBezierCurveTo(this.currentX + cx, this.currentY + cy, this.currentX + x, this.currentY + y)
@@ -90,8 +123,9 @@ export class PathMaker {
             this.path.i!.push([iovList[2] - iovList[4], iovList[3] - iovList[5]])
             this.path.o!.push([iovList[0] - this.currentX, iovList[1] - this.currentY])
             this.path.v!.push([iovList[4], iovList[5]])
-            this.currentX = iovList[4]
-            this.currentY = iovList[5]
+            this.offsetX = Math.min(this.offsetX, ...this.calculateBezierMinMax(this.currentX, iovList[0], iovList[2], iovList[4]))
+            this.offsetY = Math.min(this.offsetY, ...this.calculateBezierMinMax(this.currentY, iovList[1], iovList[3], iovList[5]))
+            this.updateXY(iovList[4], iovList[5])
         }
     }
     public arcToRelative(
