@@ -5,11 +5,12 @@
   "repository": "git@github.com:z-jack/jsmovin.git",
   "author": "z-jack <emailjiong@126.com>",
   "license": "MIT",
+  "main": "bin/jsmovin.js",
   "scripts": {
     "spec": "cd ./spec && json2ts -i animation.json -o ../src/animation.d.ts",
     "build": "npm run build:types && npm run build:js && npm run build:bundle",
     "build:types": "tsc --emitDeclarationOnly",
-    "build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
+    "build:js": "babel src --out-dir bin --extensions \".ts,.tsx\" --source-maps inline && cd src && copy \"*.d.ts\" \"../bin/\"",
     "build:bundle": "webpack"
   },
   "devDependencies": {
@@ -22,6 +23,7 @@
     "@babel/preset-typescript": "^7.7.4",
     "babel-loader": "8.0.4",
     "babel-preset-minify": "^0.5.1",
+    "copy": "^0.3.2",
     "json-schema-to-typescript": "^7.1.0",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
