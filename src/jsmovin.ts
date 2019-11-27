@@ -1,4 +1,4 @@
-import { Animation, ShapeLayer, ImageLayer, TextLayer, Transform } from "./animation";
+import { Animation, ShapeLayer } from "./animation";
 import { JSMovinLayer, LayerFactory } from './layer'
 
 export default class JSMovin {

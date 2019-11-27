@@ -238,7 +238,7 @@ export class LayerFactory {
         const rootBBox = svgRoot.getBoundingClientRect()
         const refBBox = dom.getBoundingClientRect()
         const refWHBox = dom.getBBox()
-        const coordinate: [number, number, number, number] = [refBBox.left - rootBBox.left, refBBox.top - rootBBox.top, refWHBox.width + 1, refWHBox.height + 1]
+        const coordinate: [number, number, number, number] = [refBBox.left - rootBBox.left, refBBox.top - rootBBox.top, refWHBox.width + 2, refWHBox.height + 2]
         return coordinate
     }
 

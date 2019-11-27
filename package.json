@@ -11,7 +11,7 @@
     "build": "npm run build:types && npm run build:js && npm run build:bundle",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir bin --extensions \".ts,.tsx\" --source-maps inline && cd src && copy \"*.d.ts\" \"../bin/\"",
-    "build:bundle": "webpack"
+    "build:bundle": "browserify bin/browserEntry.js -o dist/jsmovin.js && uglifyjs dist/jsmovin.js -c -m --source-map -o dist/jsmovin.min.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.7.4",
@@ -25,11 +25,11 @@
     "@types/uuid": "^3.4.6",
     "babel-loader": "8.0.4",
     "babel-preset-minify": "^0.5.1",
+    "browserify": "^16.5.0",
     "copy": "^0.3.2",
     "json-schema-to-typescript": "^7.1.0",
     "typescript": "^3.7.2",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "uglify-js": "^3.7.0"
   },
   "dependencies": {
     "svg-path-parser": "^1.1.0",

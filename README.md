@@ -36,7 +36,7 @@ yarn spec # use yarn
 npm run build # use npm
 npm run build:types # only generate .d.ts files
 npm run build:js # only compile TypeScript to JavaScript
-npm run build:bundle # only use webpack
+npm run build:bundle # only pack files to jsmovin(.min).js
 # or
 yarn build # use yarn
 yarn build:types
