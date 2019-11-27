@@ -13,6 +13,7 @@ export declare class JSMovinLayer {
 }
 export declare class LayerFactory {
     private static generateTransform;
+    private static calculateBaseTransform;
     private static getBoundingBox;
     static boundingBox(dom: SVGGraphicsElement): JSMovinLayer;
     static shape(dom: SVGPathElement): JSMovinLayer;

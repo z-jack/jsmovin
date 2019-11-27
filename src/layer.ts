@@ -226,8 +226,12 @@ export class LayerFactory {
         }
     }
 
+    private static calculateBaseTransform(dom: SVGGraphicsElement, root: SVGGraphicsElement) {
+        return root.getScreenCTM()!.inverse().multiply(dom.getScreenCTM()!)
+    }
+
     private static getBoundingBox(dom: SVGGraphicsElement) {
-        let svgRoot: SVGElement = dom
+        let svgRoot: SVGGraphicsElement = dom
         while (true) {
             if (svgRoot.parentElement instanceof SVGGraphicsElement) {
                 svgRoot = svgRoot.parentElement
@@ -235,10 +239,9 @@ export class LayerFactory {
                 break
             }
         }
-        const rootBBox = svgRoot.getBoundingClientRect()
-        const refBBox = dom.getBoundingClientRect()
-        const refWHBox = dom.getBBox()
-        const coordinate: [number, number, number, number] = [refBBox.left - rootBBox.left, refBBox.top - rootBBox.top, refWHBox.width + 2, refWHBox.height + 2]
+        const baseBox = this.calculateBaseTransform(dom, svgRoot)
+        const refBBox = dom.getBBox()
+        const coordinate: [number, number, number, number] = [baseBox.e + refBBox.x, baseBox.f + refBBox.y, refBBox.width + 2, refBBox.height + 2]
         return coordinate
     }
 

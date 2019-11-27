@@ -653,6 +653,11 @@ function () {
       };
     }
   }, {
+    key: "calculateBaseTransform",
+    value: function calculateBaseTransform(dom, root) {
+      return root.getScreenCTM().inverse().multiply(dom.getScreenCTM());
+    }
+  }, {
     key: "getBoundingBox",
     value: function getBoundingBox(dom) {
       var svgRoot = dom;
@@ -665,10 +670,9 @@ function () {
         }
       }
 
-      var rootBBox = svgRoot.getBoundingClientRect();
-      var refBBox = dom.getBoundingClientRect();
-      var refWHBox = dom.getBBox();
-      var coordinate = [refBBox.left - rootBBox.left, refBBox.top - rootBBox.top, refWHBox.width + 2, refWHBox.height + 2];
+      var baseBox = this.calculateBaseTransform(dom, svgRoot);
+      var refBBox = dom.getBBox();
+      var coordinate = [baseBox.e + refBBox.x, baseBox.f + refBBox.y, refBBox.width + 2, refBBox.height + 2];
       return coordinate;
     }
   }, {
