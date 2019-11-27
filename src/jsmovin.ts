@@ -42,6 +42,7 @@ export default class JSMovin {
     }
 
     /**
+     * add a simple graphical layer
      * @param domOrLayer a SVG element DOM or JSMovinLayer needs to be inserted
      */
     addLayer(domOrLayer: SVGGraphicsElement | JSMovinLayer): JSMovinLayer {
@@ -51,8 +52,23 @@ export default class JSMovin {
         } else {
             layer = domOrLayer
         }
-        this.root.layers!.push(layer.root)
+        this.root.layers!.splice(0, 0, layer.root)
         return layer
+    }
+
+    /**
+     * add a series of graphical layers
+     * @param domOrLayers a SVG DOM may be the mixture of text, image and graphical elements or JSMovinLayers need to be inserted
+     */
+    addComplexLayer(domOrLayers: SVGGraphicsElement | JSMovinLayer[]): JSMovinLayer[] {
+        let layers: JSMovinLayer[]
+        if (domOrLayers instanceof SVGGraphicsElement) {
+            layers = LayerFactory.hierarchyAll(domOrLayers, this.root.assets!, this.root.fonts!)
+        } else {
+            layers = domOrLayers
+        }
+        this.root.layers = layers.map(layer => layer.root).concat(this.root.layers!)
+        return layers
     }
 
     /**

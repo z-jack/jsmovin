@@ -1,8 +1,9 @@
-import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts } from './animation'
+import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape, FillShape, StrokeShape, PathShape } from './animation'
 import { EasingFunction, EasingFactory } from './easing'
 import { renderText, render, renderImage, renderPlainGlyph } from './render';
+import { getBoundingBox } from './helper'
 
-type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trim' | 'strokeColor' | 'strokeWidth'
+type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text'
 
 export class JSMovinLayer {
     public readonly root: ShapeLayer | TextLayer | ImageLayer;
@@ -17,12 +18,23 @@ export class JSMovinLayer {
                 return 100
             case 'r':
                 return 0
-
+            case 'tm':
+                return {
+                    s: {
+                        k: [0]
+                    },
+                    e: {
+                        k: [100]
+                    },
+                    o: {
+                        k: [0]
+                    }
+                }
             default:
                 return 0
         }
     }
-    private convertToStaticProperty(transform: Transform, key: string) {
+    private convertToStaticProperty(transform: any, key: string) {
         if (!transform[key]) {
             transform[key] = {
                 a: 0,
@@ -37,7 +49,7 @@ export class JSMovinLayer {
             }
         }
     }
-    private convertToAnimatableProperty(transform: Transform, key: string) {
+    private convertToAnimatableProperty(transform: any, key: string) {
         if (!transform[key] || transform[key].a == 0) {
             transform[key] = {
                 a: 1,
@@ -45,7 +57,7 @@ export class JSMovinLayer {
             }
         }
     }
-    private addKeyframe(transform: Transform, key: string, idx: number = -1, time: number, value: Array<any>, easing?: EasingFunction) {
+    private addKeyframe(transform: any, key: string, idx: number = -1, time: number, value: Array<any>, easing?: EasingFunction) {
         const existKeyframe = transform[key].k.filter((x: any) => x.t == time) as any[]
         let readyToSet;
         if (existKeyframe.length) {
@@ -74,6 +86,109 @@ export class JSMovinLayer {
             readyToSet.s = [value]
         }
     }
+    private findPropertyConfig(key: string) {
+        return ((this.root as ShapeLayer).shapes![0] as GroupShape).it!.find(shape =>
+            shape.ty == key
+        )
+    }
+    private findOrInsertPropertyConfig(key: string) {
+        const find = this.findPropertyConfig(key)
+        if (find) return find
+        const hasTransform = this.findPropertyConfig('tr')
+        if (hasTransform) {
+            const groupShapes = ((this.root as ShapeLayer).shapes![0] as GroupShape).it!
+            groupShapes.splice(groupShapes.length - 1, 0, {
+                ty: key,
+                ...this.getDefaultProperty(key) as object
+            })
+        } else {
+            ((this.root as ShapeLayer).shapes![0] as GroupShape).it!.push({
+                ty: key,
+                ...this.getDefaultProperty(key) as object
+            })
+        }
+    }
+    private commonPropertyMapping(key: SetableKeys): [any, string | undefined, number | undefined] {
+        let base: any, k: string | undefined, index: number | undefined
+        switch (key) {
+            case 'scaleX':
+                base = this.root.ks
+                k = 's'
+                index = 0
+                break
+            case 'scaleY':
+                base = this.root.ks
+                k = 's'
+                index = 1
+                break
+            case 'anchorX':
+                base = this.root.ks
+                k = 'a'
+                index = 0
+                break
+            case 'anchorY':
+                base = this.root.ks
+                k = 'a'
+                index = 1
+                break
+            case 'x':
+                base = this.root.ks
+                k = 'p'
+                index = 0
+                break
+            case 'y':
+                base = this.root.ks
+                k = 'p'
+                index = 1
+                break
+            case 'rotate':
+                base = this.root.ks
+                k = 'r'
+                index = -1
+                break
+            case 'opacity':
+                base = this.root.ks
+                k = 'o'
+                index = -1
+                break
+            case 'trimStart':
+                base = this.findOrInsertPropertyConfig('tm')
+                k = 's'
+                index = -1
+                break
+            case 'trimEnd':
+                base = this.findOrInsertPropertyConfig('tm')
+                k = 'e'
+                index = -1
+                break
+            case 'trimOffset':
+                base = this.findOrInsertPropertyConfig('tm')
+                k = 'o'
+                index = -1
+                break
+            case 'fillColor':
+                base = this.findOrInsertPropertyConfig('fl')
+                k = 'c'
+                index = -1
+                break
+            case 'strokeColor':
+                base = this.findOrInsertPropertyConfig('st')
+                k = 'c'
+                index = -1
+                break
+            case 'strokeWidth':
+                base = this.findOrInsertPropertyConfig('st')
+                k = 'w'
+                index = -1
+                break
+            case 'shape':
+                base = this.findOrInsertPropertyConfig('sh')
+                k = 'ks'
+                index = -1
+                break
+        }
+        return [base, k, index]
+    }
 
     constructor(ref: ShapeLayer | TextLayer | ImageLayer) {
         this.root = ref
@@ -81,48 +196,26 @@ export class JSMovinLayer {
 
     setStaticProperty(key: SetableKeys, value: any) {
         this.root.op = 1
-        switch (key) {
-            case 'scaleX':
-                this.convertToStaticProperty(this.root.ks!, 's')
-                this.root.ks!.s!.k![0] = value
-                break
-            case 'scaleY':
-                this.convertToStaticProperty(this.root.ks!, 's')
-                this.root.ks!.s!.k![1] = value
-                break
-            case 'anchorX':
-                this.convertToStaticProperty(this.root.ks!, 'a')
-                this.root.ks!.a!.k![0] = value
-                break
-            case 'anchorY':
-                this.convertToStaticProperty(this.root.ks!, 'a')
-                this.root.ks!.a!.k![1] = value
-                break
-            case 'x':
-                this.convertToStaticProperty(this.root.ks!, 'p')
-                this.root.ks!.p!.k![0] = value
-                break
-            case 'y':
-                this.convertToStaticProperty(this.root.ks!, 'p')
-                this.root.ks!.p!.k![1] = value
-                break
-            // case 'skew':
-            //     this.convertToStaticProperty(this.root.ks!, 's')
-            //     break
-            // case 'skewAxis':
-            //     this.convertToStaticProperty(this.root.ks!, 's')
-            //     break
-            case 'rotate':
-                this.convertToStaticProperty(this.root.ks!, 'r')
-                this.root.ks!.r!.k = value
-                break
-            case 'opacity':
-                this.convertToStaticProperty(this.root.ks!, 'o')
-                this.root.ks!.o!.k = value
-                break
-            default:
-                console.error(key, value)
-                throw new Error('Not a valid key.')
+        let base: any, k: string | undefined, index: number | undefined
+        [base, k, index] = this.commonPropertyMapping(key)
+        if (!base || !k || index === undefined) {
+            switch (key) {
+                case 'text':
+                    if (this.root.ty == 5) {
+                        const doc = this.root.t!.d!
+                        doc.k = [doc.k![0]]
+                        doc.k[0].t = 0
+                        doc.k[0].s!.t = value
+                    }
+                    break
+                default:
+                    console.error(key, value)
+                    throw new Error('Not a valid key.')
+            }
+        }
+        if (base && k && index !== undefined) {
+            this.convertToStaticProperty(base, k)
+            base[k].k[index] = value
         }
     }
 
@@ -134,56 +227,33 @@ export class JSMovinLayer {
         if (!easing) {
             easing = EasingFactory.linear()
         }
-        switch (key) {
-            case 'scaleX':
-                this.convertToAnimatableProperty(this.root.ks!, 's')
-                this.addKeyframe(this.root.ks!, 's', 0, startFrame, startValue, easing)
-                this.addKeyframe(this.root.ks!, 's', 0, endFrame, endValue)
-                break
-            case 'scaleY':
-                this.convertToAnimatableProperty(this.root.ks!, 's')
-                this.addKeyframe(this.root.ks!, 's', 1, startFrame, startValue, easing)
-                this.addKeyframe(this.root.ks!, 's', 1, endFrame, endValue)
-                break
-            case 'anchorX':
-                this.convertToAnimatableProperty(this.root.ks!, 'a')
-                this.addKeyframe(this.root.ks!, 'a', 0, startFrame, startValue, easing)
-                this.addKeyframe(this.root.ks!, 'a', 0, endFrame, endValue)
-                break
-            case 'anchorY':
-                this.convertToAnimatableProperty(this.root.ks!, 'a')
-                this.addKeyframe(this.root.ks!, 'a', 1, startFrame, startValue, easing)
-                this.addKeyframe(this.root.ks!, 'a', 1, endFrame, endValue)
-                break
-            case 'x':
-                this.convertToAnimatableProperty(this.root.ks!, 'p')
-                this.addKeyframe(this.root.ks!, 'p', 0, startFrame, startValue, easing)
-                this.addKeyframe(this.root.ks!, 'p', 0, endFrame, endValue)
-                break
-            case 'y':
-                this.convertToAnimatableProperty(this.root.ks!, 'p')
-                this.addKeyframe(this.root.ks!, 'p', 1, startFrame, startValue, easing)
-                this.addKeyframe(this.root.ks!, 'p', 1, endFrame, endValue)
-                break
-            // case 'skew':
-            //     this.convertToAnimatableProperty(this.root.ks!, 's')
-            //     break
-            // case 'skewAxis':
-            //     this.convertToAnimatableProperty(this.root.ks!, 's')
-            //     break
-            case 'rotate':
-                this.convertToAnimatableProperty(this.root.ks!, 'r')
-                this.addKeyframe(this.root.ks!, 'r', -1, startFrame, startValue, easing)
-                this.addKeyframe(this.root.ks!, 'r', -1, endFrame, endValue)
-                break
-            case 'opacity':
-                this.convertToAnimatableProperty(this.root.ks!, 'o')
-                this.addKeyframe(this.root.ks!, 'o', -1, startFrame, startValue, easing)
-                this.addKeyframe(this.root.ks!, 'o', -1, endFrame, endValue)
-                break
-            default:
-                console.error(key, startFrame, endFrame, startValue, endValue, easing)
-                throw new Error('Not a valid key.')
+        let base: any, k: string | undefined, index: number | undefined
+        [base, k, index] = this.commonPropertyMapping(key)
+        if (!base || !k || index === undefined) {
+            switch (key) {
+                case 'text':
+                    if (this.root.ty == 5) {
+                        base = this.root.t!.d
+                        let textProp = base.k[0].s
+                        let tmpStartValue = JSON.parse(JSON.stringify(textProp))
+                        let tmpEndValue = JSON.parse(JSON.stringify(textProp))
+                        tmpStartValue.t = startValue
+                        tmpEndValue.t = endValue
+                        startValue = tmpStartValue
+                        endValue = tmpEndValue
+                        k = 'k'
+                        index = -1
+                    }
+                    break
+                default:
+                    console.error(key, startFrame, endFrame, startValue, endValue, easing)
+                    throw new Error('Not a valid key.')
+            }
+        }
+        if (base && k && index !== undefined) {
+            this.convertToAnimatableProperty(base, k)
+            this.addKeyframe(base, k, index, startFrame, startValue, easing)
+            this.addKeyframe(base, k, index, endFrame, endValue)
         }
     }
 }
@@ -226,31 +296,12 @@ export class LayerFactory {
         }
     }
 
-    private static calculateBaseTransform(dom: SVGGraphicsElement, root: SVGGraphicsElement) {
-        return root.getScreenCTM()!.inverse().multiply(dom.getScreenCTM()!)
-    }
-
-    private static getBoundingBox(dom: SVGGraphicsElement) {
-        let svgRoot: SVGGraphicsElement = dom
-        while (true) {
-            if (svgRoot.parentElement instanceof SVGGraphicsElement) {
-                svgRoot = svgRoot.parentElement
-            } else {
-                break
-            }
-        }
-        const baseBox = this.calculateBaseTransform(dom, svgRoot)
-        const refBBox = dom.getBBox()
-        const coordinate: [number, number, number, number] = [baseBox.e + refBBox.x, baseBox.f + refBBox.y, refBBox.width + 2, refBBox.height + 2]
-        return coordinate
-    }
-
     static boundingBox(dom: SVGGraphicsElement) {
-        return this.rect(...this.getBoundingBox(dom))
+        return this.rect(...getBoundingBox(dom))
     }
 
     static shape(dom: SVGPathElement) {
-        const coordinate = this.getBoundingBox(dom)
+        const coordinate = getBoundingBox(dom)
         const layer: ShapeLayer = {
             ty: 4,
             ddd: 0,
@@ -261,9 +312,8 @@ export class LayerFactory {
             op: 1,
             st: 0,
             bm: 0,
-            shapes: [
-                render(dom)
-            ]
+            shapes: render(dom)
+
         }
         return new JSMovinLayer(layer)
     }
@@ -305,7 +355,7 @@ export class LayerFactory {
     }
 
     static hierarchy(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts) {
-        const coordinate = this.getBoundingBox(dom)
+        const coordinate = getBoundingBox(dom)
         let domType: 2 | 4 | 5;
         if (dom instanceof SVGTextElement) {
             domType = 5
@@ -336,18 +386,43 @@ export class LayerFactory {
                 break
             case 4:
                 const shapeLayer = layer as ShapeLayer
-                shapeLayer.shapes = []
-                shapeLayer.shapes.push(render(dom))
+                shapeLayer.shapes = render(dom)
                 break
             case 5:
                 const textLayer = layer as TextLayer
-                const [textData, font] = renderText(dom as SVGTextElement)
+
+                // move textLayer's anchor to left-top
+                textLayer.ks!.a!.k = [0, -coordinate[3], 0]
+
+                const [textData, font] = renderText(dom as SVGTextElement, fontList)
                 textLayer.t = textData
-                fontList.list!.push(font)
+                if (!fontList.list!.filter(f => f.fName == font.fName).length)
+                    fontList.list!.push(font)
                 break
         }
-
         const movinLayer = new JSMovinLayer(layer)
         return movinLayer
+    }
+
+    /**
+     * Render a DOM that may be the mixture of text, images and other glyphs
+     * 
+     * The rendering order is fixed: glyphs(bottom) - images - text(top)
+     * @param dom SVG DOM
+     * @param assetList reference of assets
+     * @param fontList reference of fonts
+     */
+    static hierarchyAll(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts) {
+        if (dom instanceof SVGTextElement || dom instanceof SVGImageElement) {
+            return [this.hierarchy(dom, assetList, fontList)]
+        } else {
+            const results = [this.hierarchy(dom, assetList, fontList)]
+
+            dom.querySelectorAll('image').forEach(dom => results.unshift(this.hierarchy(dom, assetList, fontList)))
+
+            dom.querySelectorAll('text').forEach(dom => results.unshift(this.hierarchy(dom, assetList, fontList)))
+
+            return results
+        }
     }
 }

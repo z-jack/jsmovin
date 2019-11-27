@@ -34,7 +34,7 @@ Object.defineProperty(window, 'MaskType', {
   enumerable: true
 });
 
-},{"./jsmovin":3}],2:[function(require,module,exports){
+},{"./jsmovin":4}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -48,6 +48,7 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+// parameters extracted from https://easings.net/
 var EasingFactory =
 /*#__PURE__*/
 function () {
@@ -59,6 +60,21 @@ function () {
     key: "linear",
     value: function linear() {
       return [[[1], [1]], [[0], [0]]];
+    }
+  }, {
+    key: "easeInSine",
+    value: function easeInSine() {
+      return [[[0.47], [0]], [[0.745], [0.715]]];
+    }
+  }, {
+    key: "easeOutSine",
+    value: function easeOutSine() {
+      return [[[0.39], [0.575]], [[0.565], [1]]];
+    }
+  }, {
+    key: "easeInOutSine",
+    value: function easeInOutSine() {
+      return [[[0.445], [0.05]], [[0.55], [0.95]]];
     }
   }, {
     key: "easeInQuad",
@@ -90,6 +106,81 @@ function () {
     value: function easeInOutCubic() {
       return [[[0.645], [0.045]], [[0.355], [1]]];
     }
+  }, {
+    key: "easeInQuart",
+    value: function easeInQuart() {
+      return [[[0.895], [0.03]], [[0.685], [0.22]]];
+    }
+  }, {
+    key: "easeOutQuart",
+    value: function easeOutQuart() {
+      return [[[0.165], [0.84]], [[0.44], [1]]];
+    }
+  }, {
+    key: "easeInOutQuart",
+    value: function easeInOutQuart() {
+      return [[[0.77], [0]], [[0.175], [1]]];
+    }
+  }, {
+    key: "easeInQuint",
+    value: function easeInQuint() {
+      return [[[0.755], [0.05]], [[0.855], [0.06]]];
+    }
+  }, {
+    key: "easeOutQuint",
+    value: function easeOutQuint() {
+      return [[[0.23], [1]], [[0.32], [1]]];
+    }
+  }, {
+    key: "easeInOutQuint",
+    value: function easeInOutQuint() {
+      return [[[0.86], [0]], [[0.07], [1]]];
+    }
+  }, {
+    key: "easeInExpo",
+    value: function easeInExpo() {
+      return [[[0.95], [0.05]], [[0.795], [0.035]]];
+    }
+  }, {
+    key: "easeOutExpo",
+    value: function easeOutExpo() {
+      return [[[0.19], [1]], [[0.22], [1]]];
+    }
+  }, {
+    key: "easeInOutExpo",
+    value: function easeInOutExpo() {
+      return [[[1], [0]], [[0], [1]]];
+    }
+  }, {
+    key: "easeInCirc",
+    value: function easeInCirc() {
+      return [[[0.6], [0.04]], [[0.98], [0.335]]];
+    }
+  }, {
+    key: "easeOutCirc",
+    value: function easeOutCirc() {
+      return [[[0.075], [0.82]], [[0.165], [1]]];
+    }
+  }, {
+    key: "easeInOutCirc",
+    value: function easeInOutCirc() {
+      return [[[0.785], [0.135]], [[0.15], [0.86]]];
+    }
+  }, {
+    key: "easeInBack",
+    value: function easeInBack() {
+      return [[[0.6], [-0.28]], [[0.735], [0.045]]];
+    }
+  }, {
+    key: "easeOutBack",
+    value: function easeOutBack() {
+      return [[[0.175], [0.885]], [[0.32], [1.275]]];
+    }
+  }, {
+    key: "easeInOutBack",
+    value: function easeInOutBack() {
+      return [[[0.68], [-0.55]], [[0.265], [1.55]]];
+    }
   }]);
 
   return EasingFactory;
@@ -98,6 +189,36 @@ function () {
 exports.EasingFactory = EasingFactory;
 
 },{}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calculateBaseTransform = calculateBaseTransform;
+exports.getBoundingBox = getBoundingBox;
+
+function calculateBaseTransform(dom, root) {
+  return root.getScreenCTM().inverse().multiply(dom.getScreenCTM());
+}
+
+function getBoundingBox(dom) {
+  var svgRoot = dom;
+
+  while (true) {
+    if (svgRoot.parentElement instanceof SVGGraphicsElement) {
+      svgRoot = svgRoot.parentElement;
+    } else {
+      break;
+    }
+  }
+
+  var baseBox = calculateBaseTransform(dom, svgRoot);
+  var refBBox = dom.getBBox();
+  var coordinate = [baseBox.e + refBBox.x, baseBox.f + refBBox.y, refBBox.width + 1, refBBox.height + 1];
+  return coordinate;
+}
+
+},{}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -182,6 +303,7 @@ function () {
       this.root.h = height;
     }
     /**
+     * add a simple graphical layer
      * @param domOrLayer a SVG element DOM or JSMovinLayer needs to be inserted
      */
 
@@ -196,8 +318,29 @@ function () {
         layer = domOrLayer;
       }
 
-      this.root.layers.push(layer.root);
+      this.root.layers.splice(0, 0, layer.root);
       return layer;
+    }
+    /**
+     * add a series of graphical layers
+     * @param domOrLayers a SVG DOM may be the mixture of text, image and graphical elements or JSMovinLayers need to be inserted
+     */
+
+  }, {
+    key: "addComplexLayer",
+    value: function addComplexLayer(domOrLayers) {
+      var layers;
+
+      if (domOrLayers instanceof SVGGraphicsElement) {
+        layers = _layer.LayerFactory.hierarchyAll(domOrLayers, this.root.assets, this.root.fonts);
+      } else {
+        layers = domOrLayers;
+      }
+
+      this.root.layers = layers.map(function (layer) {
+        return layer.root;
+      }).concat(this.root.layers);
+      return layers;
     }
     /**
      * @param maskOrDom a SVG element DOM or JSMovinLayer to be the mask
@@ -342,7 +485,7 @@ exports.MaskType = MaskType;
   MaskType[MaskType["InvertLuma"] = 4] = "InvertLuma";
 })(MaskType || (exports.MaskType = MaskType = {}));
 
-},{"./easing":2,"./layer":4}],4:[function(require,module,exports){
+},{"./easing":2,"./layer":5}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -354,13 +497,7 @@ var _easing = require("./easing");
 
 var _render = require("./render");
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+var _helper = require("./helper");
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -369,6 +506,18 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -397,6 +546,19 @@ function () {
 
         case 'r':
           return 0;
+
+        case 'tm':
+          return {
+            s: {
+              k: [0]
+            },
+            e: {
+              k: [100]
+            },
+            o: {
+              k: [0]
+            }
+          };
 
         default:
           return 0;
@@ -472,6 +634,130 @@ function () {
         readyToSet.s = [value];
       }
     }
+  }, {
+    key: "findPropertyConfig",
+    value: function findPropertyConfig(key) {
+      return this.root.shapes[0].it.find(function (shape) {
+        return shape.ty == key;
+      });
+    }
+  }, {
+    key: "findOrInsertPropertyConfig",
+    value: function findOrInsertPropertyConfig(key) {
+      var find = this.findPropertyConfig(key);
+      if (find) return find;
+      var hasTransform = this.findPropertyConfig('tr');
+
+      if (hasTransform) {
+        var groupShapes = this.root.shapes[0].it;
+        groupShapes.splice(groupShapes.length - 1, 0, _objectSpread({
+          ty: key
+        }, this.getDefaultProperty(key)));
+      } else {
+        this.root.shapes[0].it.push(_objectSpread({
+          ty: key
+        }, this.getDefaultProperty(key)));
+      }
+    }
+  }, {
+    key: "commonPropertyMapping",
+    value: function commonPropertyMapping(key) {
+      var base, k, index;
+
+      switch (key) {
+        case 'scaleX':
+          base = this.root.ks;
+          k = 's';
+          index = 0;
+          break;
+
+        case 'scaleY':
+          base = this.root.ks;
+          k = 's';
+          index = 1;
+          break;
+
+        case 'anchorX':
+          base = this.root.ks;
+          k = 'a';
+          index = 0;
+          break;
+
+        case 'anchorY':
+          base = this.root.ks;
+          k = 'a';
+          index = 1;
+          break;
+
+        case 'x':
+          base = this.root.ks;
+          k = 'p';
+          index = 0;
+          break;
+
+        case 'y':
+          base = this.root.ks;
+          k = 'p';
+          index = 1;
+          break;
+
+        case 'rotate':
+          base = this.root.ks;
+          k = 'r';
+          index = -1;
+          break;
+
+        case 'opacity':
+          base = this.root.ks;
+          k = 'o';
+          index = -1;
+          break;
+
+        case 'trimStart':
+          base = this.findOrInsertPropertyConfig('tm');
+          k = 's';
+          index = -1;
+          break;
+
+        case 'trimEnd':
+          base = this.findOrInsertPropertyConfig('tm');
+          k = 'e';
+          index = -1;
+          break;
+
+        case 'trimOffset':
+          base = this.findOrInsertPropertyConfig('tm');
+          k = 'o';
+          index = -1;
+          break;
+
+        case 'fillColor':
+          base = this.findOrInsertPropertyConfig('fl');
+          k = 'c';
+          index = -1;
+          break;
+
+        case 'strokeColor':
+          base = this.findOrInsertPropertyConfig('st');
+          k = 'c';
+          index = -1;
+          break;
+
+        case 'strokeWidth':
+          base = this.findOrInsertPropertyConfig('st');
+          k = 'w';
+          index = -1;
+          break;
+
+        case 'shape':
+          base = this.findOrInsertPropertyConfig('sh');
+          k = 'ks';
+          index = -1;
+          break;
+      }
+
+      return [base, k, index];
+    }
   }]);
 
   function JSMovinLayer(ref) {
@@ -486,57 +772,37 @@ function () {
     key: "setStaticProperty",
     value: function setStaticProperty(key, value) {
       this.root.op = 1;
+      var base, k, index;
 
-      switch (key) {
-        case 'scaleX':
-          this.convertToStaticProperty(this.root.ks, 's');
-          this.root.ks.s.k[0] = value;
-          break;
+      var _this$commonPropertyM = this.commonPropertyMapping(key);
 
-        case 'scaleY':
-          this.convertToStaticProperty(this.root.ks, 's');
-          this.root.ks.s.k[1] = value;
-          break;
+      var _this$commonPropertyM2 = _slicedToArray(_this$commonPropertyM, 3);
 
-        case 'anchorX':
-          this.convertToStaticProperty(this.root.ks, 'a');
-          this.root.ks.a.k[0] = value;
-          break;
+      base = _this$commonPropertyM2[0];
+      k = _this$commonPropertyM2[1];
+      index = _this$commonPropertyM2[2];
 
-        case 'anchorY':
-          this.convertToStaticProperty(this.root.ks, 'a');
-          this.root.ks.a.k[1] = value;
-          break;
+      if (!base || !k || index === undefined) {
+        switch (key) {
+          case 'text':
+            if (this.root.ty == 5) {
+              var doc = this.root.t.d;
+              doc.k = [doc.k[0]];
+              doc.k[0].t = 0;
+              doc.k[0].s.t = value;
+            }
 
-        case 'x':
-          this.convertToStaticProperty(this.root.ks, 'p');
-          this.root.ks.p.k[0] = value;
-          break;
+            break;
 
-        case 'y':
-          this.convertToStaticProperty(this.root.ks, 'p');
-          this.root.ks.p.k[1] = value;
-          break;
-        // case 'skew':
-        //     this.convertToStaticProperty(this.root.ks!, 's')
-        //     break
-        // case 'skewAxis':
-        //     this.convertToStaticProperty(this.root.ks!, 's')
-        //     break
+          default:
+            console.error(key, value);
+            throw new Error('Not a valid key.');
+        }
+      }
 
-        case 'rotate':
-          this.convertToStaticProperty(this.root.ks, 'r');
-          this.root.ks.r.k = value;
-          break;
-
-        case 'opacity':
-          this.convertToStaticProperty(this.root.ks, 'o');
-          this.root.ks.o.k = value;
-          break;
-
-        default:
-          console.error(key, value);
-          throw new Error('Not a valid key.');
+      if (base && k && index !== undefined) {
+        this.convertToStaticProperty(base, k);
+        base[k].k[index] = value;
       }
     }
   }, {
@@ -552,64 +818,44 @@ function () {
         easing = _easing.EasingFactory.linear();
       }
 
-      switch (key) {
-        case 'scaleX':
-          this.convertToAnimatableProperty(this.root.ks, 's');
-          this.addKeyframe(this.root.ks, 's', 0, startFrame, startValue, easing);
-          this.addKeyframe(this.root.ks, 's', 0, endFrame, endValue);
-          break;
+      var base, k, index;
 
-        case 'scaleY':
-          this.convertToAnimatableProperty(this.root.ks, 's');
-          this.addKeyframe(this.root.ks, 's', 1, startFrame, startValue, easing);
-          this.addKeyframe(this.root.ks, 's', 1, endFrame, endValue);
-          break;
+      var _this$commonPropertyM3 = this.commonPropertyMapping(key);
 
-        case 'anchorX':
-          this.convertToAnimatableProperty(this.root.ks, 'a');
-          this.addKeyframe(this.root.ks, 'a', 0, startFrame, startValue, easing);
-          this.addKeyframe(this.root.ks, 'a', 0, endFrame, endValue);
-          break;
+      var _this$commonPropertyM4 = _slicedToArray(_this$commonPropertyM3, 3);
 
-        case 'anchorY':
-          this.convertToAnimatableProperty(this.root.ks, 'a');
-          this.addKeyframe(this.root.ks, 'a', 1, startFrame, startValue, easing);
-          this.addKeyframe(this.root.ks, 'a', 1, endFrame, endValue);
-          break;
+      base = _this$commonPropertyM4[0];
+      k = _this$commonPropertyM4[1];
+      index = _this$commonPropertyM4[2];
 
-        case 'x':
-          this.convertToAnimatableProperty(this.root.ks, 'p');
-          this.addKeyframe(this.root.ks, 'p', 0, startFrame, startValue, easing);
-          this.addKeyframe(this.root.ks, 'p', 0, endFrame, endValue);
-          break;
+      if (!base || !k || index === undefined) {
+        switch (key) {
+          case 'text':
+            if (this.root.ty == 5) {
+              base = this.root.t.d;
+              var textProp = base.k[0].s;
+              var tmpStartValue = JSON.parse(JSON.stringify(textProp));
+              var tmpEndValue = JSON.parse(JSON.stringify(textProp));
+              tmpStartValue.t = startValue;
+              tmpEndValue.t = endValue;
+              startValue = tmpStartValue;
+              endValue = tmpEndValue;
+              k = 'k';
+              index = -1;
+            }
 
-        case 'y':
-          this.convertToAnimatableProperty(this.root.ks, 'p');
-          this.addKeyframe(this.root.ks, 'p', 1, startFrame, startValue, easing);
-          this.addKeyframe(this.root.ks, 'p', 1, endFrame, endValue);
-          break;
-        // case 'skew':
-        //     this.convertToAnimatableProperty(this.root.ks!, 's')
-        //     break
-        // case 'skewAxis':
-        //     this.convertToAnimatableProperty(this.root.ks!, 's')
-        //     break
+            break;
 
-        case 'rotate':
-          this.convertToAnimatableProperty(this.root.ks, 'r');
-          this.addKeyframe(this.root.ks, 'r', -1, startFrame, startValue, easing);
-          this.addKeyframe(this.root.ks, 'r', -1, endFrame, endValue);
-          break;
+          default:
+            console.error(key, startFrame, endFrame, startValue, endValue, easing);
+            throw new Error('Not a valid key.');
+        }
+      }
 
-        case 'opacity':
-          this.convertToAnimatableProperty(this.root.ks, 'o');
-          this.addKeyframe(this.root.ks, 'o', -1, startFrame, startValue, easing);
-          this.addKeyframe(this.root.ks, 'o', -1, endFrame, endValue);
-          break;
-
-        default:
-          console.error(key, startFrame, endFrame, startValue, endValue, easing);
-          throw new Error('Not a valid key.');
+      if (base && k && index !== undefined) {
+        this.convertToAnimatableProperty(base, k);
+        this.addKeyframe(base, k, index, startFrame, startValue, easing);
+        this.addKeyframe(base, k, index, endFrame, endValue);
       }
     }
   }]);
@@ -653,37 +899,14 @@ function () {
       };
     }
   }, {
-    key: "calculateBaseTransform",
-    value: function calculateBaseTransform(dom, root) {
-      return root.getScreenCTM().inverse().multiply(dom.getScreenCTM());
-    }
-  }, {
-    key: "getBoundingBox",
-    value: function getBoundingBox(dom) {
-      var svgRoot = dom;
-
-      while (true) {
-        if (svgRoot.parentElement instanceof SVGGraphicsElement) {
-          svgRoot = svgRoot.parentElement;
-        } else {
-          break;
-        }
-      }
-
-      var baseBox = this.calculateBaseTransform(dom, svgRoot);
-      var refBBox = dom.getBBox();
-      var coordinate = [baseBox.e + refBBox.x, baseBox.f + refBBox.y, refBBox.width + 2, refBBox.height + 2];
-      return coordinate;
-    }
-  }, {
     key: "boundingBox",
     value: function boundingBox(dom) {
-      return this.rect.apply(this, _toConsumableArray(this.getBoundingBox(dom)));
+      return this.rect.apply(this, _toConsumableArray((0, _helper.getBoundingBox)(dom)));
     }
   }, {
     key: "shape",
     value: function shape(dom) {
-      var coordinate = this.getBoundingBox(dom);
+      var coordinate = (0, _helper.getBoundingBox)(dom);
       var layer = {
         ty: 4,
         ddd: 0,
@@ -694,7 +917,7 @@ function () {
         op: 1,
         st: 0,
         bm: 0,
-        shapes: [(0, _render.render)(dom)]
+        shapes: (0, _render.render)(dom)
       };
       return new JSMovinLayer(layer);
     }
@@ -735,7 +958,7 @@ function () {
   }, {
     key: "hierarchy",
     value: function hierarchy(dom, assetList, fontList) {
-      var coordinate = this.getBoundingBox(dom);
+      var coordinate = (0, _helper.getBoundingBox)(dom);
       var domType;
 
       if (dom instanceof SVGTextElement) {
@@ -776,25 +999,55 @@ function () {
 
         case 4:
           var shapeLayer = layer;
-          shapeLayer.shapes = [];
-          shapeLayer.shapes.push((0, _render.render)(dom));
+          shapeLayer.shapes = (0, _render.render)(dom);
           break;
 
         case 5:
-          var textLayer = layer;
+          var textLayer = layer; // move textLayer's anchor to left-top
 
-          var _renderText = (0, _render.renderText)(dom),
+          textLayer.ks.a.k = [0, -coordinate[3], 0];
+
+          var _renderText = (0, _render.renderText)(dom, fontList),
               _renderText2 = _slicedToArray(_renderText, 2),
               textData = _renderText2[0],
               font = _renderText2[1];
 
           textLayer.t = textData;
-          fontList.list.push(font);
+          if (!fontList.list.filter(function (f) {
+            return f.fName == font.fName;
+          }).length) fontList.list.push(font);
           break;
       }
 
       var movinLayer = new JSMovinLayer(layer);
       return movinLayer;
+    }
+    /**
+     * Render a DOM that may be the mixture of text, images and other glyphs
+     * 
+     * The rendering order is fixed: glyphs(bottom) - images - text(top)
+     * @param dom SVG DOM
+     * @param assetList reference of assets
+     * @param fontList reference of fonts
+     */
+
+  }, {
+    key: "hierarchyAll",
+    value: function hierarchyAll(dom, assetList, fontList) {
+      var _this = this;
+
+      if (dom instanceof SVGTextElement || dom instanceof SVGImageElement) {
+        return [this.hierarchy(dom, assetList, fontList)];
+      } else {
+        var results = [this.hierarchy(dom, assetList, fontList)];
+        dom.querySelectorAll('image').forEach(function (dom) {
+          return results.unshift(_this.hierarchy(dom, assetList, fontList));
+        });
+        dom.querySelectorAll('text').forEach(function (dom) {
+          return results.unshift(_this.hierarchy(dom, assetList, fontList));
+        });
+        return results;
+      }
     }
   }]);
 
@@ -803,7 +1056,7 @@ function () {
 
 exports.LayerFactory = LayerFactory;
 
-},{"./easing":2,"./render":6}],5:[function(require,module,exports){
+},{"./easing":2,"./helper":3,"./render":7}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1116,7 +1369,7 @@ function () {
 
 exports.PathMaker = PathMaker;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1133,6 +1386,8 @@ var _v = _interopRequireDefault(require("uuid/v4"));
 
 var _svgPathParser = require("svg-path-parser");
 
+var _helper = require("./helper");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -1143,13 +1398,13 @@ function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) ||
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function render(dom) {
+function render(dom, baseDom) {
   if (dom instanceof SVGTextElement || dom instanceof SVGImageElement) {
-    return {};
+    return [];
   } else if (dom instanceof SVGGElement) {
-    return renderGroup(dom);
+    return renderGroup(dom, baseDom);
   } else {
-    return renderGlyph(dom);
+    return renderGlyph(dom, baseDom);
   }
 }
 
@@ -1179,7 +1434,7 @@ function encodeLineJoin(type) {
   }
 }
 
-function addVisualEncodings(items, styles) {
+function addVisualEncodings(items, styles, dom, baseDom) {
   if (styles.stroke && styles.stroke !== 'none') {
     items.push({
       ty: 'st',
@@ -1213,10 +1468,21 @@ function addVisualEncodings(items, styles) {
     });
   }
 
+  var posX = 0,
+      posY = 0;
+
+  if (dom && baseDom) {
+    var baseBox = (0, _helper.calculateBaseTransform)(dom, baseDom);
+    var baseBBox = baseDom.getBBox();
+    var refBBox = dom.getBBox();
+    posX = baseBox.e + refBBox.x - baseBBox.x;
+    posY = baseBox.f + refBBox.y - baseBBox.y;
+  }
+
   items.push({
     ty: "tr",
     p: {
-      k: [0, 0]
+      k: [posX, posY]
     },
     a: {
       k: [0, 0]
@@ -1228,7 +1494,7 @@ function addVisualEncodings(items, styles) {
       k: 0
     },
     o: {
-      k: 100
+      k: parseFloat(styles.opacity || '1') * 100
     },
     sk: {
       k: 0
@@ -1239,7 +1505,7 @@ function addVisualEncodings(items, styles) {
   });
 }
 
-function renderGlyph(dom) {
+function renderGlyph(dom, baseDom) {
   var group = {
     ty: "gr",
     it: [],
@@ -1259,7 +1525,7 @@ function renderGlyph(dom) {
       hd: false
     });
     var styles = window.getComputedStyle(dom);
-    addVisualEncodings(group.it, styles);
+    addVisualEncodings(group.it, styles, dom, baseDom);
   };
 
   if (dom instanceof SVGCircleElement) {
@@ -1491,27 +1757,17 @@ function renderGlyph(dom) {
     throw new Error('No implementation found for svg graphics element.');
   }
 
-  return group;
+  return [group];
 }
 
-function renderGroup(dom) {
-  var group = {
-    ty: 'gr',
-    it: [],
-    nm: dom.id,
-    bm: 0,
-    hd: false
-  };
+function renderGroup(dom, baseDom) {
+  var items = [];
   dom.childNodes.forEach(function (node) {
     if (node instanceof SVGGraphicsElement) {
-      var child = render(node);
-
-      if (child.ty) {
-        group.it.push(child);
-      }
+      items = render(node, baseDom || dom).concat(items);
     }
   });
-  return group;
+  return items;
 }
 
 function renderPlainGlyph(type, args) {
@@ -1582,16 +1838,24 @@ function renderPlainGlyph(type, args) {
   return group;
 }
 
-function renderText(dom) {
+function renderText(dom, fontList) {
   var computedStyle = getComputedStyle(dom);
   var fontSize = parseFloat(computedStyle.fontSize),
       fontFamily = computedStyle.fontFamily.split(',')[0].trim(),
       fontStyle = computedStyle.fontStyle,
-      fontName = (0, _v["default"])(),
-      fontAscent = parseFloat(computedStyle.lineHeight || "".concat(fontSize)),
+      fontWeight = computedStyle.fontWeight,
       fontColor = (computedStyle.color || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(function (i) {
     return parseInt(i) / 255;
   });
+  var fontName = (0, _v["default"])();
+
+  if (fontList) {
+    var fontExist = fontList.list.filter(function (font) {
+      return font.fFamily == fontFamily && font.fStyle == fontStyle && font.fWeight == fontWeight;
+    });
+    if (fontExist.length) fontName = fontExist[0].fName;
+  }
+
   var textData = {
     d: {
       k: [{
@@ -1602,7 +1866,6 @@ function renderText(dom) {
           t: dom.innerHTML,
           j: 0,
           tr: 0,
-          lh: fontAscent,
           ls: 0,
           fc: fontColor
         }
@@ -1617,14 +1880,10 @@ function renderText(dom) {
     a: []
   };
   var fontDef = {
-    origin: 0,
-    fPath: '',
-    fClass: '',
     fFamily: fontFamily,
-    fWeight: '',
+    fWeight: "".concat(fontWeight),
     fStyle: fontStyle,
-    fName: fontName,
-    ascent: fontAscent
+    fName: fontName
   };
   return [textData, fontDef];
 }
@@ -1651,7 +1910,7 @@ function renderImage(dom) {
   return [id, asset];
 }
 
-},{"./path":5,"svg-path-parser":7,"uuid/v4":11}],7:[function(require,module,exports){
+},{"./helper":3,"./path":6,"svg-path-parser":8,"uuid/v4":12}],8:[function(require,module,exports){
 // v1.0 exported just the parser function. To maintain backwards compatibility,
 // we export additional named features as properties of that function.
 var parserFunction = require('./parser.js').parse;
@@ -1679,7 +1938,7 @@ function makeSVGPathCommandsAbsolute(commands) {
 	return commands;
 }
 
-},{"./parser.js":8}],8:[function(require,module,exports){
+},{"./parser.js":9}],9:[function(require,module,exports){
 /*
  * Generated by PEG.js 0.10.0.
  *
@@ -3749,7 +4008,7 @@ module.exports = {
   parse:       peg$parse
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -3775,7 +4034,7 @@ function bytesToUuid(buf, offset) {
 
 module.exports = bytesToUuid;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 // Unique ID creation requires a high quality random # generator.  In the
 // browser this is a little complicated due to unknown quality of Math.random()
 // and inconsistent support for the `crypto` API.  We do the best we can via
@@ -3811,7 +4070,7 @@ if (getRandomValues) {
   };
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var rng = require('./lib/rng');
 var bytesToUuid = require('./lib/bytesToUuid');
 
@@ -3842,4 +4101,4 @@ function v4(options, buf, offset) {
 
 module.exports = v4;
 
-},{"./lib/bytesToUuid":9,"./lib/rng":10}]},{},[1]);
+},{"./lib/bytesToUuid":10,"./lib/rng":11}]},{},[1]);

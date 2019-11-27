@@ -1,16 +1,17 @@
-import { GroupShape, TextData, ReferenceID, PathShape, FillShape, StrokeShape, TransformShape, ImageAsset, Font1 } from './animation'
+import { GroupShape, TextData, ReferenceID, PathShape, FillShape, StrokeShape, TransformShape, ImageAsset, Font1, Fonts } from './animation'
 import { PathMaker } from './path'
 import uuid from 'uuid/v4'
 import { parseSVG, MoveToCommand, LineToCommand, HorizontalLineToCommand, VerticalLineToCommand, CurveToCommand, QuadraticCurveToCommand, EllipticalArcCommand } from 'svg-path-parser'
+import { calculateBaseTransform } from './helper'
 
 
-export function render(dom: SVGGraphicsElement): GroupShape {
+export function render(dom: SVGGraphicsElement, baseDom?: SVGGraphicsElement): GroupShape[] {
     if (dom instanceof SVGTextElement || dom instanceof SVGImageElement) {
-        return {}
+        return []
     } else if (dom instanceof SVGGElement) {
-        return renderGroup(dom)
+        return renderGroup(dom, baseDom)
     } else {
-        return renderGlyph(dom)
+        return renderGlyph(dom, baseDom)
     }
 }
 
@@ -38,7 +39,7 @@ function encodeLineJoin(type?: string | null): number {
 
 type VisualGroupItem = PathShape | FillShape | StrokeShape | TransformShape
 
-function addVisualEncodings(items: VisualGroupItem[], styles: CSSStyleDeclaration) {
+function addVisualEncodings(items: VisualGroupItem[], styles: CSSStyleDeclaration, dom?: SVGGraphicsElement, baseDom?: SVGGraphicsElement) {
     if (styles.stroke && styles.stroke !== 'none') {
         items.push({
             ty: 'st',
@@ -66,12 +67,20 @@ function addVisualEncodings(items: VisualGroupItem[], styles: CSSStyleDeclaratio
             }
         })
     }
+    let posX = 0, posY = 0
+    if (dom && baseDom) {
+        const baseBox = calculateBaseTransform(dom, baseDom)
+        const baseBBox = baseDom.getBBox()
+        const refBBox = dom.getBBox()
+        posX = baseBox.e + refBBox.x - baseBBox.x
+        posY = baseBox.f + refBBox.y - baseBBox.y
+    }
     items.push({
         ty: "tr",
         p: {
             k: [
-                0,
-                0
+                posX,
+                posY
             ]
         },
         a: {
@@ -90,7 +99,7 @@ function addVisualEncodings(items: VisualGroupItem[], styles: CSSStyleDeclaratio
             k: 0
         },
         o: {
-            k: 100
+            k: parseFloat(styles.opacity || '1') * 100
         },
         sk: {
             k: 0
@@ -99,9 +108,10 @@ function addVisualEncodings(items: VisualGroupItem[], styles: CSSStyleDeclaratio
             k: 0
         }
     })
+
 }
 
-function renderGlyph(dom: SVGGraphicsElement): GroupShape {
+function renderGlyph(dom: SVGGraphicsElement, baseDom?: SVGGraphicsElement): GroupShape[] {
     const group: GroupShape = {
         ty: "gr",
         it: [],
@@ -120,7 +130,7 @@ function renderGlyph(dom: SVGGraphicsElement): GroupShape {
             hd: false
         })
         const styles = window.getComputedStyle(dom)
-        addVisualEncodings(group.it! as VisualGroupItem[], styles)
+        addVisualEncodings(group.it! as VisualGroupItem[], styles, dom, baseDom)
     }
     if (dom instanceof SVGCircleElement) {
         const svgLength = dom.r.baseVal
@@ -262,26 +272,17 @@ function renderGlyph(dom: SVGGraphicsElement): GroupShape {
         console.error(dom)
         throw new Error('No implementation found for svg graphics element.')
     }
-    return group
+    return [group]
 }
 
-function renderGroup(dom: SVGGElement): GroupShape {
-    let group: GroupShape = {
-        ty: 'gr',
-        it: [],
-        nm: dom.id,
-        bm: 0,
-        hd: false
-    }
+function renderGroup(dom: SVGGElement, baseDom?: SVGGraphicsElement): GroupShape[] {
+    let items: GroupShape[] = []
     dom.childNodes.forEach(node => {
         if (node instanceof SVGGraphicsElement) {
-            let child = render(node)
-            if (child.ty) {
-                group.it!.push(child)
-            }
+            items = render(node, baseDom || dom).concat(items)
         }
     })
-    return group
+    return items
 }
 
 export function renderPlainGlyph(type: 'rect' | 'ellipse', args: number[]): GroupShape {
@@ -362,14 +363,19 @@ export function renderPlainGlyph(type: 'rect' | 'ellipse', args: number[]): Grou
     return group
 }
 
-export function renderText(dom: SVGTextElement): [TextData, Font1] {
+export function renderText(dom: SVGTextElement, fontList?: Fonts): [TextData, Font1] {
     const computedStyle = getComputedStyle(dom)
     const fontSize = parseFloat(computedStyle.fontSize),
         fontFamily = computedStyle.fontFamily.split(',')[0].trim(),
         fontStyle = computedStyle.fontStyle,
-        fontName = uuid(),
-        fontAscent = parseFloat(computedStyle.lineHeight || `${fontSize}`),
+        fontWeight = computedStyle.fontWeight,
         fontColor = (computedStyle.color || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(i => parseInt(i) / 255)
+    let fontName = uuid()
+    if (fontList) {
+        const fontExist = fontList.list!.filter(font => font.fFamily == fontFamily && font.fStyle == fontStyle && font.fWeight == fontWeight)
+        if (fontExist.length)
+            fontName = fontExist[0].fName!
+    }
     const textData: TextData = {
         d: {
             k: [
@@ -381,7 +387,6 @@ export function renderText(dom: SVGTextElement): [TextData, Font1] {
                         t: dom.innerHTML,
                         j: 0,
                         tr: 0,
-                        lh: fontAscent,
                         ls: 0,
                         fc: fontColor
                     }
@@ -400,14 +405,10 @@ export function renderText(dom: SVGTextElement): [TextData, Font1] {
         a: []
     }
     const fontDef: Font1 = {
-        origin: 0,
-        fPath: '',
-        fClass: '',
         fFamily: fontFamily,
-        fWeight: '',
+        fWeight: `${fontWeight}`,
         fStyle: fontStyle,
-        fName: fontName,
-        ascent: fontAscent
+        fName: fontName
     }
     return [textData, fontDef]
 }
