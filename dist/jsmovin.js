@@ -1926,7 +1926,7 @@ function renderImage(dom, assetList) {
 
   if (assetList) {
     var assetExist = assetList.filter(function (asset) {
-      return asset.u == dataUrl;
+      return asset.p == dataUrl;
     });
     if (assetExist.length) id = assetExist[0].id;
   }

@@ -435,7 +435,7 @@ export function renderImage(dom: SVGImageElement, assetList?: Assets): [Referenc
 
     const dataUrl = canvas.toDataURL()
     if (assetList) {
-        const assetExist = assetList!.filter(asset => asset.u == dataUrl)
+        const assetExist = assetList!.filter(asset => asset.p == dataUrl)
         if (assetExist.length)
             id = assetExist[0].id!
     }
