@@ -1,4 +1,4 @@
-import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape, FillShape, StrokeShape, PathShape } from './animation'
+import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape } from './animation'
 import { EasingFunction, EasingFactory } from './easing'
 import { renderText, render, renderImage, renderPlainGlyph } from './render';
 import { getBoundingBox } from './helper'

@@ -69,11 +69,11 @@ function addVisualEncodings(items: VisualGroupItem[], styles: CSSStyleDeclaratio
     }
     let posX = 0, posY = 0
     if (dom && baseDom) {
-        const baseBox = calculateBaseTransform(dom, baseDom)
+        const baseTransform = calculateBaseTransform(dom, baseDom)
         const baseBBox = baseDom.getBBox()
         const refBBox = dom.getBBox()
-        posX = baseBox.e + refBBox.x - baseBBox.x
-        posY = baseBox.f + refBBox.y - baseBBox.y
+        posX = baseTransform.e + refBBox.x - baseBBox.x
+        posY = baseTransform.f + refBBox.y - baseBBox.y
     }
     items.push({
         ty: "tr",

@@ -17,7 +17,7 @@ export class PathMaker {
         this.currentX = x
         this.currentY = y
         this.offsetX = Math.min(this.offsetX, x)
-        this.offsetY = Math.min(this.offsetY, x)
+        this.offsetY = Math.min(this.offsetY, y)
     }
 
     private calculateBezierMinMax(p0: number, p1: number, p2: number, p3: number): [number, number] {

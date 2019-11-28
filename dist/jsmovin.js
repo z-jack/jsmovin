@@ -1108,7 +1108,7 @@ function () {
       this.currentX = x;
       this.currentY = y;
       this.offsetX = Math.min(this.offsetX, x);
-      this.offsetY = Math.min(this.offsetY, x);
+      this.offsetY = Math.min(this.offsetY, y);
     }
   }, {
     key: "calculateBezierMinMax",
@@ -1472,11 +1472,11 @@ function addVisualEncodings(items, styles, dom, baseDom) {
       posY = 0;
 
   if (dom && baseDom) {
-    var baseBox = (0, _helper.calculateBaseTransform)(dom, baseDom);
+    var baseTransform = (0, _helper.calculateBaseTransform)(dom, baseDom);
     var baseBBox = baseDom.getBBox();
     var refBBox = dom.getBBox();
-    posX = baseBox.e + refBBox.x - baseBBox.x;
-    posY = baseBox.f + refBBox.y - baseBBox.y;
+    posX = baseTransform.e + refBBox.x - baseBBox.x;
+    posY = baseTransform.f + refBBox.y - baseBBox.y;
   }
 
   items.push({
