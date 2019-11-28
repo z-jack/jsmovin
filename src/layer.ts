@@ -223,7 +223,7 @@ export class JSMovinLayer {
         if (endFrame <= startFrame) {
             throw new Error('End frame should be larger than start frame.')
         }
-        this.root.op = endFrame
+        this.root.op = endFrame + 1
         if (!easing) {
             easing = EasingFactory.linear()
         }
@@ -297,7 +297,8 @@ export class LayerFactory {
     }
 
     static boundingBox(dom: SVGGraphicsElement) {
-        return this.rect(...getBoundingBox(dom))
+        const boundingBox = getBoundingBox(dom).map((v, i) => i < 2 ? v - 1 : v + 1) as [number, number, number, number]
+        return this.rect(...boundingBox)
     }
 
     static shape(dom: SVGPathElement) {

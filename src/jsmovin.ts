@@ -97,6 +97,7 @@ export default class JSMovin {
             maskLayer = maskOrDom
         }
         this.root.layers!.splice(layerIndex, 0, maskLayer.root)
+        return maskLayer
     }
 
     /**

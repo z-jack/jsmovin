@@ -31,7 +31,7 @@ export default class JSMovin {
      * @param layerRefOrIndex a JSMovinLayer or index of layer to be the masked layer
      * @param maskType which type of mask to use, use `MaskType.*` to specify
      */
-    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer, maskType?: MaskType): void;
+    addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer, maskType?: MaskType): JSMovinLayer;
     /**
      * @param layerRefOrIndex a JSMovinLayer or index of layer to remove
      */

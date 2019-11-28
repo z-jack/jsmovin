@@ -377,6 +377,7 @@ function () {
       }
 
       this.root.layers.splice(layerIndex, 0, maskLayer.root);
+      return maskLayer;
     }
     /**
      * @param layerRefOrIndex a JSMovinLayer or index of layer to remove
@@ -812,7 +813,7 @@ function () {
         throw new Error('End frame should be larger than start frame.');
       }
 
-      this.root.op = endFrame;
+      this.root.op = endFrame + 1;
 
       if (!easing) {
         easing = _easing.EasingFactory.linear();
@@ -901,7 +902,10 @@ function () {
   }, {
     key: "boundingBox",
     value: function boundingBox(dom) {
-      return this.rect.apply(this, _toConsumableArray((0, _helper.getBoundingBox)(dom)));
+      var boundingBox = (0, _helper.getBoundingBox)(dom).map(function (v, i) {
+        return i < 2 ? v - 1 : v + 1;
+      });
+      return this.rect.apply(this, _toConsumableArray(boundingBox));
     }
   }, {
     key: "shape",
