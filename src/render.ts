@@ -1,4 +1,4 @@
-import { GroupShape, TextData, ReferenceID, PathShape, FillShape, StrokeShape, TransformShape, ImageAsset, Font1, Fonts } from './animation'
+import { GroupShape, TextData, ReferenceID, PathShape, FillShape, StrokeShape, TransformShape, ImageAsset, Font1, Fonts, Assets } from './animation'
 import { PathMaker } from './path'
 import uuid from 'uuid/v4'
 import { parseSVG, MoveToCommand, LineToCommand, HorizontalLineToCommand, VerticalLineToCommand, CurveToCommand, QuadraticCurveToCommand, EllipticalArcCommand } from 'svg-path-parser'
@@ -420,8 +420,8 @@ export function renderText(dom: SVGTextElement, fontList?: Fonts): [TextData, Fo
     return [textData, fontDef]
 }
 
-export function renderImage(dom: SVGImageElement): [ReferenceID, ImageAsset] {
-    const id = uuid()
+export function renderImage(dom: SVGImageElement, assetList?: Assets): [ReferenceID, ImageAsset] {
+    let id = uuid()
     const domHeightVal = dom.height.baseVal
     domHeightVal.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX)
     const domWidthVal = dom.width.baseVal
@@ -429,16 +429,21 @@ export function renderImage(dom: SVGImageElement): [ReferenceID, ImageAsset] {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
 
-    canvas.width = domWidthVal.valueInSpecifiedUnits
-    canvas.height = domHeightVal.valueInSpecifiedUnits
-    ctx!.drawImage(dom, 0, 0)
+    canvas.width = domWidthVal.valueInSpecifiedUnits * 3
+    canvas.height = domHeightVal.valueInSpecifiedUnits * 3
+    ctx!.drawImage(dom, 0, 0, canvas.width, canvas.height)
 
     const dataUrl = canvas.toDataURL()
+    if (assetList) {
+        const assetExist = assetList!.filter(asset => asset.u == dataUrl)
+        if (assetExist.length)
+            id = assetExist[0].id!
+    }
     const asset = {
         h: domHeightVal.valueInSpecifiedUnits,
         w: domWidthVal.valueInSpecifiedUnits,
-        id: uuid(),
-        u: dataUrl,
+        id,
+        p: dataUrl,
         e: 1
     }
     return [id, asset]

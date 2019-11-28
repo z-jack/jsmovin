@@ -258,11 +258,19 @@ Object.defineProperty(exports, "EasingFactory", {
     return _easing.EasingFactory;
   }
 });
+Object.defineProperty(exports, "PathMaker", {
+  enumerable: true,
+  get: function get() {
+    return _path.PathMaker;
+  }
+});
 exports.MaskType = exports["default"] = void 0;
 
 var _layer = require("./layer");
 
 var _easing = require("./easing");
+
+var _path = require("./path");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -487,7 +495,7 @@ exports.MaskType = MaskType;
   MaskType[MaskType["InvertLuma"] = 4] = "InvertLuma";
 })(MaskType || (exports.MaskType = MaskType = {}));
 
-},{"./easing":2,"./layer":5}],5:[function(require,module,exports){
+},{"./easing":2,"./layer":5,"./path":6}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -738,25 +746,25 @@ function () {
           break;
 
         case 'fillColor':
-          base = this.findOrInsertPropertyConfig('fl');
+          base = this.findPropertyConfig('fl');
           k = 'c';
           index = -1;
           break;
 
         case 'strokeColor':
-          base = this.findOrInsertPropertyConfig('st');
+          base = this.findPropertyConfig('st');
           k = 'c';
           index = -1;
           break;
 
         case 'strokeWidth':
-          base = this.findOrInsertPropertyConfig('st');
+          base = this.findPropertyConfig('st');
           k = 'w';
           index = -1;
           break;
 
         case 'shape':
-          base = this.findOrInsertPropertyConfig('sh');
+          base = this.findPropertyConfig('sh');
           k = 'ks';
           index = -1;
           break;
@@ -808,7 +816,7 @@ function () {
 
       if (base && k && index !== undefined) {
         this.convertToStaticProperty(base, k);
-        base[k].k[index] = value;
+        if (index >= 0) base[k].k[index] = value;else base[k].k = value;
       }
     }
   }, {
@@ -1001,7 +1009,7 @@ function () {
           var preCompAsset = [];
           var preCompRefId = (0, _v["default"])();
           domLeaves.forEach(function (d) {
-            if (d instanceof SVGGraphicsElement) {
+            if (d instanceof SVGGraphicsElement && !(d instanceof SVGGElement)) {
               preCompAsset.unshift(_this.hierarchy(d, assetList, fontList));
             }
           });
@@ -1022,13 +1030,15 @@ function () {
         case 2:
           var imageLayer = layer;
 
-          var _renderImage = (0, _render.renderImage)(dom),
+          var _renderImage = (0, _render.renderImage)(dom, assetList),
               _renderImage2 = _slicedToArray(_renderImage, 2),
               imageRefId = _renderImage2[0],
               imageAsset = _renderImage2[1];
 
           imageLayer.refId = imageRefId;
-          assetList.push(imageAsset);
+          if (!assetList.filter(function (a) {
+            return a.id == imageRefId;
+          }).length) assetList.push(imageAsset);
           break;
 
         case 4:
@@ -1901,7 +1911,7 @@ function renderText(dom, fontList) {
   return [textData, fontDef];
 }
 
-function renderImage(dom) {
+function renderImage(dom, assetList) {
   var id = (0, _v["default"])();
   var domHeightVal = dom.height.baseVal;
   domHeightVal.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX);
@@ -1909,15 +1919,23 @@ function renderImage(dom) {
   domWidthVal.convertToSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX);
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
-  canvas.width = domWidthVal.valueInSpecifiedUnits;
-  canvas.height = domHeightVal.valueInSpecifiedUnits;
-  ctx.drawImage(dom, 0, 0);
+  canvas.width = domWidthVal.valueInSpecifiedUnits * 3;
+  canvas.height = domHeightVal.valueInSpecifiedUnits * 3;
+  ctx.drawImage(dom, 0, 0, canvas.width, canvas.height);
   var dataUrl = canvas.toDataURL();
+
+  if (assetList) {
+    var assetExist = assetList.filter(function (asset) {
+      return asset.u == dataUrl;
+    });
+    if (assetExist.length) id = assetExist[0].id;
+  }
+
   var asset = {
     h: domHeightVal.valueInSpecifiedUnits,
     w: domWidthVal.valueInSpecifiedUnits,
-    id: (0, _v["default"])(),
-    u: dataUrl,
+    id: id,
+    p: dataUrl,
     e: 1
   };
   return [id, asset];

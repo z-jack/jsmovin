@@ -54,6 +54,7 @@ export default class JSMovin {
 }
 export { LayerFactory } from './layer';
 export { EasingFactory } from './easing';
+export { PathMaker } from './path';
 export declare enum MaskType {
     Alpha = 1,
     InvertAlpha = 2,

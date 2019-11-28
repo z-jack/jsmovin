@@ -168,22 +168,22 @@ export class JSMovinLayer {
                 index = -1
                 break
             case 'fillColor':
-                base = this.findOrInsertPropertyConfig('fl')
+                base = this.findPropertyConfig('fl')
                 k = 'c'
                 index = -1
                 break
             case 'strokeColor':
-                base = this.findOrInsertPropertyConfig('st')
+                base = this.findPropertyConfig('st')
                 k = 'c'
                 index = -1
                 break
             case 'strokeWidth':
-                base = this.findOrInsertPropertyConfig('st')
+                base = this.findPropertyConfig('st')
                 k = 'w'
                 index = -1
                 break
             case 'shape':
-                base = this.findOrInsertPropertyConfig('sh')
+                base = this.findPropertyConfig('sh')
                 k = 'ks'
                 index = -1
                 break
@@ -216,7 +216,10 @@ export class JSMovinLayer {
         }
         if (base && k && index !== undefined) {
             this.convertToStaticProperty(base, k)
-            base[k].k[index] = value
+            if (index >= 0)
+                base[k].k[index] = value
+            else
+                base[k].k = value
         }
     }
 
@@ -386,7 +389,7 @@ export class LayerFactory {
                 const preCompAsset: JSMovinLayer[] = []
                 const preCompRefId = uuid()
                 domLeaves.forEach(d => {
-                    if (d instanceof SVGGraphicsElement) {
+                    if (d instanceof SVGGraphicsElement && !(d instanceof SVGGElement)) {
                         preCompAsset.unshift(this.hierarchy(d, assetList, fontList))
                     }
                 })
@@ -403,9 +406,10 @@ export class LayerFactory {
                 break
             case 2:
                 const imageLayer = layer as ImageLayer
-                const [imageRefId, imageAsset] = renderImage(dom as SVGImageElement)
+                const [imageRefId, imageAsset] = renderImage(dom as SVGImageElement, assetList)
                 imageLayer.refId = imageRefId
-                assetList.push(imageAsset)
+                if (!assetList.filter(a => a.id == imageRefId).length)
+                    assetList.push(imageAsset)
                 break
             case 4:
                 const shapeLayer = layer as ShapeLayer
