@@ -1,8 +1,8 @@
-import { ShapeLayer, TextLayer, ImageLayer, Assets, Fonts } from './animation';
+import { ShapeLayer, TextLayer, ImageLayer, Assets, Fonts, PreCompLayer } from './animation';
 import { EasingFunction } from './easing';
 declare type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text';
 export declare class JSMovinLayer {
-    readonly root: ShapeLayer | TextLayer | ImageLayer;
+    readonly root: ShapeLayer | TextLayer | ImageLayer | PreCompLayer;
     private getDefaultProperty;
     private convertToStaticProperty;
     private convertToAnimatableProperty;
@@ -10,7 +10,7 @@ export declare class JSMovinLayer {
     private findPropertyConfig;
     private findOrInsertPropertyConfig;
     private commonPropertyMapping;
-    constructor(ref: ShapeLayer | TextLayer | ImageLayer);
+    constructor(ref: ShapeLayer | TextLayer | ImageLayer | PreCompLayer);
     setStaticProperty(key: SetableKeys, value: any): void;
     setAnimatableProperty(key: SetableKeys, startFrame: number, endFrame: number, startValue: any, endValue: any, easing?: EasingFunction): void;
 }

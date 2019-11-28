@@ -196,8 +196,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.calculateBaseTransform = calculateBaseTransform;
 exports.getBoundingBox = getBoundingBox;
+exports.getLeafNodes = getLeafNodes;
 
 function calculateBaseTransform(dom, root) {
+  // https://github.com/dagrejs/dagre-d3/issues/202
   return root.getScreenCTM().inverse().multiply(dom.getScreenCTM());
 }
 
@@ -216,6 +218,26 @@ function getBoundingBox(dom) {
   var refBBox = dom.getBBox();
   var coordinate = [baseBox.e + refBBox.x, baseBox.f + refBBox.y, refBBox.width + 1, refBBox.height + 1];
   return coordinate;
+}
+
+function getLeafNodes(master) {
+  // https://stackoverflow.com/questions/22289391/how-to-create-an-array-of-leaf-nodes-of-an-html-dom-using-javascript
+  var nodes = Array.prototype.slice.call(master.getElementsByTagName("*"), 0);
+  var leafNodes = nodes.filter(function (elem) {
+    if (elem.hasChildNodes()) {
+      // see if any of the child nodes are elements
+      for (var i = 0; i < elem.childNodes.length; i++) {
+        if (elem.childNodes[i].nodeType == 1) {
+          // there is a child element, so return false to not include
+          // this parent element
+          return false;
+        }
+      }
+    }
+
+    return true;
+  });
+  return leafNodes;
 }
 
 },{}],4:[function(require,module,exports){
@@ -500,6 +522,10 @@ var _render = require("./render");
 
 var _helper = require("./helper");
 
+var _v = _interopRequireDefault(require("uuid/v4"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -783,7 +809,7 @@ function () {
       k = _this$commonPropertyM2[1];
       index = _this$commonPropertyM2[2];
 
-      if (!base || !k || index === undefined) {
+      if (!k || index === undefined) {
         switch (key) {
           case 'text':
             if (this.root.ty == 5) {
@@ -829,7 +855,7 @@ function () {
       k = _this$commonPropertyM4[1];
       index = _this$commonPropertyM4[2];
 
-      if (!base || !k || index === undefined) {
+      if (!k || index === undefined) {
         switch (key) {
           case 'text':
             if (this.root.ty == 5) {
@@ -962,6 +988,8 @@ function () {
   }, {
     key: "hierarchy",
     value: function hierarchy(dom, assetList, fontList) {
+      var _this = this;
+
       var coordinate = (0, _helper.getBoundingBox)(dom);
       var domType;
 
@@ -969,6 +997,8 @@ function () {
         domType = 5;
       } else if (dom instanceof SVGImageElement) {
         domType = 2;
+      } else if (dom instanceof SVGGElement) {
+        domType = 0;
       } else {
         domType = 4;
       }
@@ -978,7 +1008,7 @@ function () {
         ddd: 0,
         sr: 1,
         ao: 0,
-        ks: this.generateTransform(coordinate),
+        ks: this.generateTransform(domType == 0 ? [0, 0, 0, 0] : coordinate),
         ip: 0,
         op: 1,
         st: 0,
@@ -986,19 +1016,40 @@ function () {
       };
 
       switch (domType) {
+        case 0:
+          var precompLayer = layer;
+          var domLeaves = (0, _helper.getLeafNodes)(dom);
+          var preCompAsset = [];
+          var preCompRefId = (0, _v["default"])();
+          domLeaves.forEach(function (d) {
+            if (d instanceof SVGGraphicsElement) {
+              preCompAsset.unshift(_this.hierarchy(d, assetList, fontList));
+            }
+          });
+          preCompAsset.forEach(function (layer) {
+            layer.root.op = 9e9;
+          });
+          precompLayer.w = coordinate[0] + coordinate[2] + 1;
+          precompLayer.h = coordinate[1] + coordinate[3] + 1;
+          precompLayer.refId = preCompRefId;
+          assetList.push({
+            id: preCompRefId,
+            layers: preCompAsset.map(function (layer) {
+              return layer.root;
+            })
+          });
+          break;
+
         case 2:
-          if (assetList) {
-            var imageLayer = layer;
+          var imageLayer = layer;
 
-            var _renderImage = (0, _render.renderImage)(dom),
-                _renderImage2 = _slicedToArray(_renderImage, 2),
-                refId = _renderImage2[0],
-                asset = _renderImage2[1];
+          var _renderImage = (0, _render.renderImage)(dom),
+              _renderImage2 = _slicedToArray(_renderImage, 2),
+              imageRefId = _renderImage2[0],
+              imageAsset = _renderImage2[1];
 
-            imageLayer.refId = refId;
-            assetList.push(asset);
-          }
-
+          imageLayer.refId = imageRefId;
+          assetList.push(imageAsset);
           break;
 
         case 4:
@@ -1038,17 +1089,17 @@ function () {
   }, {
     key: "hierarchyAll",
     value: function hierarchyAll(dom, assetList, fontList) {
-      var _this = this;
+      var _this2 = this;
 
       if (dom instanceof SVGTextElement || dom instanceof SVGImageElement) {
         return [this.hierarchy(dom, assetList, fontList)];
       } else {
         var results = [this.hierarchy(dom, assetList, fontList)];
         dom.querySelectorAll('image').forEach(function (dom) {
-          return results.unshift(_this.hierarchy(dom, assetList, fontList));
+          return results.unshift(_this2.hierarchy(dom, assetList, fontList));
         });
         dom.querySelectorAll('text').forEach(function (dom) {
-          return results.unshift(_this.hierarchy(dom, assetList, fontList));
+          return results.unshift(_this2.hierarchy(dom, assetList, fontList));
         });
         return results;
       }
@@ -1060,7 +1111,7 @@ function () {
 
 exports.LayerFactory = LayerFactory;
 
-},{"./easing":2,"./helper":3,"./render":7}],6:[function(require,module,exports){
+},{"./easing":2,"./helper":3,"./render":7,"uuid/v4":12}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1784,6 +1835,12 @@ function renderPlainGlyph(type, args) {
         a: 0
       },
       hd: false
+    }, {
+      ty: 'st',
+      c: {
+        k: [1, 1, 1, 1]
+      },
+      w: 1
     }, {
       ty: 'fl',
       c: {

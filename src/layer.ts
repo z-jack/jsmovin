@@ -1,12 +1,13 @@
-import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape } from './animation'
+import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape, PreCompLayer } from './animation'
 import { EasingFunction, EasingFactory } from './easing'
 import { renderText, render, renderImage, renderPlainGlyph } from './render';
-import { getBoundingBox } from './helper'
+import { getBoundingBox, getLeafNodes } from './helper'
+import uuid from 'uuid/v4';
 
 type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text'
 
 export class JSMovinLayer {
-    public readonly root: ShapeLayer | TextLayer | ImageLayer;
+    public readonly root: ShapeLayer | TextLayer | ImageLayer | PreCompLayer;
     private getDefaultProperty(key: string) {
         switch (key) {
             case 'a':
@@ -190,7 +191,7 @@ export class JSMovinLayer {
         return [base, k, index]
     }
 
-    constructor(ref: ShapeLayer | TextLayer | ImageLayer) {
+    constructor(ref: ShapeLayer | TextLayer | ImageLayer | PreCompLayer) {
         this.root = ref
     }
 
@@ -198,7 +199,7 @@ export class JSMovinLayer {
         this.root.op = 1
         let base: any, k: string | undefined, index: number | undefined
         [base, k, index] = this.commonPropertyMapping(key)
-        if (!base || !k || index === undefined) {
+        if (!k || index === undefined) {
             switch (key) {
                 case 'text':
                     if (this.root.ty == 5) {
@@ -229,7 +230,7 @@ export class JSMovinLayer {
         }
         let base: any, k: string | undefined, index: number | undefined
         [base, k, index] = this.commonPropertyMapping(key)
-        if (!base || !k || index === undefined) {
+        if (!k || index === undefined) {
             switch (key) {
                 case 'text':
                     if (this.root.ty == 5) {
@@ -357,33 +358,54 @@ export class LayerFactory {
 
     static hierarchy(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts) {
         const coordinate = getBoundingBox(dom)
-        let domType: 2 | 4 | 5;
+        let domType: 2 | 4 | 5 | 0;
         if (dom instanceof SVGTextElement) {
             domType = 5
         } else if (dom instanceof SVGImageElement) {
             domType = 2
+        } else if (dom instanceof SVGGElement) {
+            domType = 0
         } else {
             domType = 4
         }
-        const layer: ShapeLayer | ImageLayer | TextLayer = {
+        const layer: ShapeLayer | ImageLayer | TextLayer | PreCompLayer = {
             ty: domType,
             ddd: 0,
             sr: 1,
             ao: 0,
-            ks: this.generateTransform(coordinate),
+            ks: this.generateTransform(domType == 0 ? [0, 0, 0, 0] : coordinate),
             ip: 0,
             op: 1,
             st: 0,
             bm: 0
         }
         switch (domType) {
+            case 0:
+                const precompLayer = layer as PreCompLayer
+                const domLeaves = getLeafNodes(dom)
+                const preCompAsset: JSMovinLayer[] = []
+                const preCompRefId = uuid()
+                domLeaves.forEach(d => {
+                    if (d instanceof SVGGraphicsElement) {
+                        preCompAsset.unshift(this.hierarchy(d, assetList, fontList))
+                    }
+                })
+                preCompAsset.forEach(layer => {
+                    layer.root.op = 9e9
+                })
+                precompLayer.w = coordinate[0] + coordinate[2] + 1
+                precompLayer.h = coordinate[1] + coordinate[3] + 1
+                precompLayer.refId = preCompRefId
+                assetList.push({
+                    id: preCompRefId,
+                    layers: preCompAsset.map(layer => layer.root)
+                })
+                break
             case 2:
-                if (assetList) {
-                    const imageLayer = layer as ImageLayer
-                    const [refId, asset] = renderImage(dom as SVGImageElement)
-                    imageLayer.refId = refId
-                    assetList.push(asset)
-                }
+                const imageLayer = layer as ImageLayer
+                const [imageRefId, imageAsset] = renderImage(dom as SVGImageElement)
+                imageLayer.refId = imageRefId
+                assetList.push(imageAsset)
                 break
             case 4:
                 const shapeLayer = layer as ShapeLayer

@@ -27,6 +27,9 @@
           },
           {
             "$ref": "../layers/text.json"
+          },
+          {
+            "$ref": "../layers/preComp.json"
           }
         ],
         "type": "object"

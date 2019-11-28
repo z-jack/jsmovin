@@ -6894,9 +6894,255 @@ export type Keyframes = {
   [k: string]: any;
 }[];
 /**
+ * Type of layer: Precomp.
+ */
+export type Type33 = 0;
+/**
+ * Transform properties
+ */
+export type Transform6 = {
+  a?: AnchorPoint;
+  p?: Position;
+  s?: Scale;
+  r?: Rotation;
+  o?: Opacity;
+  px?: PositionX;
+  py?: PositionY;
+  pz?: PositionZ;
+  sk?: Skew;
+  sa?: SkewAxis;
+  [k: string]: any;
+};
+/**
+ * Auto-Orient along path AE property.
+ */
+export type AutoOrient5 = 0 | 1;
+/**
+ * Blend Mode
+ */
+export type BlendMode4 = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15;
+/**
+ * 3d layer flag
+ */
+export type DLayer5 = 0 | 1;
+/**
+ * Layer index in AE. Used for parenting and expressions.
+ */
+export type Index5 = number;
+/**
+ * Parsed layer name used as html class on SVG/HTML renderer
+ */
+export type Class5 = string;
+/**
+ * Parsed layer name used as html id on SVG/HTML renderer
+ */
+export type LayerHTMLID5 = string;
+/**
+ * In Point of layer. Sets the initial frame of the layer.
+ */
+export type InPoint6 = number;
+/**
+ * Out Point of layer. Sets the final frame of the layer.
+ */
+export type OutPoint6 = number;
+/**
+ * Start Time of layer. Sets the start time of the layer.
+ */
+export type StartTime5 = number;
+/**
+ * After Effects Layer Name. Used for expressions.
+ */
+export type Name34 = number;
+/**
+ * Boolean when layer has a mask. Will be deprecated in favor of checking masksProperties.
+ */
+export type HasMasks4 = number;
+/**
+ * List of Masks
+ */
+export type MasksProperties4 = {
+  inv?: Inverted;
+  nm?: Name2;
+  pt?: Points;
+  o?: Opacity1;
+  mode?: Mode;
+  [k: string]: any;
+}[];
+/**
+ * List of Effects
+ */
+export type Effects11 = (
+  | {
+      ix?: EffectIndex;
+      mn?: MatchName;
+      nm?: Name3;
+      ty?: Type1;
+      v?: Value;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex1;
+      mn?: MatchName1;
+      nm?: Name4;
+      ty?: Type2;
+      v?: Value1;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex2;
+      mn?: MatchName2;
+      nm?: Name5;
+      ty?: Type3;
+      v?: Value2;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex3;
+      mn?: MatchName3;
+      nm?: Name6;
+      ty?: Type4;
+      v?: Value3;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex4;
+      mn?: MatchName4;
+      nm?: Name7;
+      ty?: Type5;
+      v?: Value4;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex5;
+      mn?: MatchName5;
+      nm?: Name8;
+      ty?: Type6;
+      ef?: Effects;
+      /**
+       * Enabled AE property value
+       */
+      en?: number;
+      [k: string]: any;
+    }
+  | any
+  | {
+      ix?: EffectIndex6;
+      mn?: MatchName6;
+      nm?: Name9;
+      ty?: Type7;
+      v?: Value5;
+      [k: string]: any;
+    }
+  | {
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex7;
+      mn?: MatchName7;
+      nm?: Name10;
+      ty?: Type8;
+      v?: Value6;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex8;
+      mn?: MatchName8;
+      nm?: Name11;
+      ty?: Type9;
+      ef?: Effects1;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex9;
+      mn?: MatchName9;
+      nm?: Name12;
+      ty?: Type10;
+      ef?: Effects2;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex10;
+      mn?: MatchName10;
+      nm?: Name13;
+      ty?: Type11;
+      ef?: Effects3;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex11;
+      mn?: MatchName11;
+      nm?: Name14;
+      ty?: Type12;
+      ef?: Effects4;
+      [k: string]: any;
+    }
+  | {
+      ix?: EffectIndex12;
+      mn?: MatchName12;
+      nm?: Name15;
+      ty?: Type13;
+      ef?: Effects5;
+      [k: string]: any;
+    }
+)[];
+/**
+ * Layer Time Stretching
+ */
+export type Stretch5 = number;
+/**
+ * Layer Parent. Uses ind of parent.
+ */
+export type Parent5 = number;
+/**
+ * id pointing to the source composition defined on 'assets' object
+ */
+export type ReferenceID1 = string;
+/**
+ * Comp's Time remapping
+ */
+export type TimeRemapping = {
+  /**
+   * Property Value keyframes
+   */
+  k?: {
+    /**
+     * Start value of keyframe segment.
+     */
+    s?: number;
+    /**
+     * Start time of keyframe segment.
+     */
+    t?: number;
+    /**
+     * Bezier curve interpolation in value.
+     */
+    i?: {
+      /**
+       * bezier x axis
+       */
+      x?: number;
+      /**
+       * bezier y axis
+       */
+      y?: number;
+      [k: string]: any;
+    };
+    [k: string]: any;
+  }[];
+  /**
+   * Property Expression. An AE expression that modifies the value.
+   */
+  x?: string;
+  /**
+   * Property Index. Used for expressions.
+   */
+  ix?: string;
+  [k: string]: any;
+};
+/**
  * List of Composition Layers
  */
-export type Layers = (ShapeLayer | SolidLayer | ImageLayer | NullLayer | TextLayer)[];
+export type Layers = (ShapeLayer | SolidLayer | ImageLayer | NullLayer | TextLayer | PreCompLayer)[];
 /**
  * Image Height
  */
@@ -6924,7 +7170,7 @@ export type ID1 = string;
 /**
  * List of Precomp Layers
  */
-export type Layers1 = (ShapeLayer | SolidLayer | ImageLayer | NullLayer | TextLayer)[];
+export type Layers1 = (ShapeLayer | SolidLayer | ImageLayer | NullLayer | TextLayer | PreCompLayer)[];
 /**
  * source items that can be used in multiple places. Comps and Images for now.
  */
@@ -7346,6 +7592,28 @@ export interface TextProperties {
   s?: Size2;
   t?: Text;
   tr?: Tracking1;
+  [k: string]: any;
+}
+export interface PreCompLayer {
+  ty?: Type33;
+  ks?: Transform6;
+  ao?: AutoOrient5;
+  bm?: BlendMode4;
+  ddd?: DLayer5;
+  ind?: Index5;
+  cl?: Class5;
+  ln?: LayerHTMLID5;
+  ip?: InPoint6;
+  op?: OutPoint6;
+  st?: StartTime5;
+  nm?: Name34;
+  hasMask?: HasMasks4;
+  masksProperties?: MasksProperties4;
+  ef?: Effects11;
+  sr?: Stretch5;
+  parent?: Parent5;
+  refId?: ReferenceID1;
+  tm?: TimeRemapping;
   [k: string]: any;
 }
 export interface ImageAsset {

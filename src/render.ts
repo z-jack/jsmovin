@@ -298,6 +298,13 @@ export function renderPlainGlyph(type: 'rect' | 'ellipse', args: number[]): Grou
                 hd: false
             },
             {
+                ty: 'st',
+                c: {
+                    k: [1, 1, 1, 1]
+                },
+                w: 1
+            },
+            {
                 ty: 'fl',
                 c: {
                     k: [1, 1, 1, 1]
