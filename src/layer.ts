@@ -426,26 +426,4 @@ export class LayerFactory {
         const movinLayer = new JSMovinLayer(layer)
         return movinLayer
     }
-
-    /**
-     * Render a DOM that may be the mixture of text, images and other glyphs
-     * 
-     * The rendering order is fixed: glyphs(bottom) - images - text(top)
-     * @param dom SVG DOM
-     * @param assetList reference of assets
-     * @param fontList reference of fonts
-     */
-    static hierarchyAll(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts) {
-        if (dom instanceof SVGTextElement || dom instanceof SVGImageElement) {
-            return [this.hierarchy(dom, assetList, fontList)]
-        } else {
-            const results = [this.hierarchy(dom, assetList, fontList)]
-
-            dom.querySelectorAll('image').forEach(dom => results.unshift(this.hierarchy(dom, assetList, fontList)))
-
-            dom.querySelectorAll('text').forEach(dom => results.unshift(this.hierarchy(dom, assetList, fontList)))
-
-            return results
-        }
-    }
 }

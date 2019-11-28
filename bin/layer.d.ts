@@ -21,14 +21,5 @@ export declare class LayerFactory {
     static rect(left: number, top: number, width: number, height: number): JSMovinLayer;
     static ellipse(cx: number, cy: number, rx: number, ry: number): JSMovinLayer;
     static hierarchy(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts): JSMovinLayer;
-    /**
-     * Render a DOM that may be the mixture of text, images and other glyphs
-     *
-     * The rendering order is fixed: glyphs(bottom) - images - text(top)
-     * @param dom SVG DOM
-     * @param assetList reference of assets
-     * @param fontList reference of fonts
-     */
-    static hierarchyAll(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts): JSMovinLayer[];
 }
 export {};

@@ -344,27 +344,6 @@ function () {
       return layer;
     }
     /**
-     * add a series of graphical layers
-     * @param domOrLayers a SVG DOM may be the mixture of text, image and graphical elements or JSMovinLayers need to be inserted
-     */
-
-  }, {
-    key: "addComplexLayer",
-    value: function addComplexLayer(domOrLayers) {
-      var layers;
-
-      if (domOrLayers instanceof SVGGraphicsElement) {
-        layers = _layer.LayerFactory.hierarchyAll(domOrLayers, this.root.assets, this.root.fonts);
-      } else {
-        layers = domOrLayers;
-      }
-
-      this.root.layers = layers.map(function (layer) {
-        return layer.root;
-      }).concat(this.root.layers);
-      return layers;
-    }
-    /**
      * @param maskOrDom a SVG element DOM or JSMovinLayer to be the mask
      * @param layerRefOrIndex a JSMovinLayer or index of layer to be the masked layer
      * @param maskType which type of mask to use, use `MaskType.*` to specify
@@ -1076,33 +1055,6 @@ function () {
 
       var movinLayer = new JSMovinLayer(layer);
       return movinLayer;
-    }
-    /**
-     * Render a DOM that may be the mixture of text, images and other glyphs
-     * 
-     * The rendering order is fixed: glyphs(bottom) - images - text(top)
-     * @param dom SVG DOM
-     * @param assetList reference of assets
-     * @param fontList reference of fonts
-     */
-
-  }, {
-    key: "hierarchyAll",
-    value: function hierarchyAll(dom, assetList, fontList) {
-      var _this2 = this;
-
-      if (dom instanceof SVGTextElement || dom instanceof SVGImageElement) {
-        return [this.hierarchy(dom, assetList, fontList)];
-      } else {
-        var results = [this.hierarchy(dom, assetList, fontList)];
-        dom.querySelectorAll('image').forEach(function (dom) {
-          return results.unshift(_this2.hierarchy(dom, assetList, fontList));
-        });
-        dom.querySelectorAll('text').forEach(function (dom) {
-          return results.unshift(_this2.hierarchy(dom, assetList, fontList));
-        });
-        return results;
-      }
     }
   }]);
 

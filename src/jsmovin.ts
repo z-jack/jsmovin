@@ -57,21 +57,6 @@ export default class JSMovin {
     }
 
     /**
-     * add a series of graphical layers
-     * @param domOrLayers a SVG DOM may be the mixture of text, image and graphical elements or JSMovinLayers need to be inserted
-     */
-    addComplexLayer(domOrLayers: SVGGraphicsElement | JSMovinLayer[]): JSMovinLayer[] {
-        let layers: JSMovinLayer[]
-        if (domOrLayers instanceof SVGGraphicsElement) {
-            layers = LayerFactory.hierarchyAll(domOrLayers, this.root.assets!, this.root.fonts!)
-        } else {
-            layers = domOrLayers
-        }
-        this.root.layers = layers.map(layer => layer.root).concat(this.root.layers!)
-        return layers
-    }
-
-    /**
      * @param maskOrDom a SVG element DOM or JSMovinLayer to be the mask
      * @param layerRefOrIndex a JSMovinLayer or index of layer to be the masked layer
      * @param maskType which type of mask to use, use `MaskType.*` to specify
