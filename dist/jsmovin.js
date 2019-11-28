@@ -197,6 +197,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.calculateBaseTransform = calculateBaseTransform;
 exports.getBoundingBox = getBoundingBox;
 exports.getLeafNodes = getLeafNodes;
+exports.getBaselineHeight = getBaselineHeight;
 
 function calculateBaseTransform(dom, root) {
   // https://github.com/dagrejs/dagre-d3/issues/202
@@ -238,6 +239,16 @@ function getLeafNodes(master) {
     return true;
   });
   return leafNodes;
+}
+
+function getBaselineHeight(dom) {
+  var canvas = document.createElement('canvas');
+  var ctx = canvas.getContext('2d');
+  var computedStyle = getComputedStyle(dom);
+  var fontSettings = computedStyle.font;
+  ctx.font = fontSettings;
+  var textMetrix = ctx.measureText('ypfgj█');
+  return textMetrix.actualBoundingBoxDescent || 0;
 }
 
 },{}],4:[function(require,module,exports){
@@ -1049,7 +1060,8 @@ function () {
         case 5:
           var textLayer = layer; // move textLayer's anchor to left-top
 
-          textLayer.ks.a.k = [0, -coordinate[3], 0];
+          var baseLineHeight = (0, _helper.getBaselineHeight)(dom);
+          textLayer.ks.a.k = [0, baseLineHeight - coordinate[3], 0];
 
           var _renderText = (0, _render.renderText)(dom, fontList),
               _renderText2 = _slicedToArray(_renderText, 2),

@@ -1,7 +1,7 @@
 import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape, PreCompLayer } from './animation'
 import { EasingFunction, EasingFactory } from './easing'
 import { renderText, render, renderImage, renderPlainGlyph } from './render';
-import { getBoundingBox, getLeafNodes } from './helper'
+import { getBoundingBox, getLeafNodes, getBaselineHeight } from './helper'
 import uuid from 'uuid/v4';
 
 type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text'
@@ -419,7 +419,8 @@ export class LayerFactory {
                 const textLayer = layer as TextLayer
 
                 // move textLayer's anchor to left-top
-                textLayer.ks!.a!.k = [0, -coordinate[3], 0]
+                const baseLineHeight = getBaselineHeight(dom as SVGTextElement)
+                textLayer.ks!.a!.k = [0, baseLineHeight - coordinate[3], 0]
 
                 const [textData, font] = renderText(dom as SVGTextElement, fontList)
                 textLayer.t = textData

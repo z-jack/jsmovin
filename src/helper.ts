@@ -38,3 +38,14 @@ export function getLeafNodes(master: SVGGraphicsElement) {
     });
     return leafNodes;
 }
+
+export function getBaselineHeight(dom: SVGTextElement) {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')!
+    const computedStyle = getComputedStyle(dom)
+    const fontSettings = computedStyle.font
+
+    ctx.font = fontSettings
+    const textMetrix = ctx.measureText('ypfgj█')
+    return textMetrix.actualBoundingBoxDescent || 0
+}
