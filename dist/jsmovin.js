@@ -198,6 +198,8 @@ exports.calculateBaseTransform = calculateBaseTransform;
 exports.getBoundingBox = getBoundingBox;
 exports.getLeafNodes = getLeafNodes;
 exports.getBaselineHeight = getBaselineHeight;
+exports.encodeLineCap = encodeLineCap;
+exports.encodeLineJoin = encodeLineJoin;
 
 function calculateBaseTransform(dom, root) {
   // https://github.com/dagrejs/dagre-d3/issues/202
@@ -249,6 +251,32 @@ function getBaselineHeight(dom) {
   ctx.font = fontSettings;
   var textMetrix = ctx.measureText('ypfgj█');
   return textMetrix.actualBoundingBoxDescent || 0;
+}
+
+function encodeLineCap(type) {
+  switch (type) {
+    case 'square':
+      return 3;
+
+    case 'butt':
+      return 1;
+
+    default:
+      return 2;
+  }
+}
+
+function encodeLineJoin(type) {
+  switch (type) {
+    case 'miter':
+      return 1;
+
+    case 'bevel':
+      return 3;
+
+    default:
+      return 2;
+  }
 }
 
 },{}],4:[function(require,module,exports){
@@ -674,16 +702,18 @@ function () {
       if (find) return find;
       var hasTransform = this.findPropertyConfig('tr');
 
+      var config = _objectSpread({
+        ty: key
+      }, this.getDefaultProperty(key));
+
       if (hasTransform) {
         var groupShapes = this.root.shapes[0].it;
-        groupShapes.splice(groupShapes.length - 1, 0, _objectSpread({
-          ty: key
-        }, this.getDefaultProperty(key)));
+        groupShapes.splice(groupShapes.length - 1, 0, config);
       } else {
-        this.root.shapes[0].it.push(_objectSpread({
-          ty: key
-        }, this.getDefaultProperty(key)));
+        this.root.shapes[0].it.push(config);
       }
+
+      return config;
     }
   }, {
     key: "commonPropertyMapping",
@@ -780,6 +810,30 @@ function () {
           k = 'ks';
           index = -1;
           break;
+
+        case 'fillOpacity':
+          base = this.findPropertyConfig('fl');
+          k = 'o';
+          index = -1;
+          break;
+
+        case 'strokeOpacity':
+          base = this.findPropertyConfig('st');
+          k = 'o';
+          index = -1;
+          break;
+
+        case 'lineCap':
+          base = this.findPropertyConfig('st');
+          k = 'lc';
+          index = -1;
+          break;
+
+        case 'lineJoin':
+          base = this.findPropertyConfig('st');
+          k = 'lj';
+          index = -1;
+          break;
       }
 
       return [base, k, index];
@@ -824,6 +878,12 @@ function () {
             console.error(key, value);
             throw new Error('Not a valid key.');
         }
+      }
+
+      if (key === 'lineCap') {
+        value = (0, _helper.encodeLineCap)(value);
+      } else if (key === 'lineJoin') {
+        value = (0, _helper.encodeLineJoin)(value);
       }
 
       if (base && k && index !== undefined) {
@@ -880,6 +940,14 @@ function () {
             console.error(key, startFrame, endFrame, startValue, endValue, easing);
             throw new Error('Not a valid key.');
         }
+      }
+
+      if (key === 'lineCap') {
+        startValue = (0, _helper.encodeLineCap)(startValue);
+        endValue = (0, _helper.encodeLineCap)(endValue);
+      } else if (key === 'lineJoin') {
+        startValue = (0, _helper.encodeLineJoin)(startValue);
+        endValue = (0, _helper.encodeLineJoin)(endValue);
       }
 
       if (base && k && index !== undefined) {
@@ -1442,32 +1510,6 @@ function render(dom, baseDom) {
   }
 }
 
-function encodeLineCap(type) {
-  switch (type) {
-    case 'square':
-      return 3;
-
-    case 'butt':
-      return 1;
-
-    default:
-      return 2;
-  }
-}
-
-function encodeLineJoin(type) {
-  switch (type) {
-    case 'miter':
-      return 1;
-
-    case 'bevel':
-      return 3;
-
-    default:
-      return 2;
-  }
-}
-
 function addVisualEncodings(items, styles, dom, baseDom) {
   if (styles.stroke && styles.stroke !== 'none') {
     items.push({
@@ -1483,8 +1525,8 @@ function addVisualEncodings(items, styles, dom, baseDom) {
       w: {
         k: parseFloat(styles.strokeWidth || '1')
       },
-      lc: encodeLineCap(styles.strokeLinecap),
-      lj: encodeLineJoin(styles.strokeLinejoin)
+      lc: (0, _helper.encodeLineCap)(styles.strokeLinecap),
+      lj: (0, _helper.encodeLineJoin)(styles.strokeLinejoin)
     });
   }
 
@@ -1821,6 +1863,15 @@ function renderPlainGlyph(type, args) {
       },
       w: {
         k: 1
+      },
+      o: {
+        k: 100
+      },
+      lc: {
+        k: (0, _helper.encodeLineCap)('butt')
+      },
+      lj: {
+        k: (0, _helper.encodeLineJoin)('miter')
       }
     }, {
       ty: 'fl',

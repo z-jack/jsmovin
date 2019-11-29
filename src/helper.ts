@@ -49,3 +49,25 @@ export function getBaselineHeight(dom: SVGTextElement) {
     const textMetrix = ctx.measureText('ypfgj█')
     return textMetrix.actualBoundingBoxDescent || 0
 }
+
+export function encodeLineCap(type?: string | null): number {
+    switch (type) {
+        case 'square':
+            return 3
+        case 'butt':
+            return 1
+        default:
+            return 2
+    }
+}
+
+export function encodeLineJoin(type?: string | null): number {
+    switch (type) {
+        case 'miter':
+            return 1
+        case 'bevel':
+            return 3
+        default:
+            return 2
+    }
+}

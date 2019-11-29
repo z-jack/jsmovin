@@ -2,7 +2,7 @@ import { GroupShape, TextData, ReferenceID, PathShape, FillShape, StrokeShape, T
 import { PathMaker } from './path'
 import uuid from 'uuid/v4'
 import { parseSVG, MoveToCommand, LineToCommand, HorizontalLineToCommand, VerticalLineToCommand, CurveToCommand, QuadraticCurveToCommand, EllipticalArcCommand } from 'svg-path-parser'
-import { calculateBaseTransform } from './helper'
+import { calculateBaseTransform, encodeLineJoin, encodeLineCap } from './helper'
 
 
 export function render(dom: SVGGraphicsElement, baseDom?: SVGGraphicsElement): GroupShape[] {
@@ -12,28 +12,6 @@ export function render(dom: SVGGraphicsElement, baseDom?: SVGGraphicsElement): G
         return renderGroup(dom, baseDom)
     } else {
         return renderGlyph(dom, baseDom)
-    }
-}
-
-function encodeLineCap(type?: string | null): number {
-    switch (type) {
-        case 'square':
-            return 3
-        case 'butt':
-            return 1
-        default:
-            return 2
-    }
-}
-
-function encodeLineJoin(type?: string | null): number {
-    switch (type) {
-        case 'miter':
-            return 1
-        case 'bevel':
-            return 3
-        default:
-            return 2
     }
 }
 
@@ -304,6 +282,15 @@ export function renderPlainGlyph(type: 'rect' | 'ellipse', args: number[]): Grou
                 },
                 w: {
                     k: 1
+                },
+                o: {
+                    k: 100
+                },
+                lc: {
+                    k: encodeLineCap('butt')
+                },
+                lj: {
+                    k: encodeLineJoin('miter')
                 }
             },
             {

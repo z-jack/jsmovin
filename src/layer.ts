@@ -1,10 +1,10 @@
 import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape, PreCompLayer } from './animation'
 import { EasingFunction, EasingFactory } from './easing'
 import { renderText, render, renderImage, renderPlainGlyph } from './render';
-import { getBoundingBox, getLeafNodes, getBaselineHeight } from './helper'
+import { getBoundingBox, getLeafNodes, getBaselineHeight, encodeLineCap, encodeLineJoin } from './helper'
 import uuid from 'uuid/v4';
 
-type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text'
+type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text' | 'fillOpacity' | 'strokeOpacity' | 'lineCap' | 'lineJoin'
 
 export class JSMovinLayer {
     public readonly root: ShapeLayer | TextLayer | ImageLayer | PreCompLayer;
@@ -96,18 +96,17 @@ export class JSMovinLayer {
         const find = this.findPropertyConfig(key)
         if (find) return find
         const hasTransform = this.findPropertyConfig('tr')
+        const config = {
+            ty: key,
+            ...this.getDefaultProperty(key) as object
+        }
         if (hasTransform) {
             const groupShapes = ((this.root as ShapeLayer).shapes![0] as GroupShape).it!
-            groupShapes.splice(groupShapes.length - 1, 0, {
-                ty: key,
-                ...this.getDefaultProperty(key) as object
-            })
+            groupShapes.splice(groupShapes.length - 1, 0, config)
         } else {
-            ((this.root as ShapeLayer).shapes![0] as GroupShape).it!.push({
-                ty: key,
-                ...this.getDefaultProperty(key) as object
-            })
+            ((this.root as ShapeLayer).shapes![0] as GroupShape).it!.push(config)
         }
+        return config
     }
     private commonPropertyMapping(key: SetableKeys): [any, string | undefined, number | undefined] {
         let base: any, k: string | undefined, index: number | undefined
@@ -187,6 +186,26 @@ export class JSMovinLayer {
                 k = 'ks'
                 index = -1
                 break
+            case 'fillOpacity':
+                base = this.findPropertyConfig('fl')
+                k = 'o'
+                index = -1
+                break
+            case 'strokeOpacity':
+                base = this.findPropertyConfig('st')
+                k = 'o'
+                index = -1
+                break
+            case 'lineCap':
+                base = this.findPropertyConfig('st')
+                k = 'lc'
+                index = -1
+                break
+            case 'lineJoin':
+                base = this.findPropertyConfig('st')
+                k = 'lj'
+                index = -1
+                break
         }
         return [base, k, index]
     }
@@ -213,6 +232,11 @@ export class JSMovinLayer {
                     console.error(key, value)
                     throw new Error('Not a valid key.')
             }
+        }
+        if (key === 'lineCap') {
+            value = encodeLineCap(value)
+        } else if (key === 'lineJoin') {
+            value = encodeLineJoin(value)
         }
         if (base && k && index !== undefined) {
             this.convertToStaticProperty(base, k)
@@ -254,6 +278,13 @@ export class JSMovinLayer {
                     console.error(key, startFrame, endFrame, startValue, endValue, easing)
                     throw new Error('Not a valid key.')
             }
+        }
+        if (key === 'lineCap') {
+            startValue = encodeLineCap(startValue)
+            endValue = encodeLineCap(endValue)
+        } else if (key === 'lineJoin') {
+            startValue = encodeLineJoin(startValue)
+            endValue = encodeLineJoin(endValue)
         }
         if (base && k && index !== undefined) {
             this.convertToAnimatableProperty(base, k)
