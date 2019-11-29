@@ -84,7 +84,7 @@ export class JSMovinLayer {
         if (idx >= 0) {
             readyToSet.s[idx] = value
         } else {
-            readyToSet.s = wrap ? [value] : value
+            readyToSet.s = wrap && !(value instanceof Array) ? [value] : value
         }
     }
     private findPropertyConfig(key: string) {
