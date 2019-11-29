@@ -302,7 +302,9 @@ export function renderPlainGlyph(type: 'rect' | 'ellipse', args: number[]): Grou
                 c: {
                     k: [1, 1, 1, 1]
                 },
-                w: 1
+                w: {
+                    k: 1
+                }
             },
             {
                 ty: 'fl',

@@ -624,6 +624,7 @@ function () {
       var time = arguments.length > 3 ? arguments[3] : undefined;
       var value = arguments.length > 4 ? arguments[4] : undefined;
       var easing = arguments.length > 5 ? arguments[5] : undefined;
+      var wrap = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : true;
       var existKeyframe = transform[key].k.filter(function (x) {
         return x.t == time;
       });
@@ -656,7 +657,7 @@ function () {
       if (idx >= 0) {
         readyToSet.s[idx] = value;
       } else {
-        readyToSet.s = [value];
+        readyToSet.s = wrap ? [value] : value;
       }
     }
   }, {
@@ -843,7 +844,10 @@ function () {
         easing = _easing.EasingFactory.linear();
       }
 
-      var base, k, index;
+      var base,
+          k,
+          index,
+          wrap = true;
 
       var _this$commonPropertyM3 = this.commonPropertyMapping(key);
 
@@ -857,16 +861,17 @@ function () {
         switch (key) {
           case 'text':
             if (this.root.ty == 5) {
-              base = this.root.t.d;
-              var textProp = base.k[0].s;
+              base = this.root.t;
+              var textProp = base.d.k[0].s;
               var tmpStartValue = JSON.parse(JSON.stringify(textProp));
               var tmpEndValue = JSON.parse(JSON.stringify(textProp));
               tmpStartValue.t = startValue;
               tmpEndValue.t = endValue;
               startValue = tmpStartValue;
               endValue = tmpEndValue;
-              k = 'k';
+              k = 'd';
               index = -1;
+              wrap = false;
             }
 
             break;
@@ -879,8 +884,8 @@ function () {
 
       if (base && k && index !== undefined) {
         this.convertToAnimatableProperty(base, k);
-        this.addKeyframe(base, k, index, startFrame, startValue, easing);
-        this.addKeyframe(base, k, index, endFrame, endValue);
+        this.addKeyframe(base, k, index, startFrame, startValue, easing, wrap);
+        this.addKeyframe(base, k, index, endFrame, endValue, undefined, wrap);
       }
     }
   }]);
@@ -1814,7 +1819,9 @@ function renderPlainGlyph(type, args) {
       c: {
         k: [1, 1, 1, 1]
       },
-      w: 1
+      w: {
+        k: 1
+      }
     }, {
       ty: 'fl',
       c: {

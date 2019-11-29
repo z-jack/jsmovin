@@ -58,7 +58,7 @@ export class JSMovinLayer {
             }
         }
     }
-    private addKeyframe(transform: any, key: string, idx: number = -1, time: number, value: Array<any>, easing?: EasingFunction) {
+    private addKeyframe(transform: any, key: string, idx: number = -1, time: number, value: Array<any>, easing?: EasingFunction, wrap: boolean = true) {
         const existKeyframe = transform[key].k.filter((x: any) => x.t == time) as any[]
         let readyToSet;
         if (existKeyframe.length) {
@@ -84,7 +84,7 @@ export class JSMovinLayer {
         if (idx >= 0) {
             readyToSet.s[idx] = value
         } else {
-            readyToSet.s = [value]
+            readyToSet.s = wrap ? [value] : value
         }
     }
     private findPropertyConfig(key: string) {
@@ -231,22 +231,23 @@ export class JSMovinLayer {
         if (!easing) {
             easing = EasingFactory.linear()
         }
-        let base: any, k: string | undefined, index: number | undefined
+        let base: any, k: string | undefined, index: number | undefined, wrap = true;
         [base, k, index] = this.commonPropertyMapping(key)
         if (!k || index === undefined) {
             switch (key) {
                 case 'text':
                     if (this.root.ty == 5) {
-                        base = this.root.t!.d
-                        let textProp = base.k[0].s
+                        base = this.root.t
+                        let textProp = base.d.k[0].s
                         let tmpStartValue = JSON.parse(JSON.stringify(textProp))
                         let tmpEndValue = JSON.parse(JSON.stringify(textProp))
                         tmpStartValue.t = startValue
                         tmpEndValue.t = endValue
                         startValue = tmpStartValue
                         endValue = tmpEndValue
-                        k = 'k'
+                        k = 'd'
                         index = -1
+                        wrap = false
                     }
                     break
                 default:
@@ -256,8 +257,8 @@ export class JSMovinLayer {
         }
         if (base && k && index !== undefined) {
             this.convertToAnimatableProperty(base, k)
-            this.addKeyframe(base, k, index, startFrame, startValue, easing)
-            this.addKeyframe(base, k, index, endFrame, endValue)
+            this.addKeyframe(base, k, index, startFrame, startValue, easing, wrap)
+            this.addKeyframe(base, k, index, endFrame, endValue, undefined, wrap)
         }
     }
 }
