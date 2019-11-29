@@ -638,7 +638,7 @@ function () {
   }, {
     key: "convertToAnimatableProperty",
     value: function convertToAnimatableProperty(transform, key) {
-      if (!transform[key] || transform[key].a == 0) {
+      if (!transform[key] || !transform[key].a) {
         transform[key] = {
           a: 1,
           k: []
@@ -685,7 +685,7 @@ function () {
       if (idx >= 0) {
         readyToSet.s[idx] = value;
       } else {
-        readyToSet.s = wrap ? [value] : value;
+        readyToSet.s = wrap && !(value instanceof Array) ? [value] : value;
       }
     }
   }, {

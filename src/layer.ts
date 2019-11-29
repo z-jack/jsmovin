@@ -22,13 +22,13 @@ export class JSMovinLayer {
             case 'tm':
                 return {
                     s: {
-                        k: [0]
+                        k: 0
                     },
                     e: {
-                        k: [100]
+                        k: 100
                     },
                     o: {
-                        k: [0]
+                        k: 0
                     }
                 }
             default:
@@ -51,7 +51,7 @@ export class JSMovinLayer {
         }
     }
     private convertToAnimatableProperty(transform: any, key: string) {
-        if (!transform[key] || transform[key].a == 0) {
+        if (!transform[key] || !transform[key].a) {
             transform[key] = {
                 a: 1,
                 k: []
