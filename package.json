@@ -11,9 +11,10 @@
     "build": "npm run build:types && npm run build:js && npm run build:bundle",
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir bin --extensions \".ts,.tsx\" --source-maps inline && cd src && copy \"*.d.ts\" \"../bin/\"",
-    "build:bundle": "browserify bin/browserEntry.js -o dist/jsmovin.js && uglifyjs dist/jsmovin.js -c -m --source-map -o dist/jsmovin.min.js"
+    "build:bundle": "browserify bin/browserEntry.js -o dist/jsmovin.js && uglifyjs dist/jsmovin.js -c -m --source-map -o dist/jsmovin.min.js",
+    "build:add": "git add ."
   },
-  "precommit": ["spec", "build"],
+  "precommit": ["spec", "build", "build:add"],
   "devDependencies": {
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",

@@ -603,13 +603,13 @@ function () {
         case 'tm':
           return {
             s: {
-              k: [0]
+              k: 0
             },
             e: {
-              k: [100]
+              k: 100
             },
             o: {
-              k: [0]
+              k: 0
             }
           };
 
