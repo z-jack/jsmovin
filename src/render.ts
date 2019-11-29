@@ -286,12 +286,8 @@ export function renderPlainGlyph(type: 'rect' | 'ellipse', args: number[]): Grou
                 o: {
                     k: 100
                 },
-                lc: {
-                    k: encodeLineCap('butt')
-                },
-                lj: {
-                    k: encodeLineJoin('miter')
-                }
+                lc: encodeLineCap('butt'),
+                lj: encodeLineJoin('miter')
             },
             {
                 ty: 'fl',

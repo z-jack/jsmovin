@@ -1,6 +1,6 @@
 {
   "name": "jsmovin",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "To generate \"AE bodymovin\" JSON format using JavaScript.",
   "repository": "github:z-jack/jsmovin",
   "author": "z-jack <emailjiong@126.com>",
@@ -14,7 +14,11 @@
     "build:bundle": "browserify bin/browserEntry.js -o dist/jsmovin.js && uglifyjs dist/jsmovin.js -c -m --source-map -o dist/jsmovin.min.js",
     "build:add": "git add ."
   },
-  "precommit": ["spec", "build", "build:add"],
+  "precommit": [
+    "spec",
+    "build",
+    "build:add"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",

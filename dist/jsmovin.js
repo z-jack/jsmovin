@@ -822,18 +822,6 @@ function () {
           k = 'o';
           index = -1;
           break;
-
-        case 'lineCap':
-          base = this.findPropertyConfig('st');
-          k = 'lc';
-          index = -1;
-          break;
-
-        case 'lineJoin':
-          base = this.findPropertyConfig('st');
-          k = 'lj';
-          index = -1;
-          break;
       }
 
       return [base, k, index];
@@ -878,12 +866,6 @@ function () {
             console.error(key, value);
             throw new Error('Not a valid key.');
         }
-      }
-
-      if (key === 'lineCap') {
-        value = (0, _helper.encodeLineCap)(value);
-      } else if (key === 'lineJoin') {
-        value = (0, _helper.encodeLineJoin)(value);
       }
 
       if (base && k && index !== undefined) {
@@ -940,14 +922,6 @@ function () {
             console.error(key, startFrame, endFrame, startValue, endValue, easing);
             throw new Error('Not a valid key.');
         }
-      }
-
-      if (key === 'lineCap') {
-        startValue = (0, _helper.encodeLineCap)(startValue);
-        endValue = (0, _helper.encodeLineCap)(endValue);
-      } else if (key === 'lineJoin') {
-        startValue = (0, _helper.encodeLineJoin)(startValue);
-        endValue = (0, _helper.encodeLineJoin)(endValue);
       }
 
       if (base && k && index !== undefined) {
@@ -1867,12 +1841,8 @@ function renderPlainGlyph(type, args) {
       o: {
         k: 100
       },
-      lc: {
-        k: (0, _helper.encodeLineCap)('butt')
-      },
-      lj: {
-        k: (0, _helper.encodeLineJoin)('miter')
-      }
+      lc: (0, _helper.encodeLineCap)('butt'),
+      lj: (0, _helper.encodeLineJoin)('miter')
     }, {
       ty: 'fl',
       c: {
