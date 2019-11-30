@@ -1,3 +1,4 @@
+import { ReferenceID } from "./animation";
 import { JSMovinLayer } from './layer';
 export default class JSMovin {
     private root;
@@ -27,6 +28,10 @@ export default class JSMovin {
      * @param maskType which type of mask to use, use `MaskType.*` to specify
      */
     addMask(maskOrDom: JSMovinLayer | SVGGraphicsElement, layerRefOrIndex: number | JSMovinLayer, maskType?: MaskType): JSMovinLayer;
+    /**
+     * @param layerRefs a set of layers to be packed as an asset
+     */
+    makeAsset(layerRefs: JSMovinLayer[]): ReferenceID;
     /**
      * @param layerRefOrIndex a JSMovinLayer or index of layer to remove
      */

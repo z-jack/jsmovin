@@ -307,9 +307,13 @@ exports.MaskType = exports["default"] = void 0;
 
 var _layer = require("./layer");
 
+var _v = _interopRequireDefault(require("uuid/v4"));
+
 var _easing = require("./easing");
 
 var _path = require("./path");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -428,6 +432,58 @@ function () {
       return maskLayer;
     }
     /**
+     * @param layerRefs a set of layers to be packed as an asset
+     */
+
+  }, {
+    key: "makeAsset",
+    value: function makeAsset(layerRefs) {
+      var _this = this;
+
+      layerRefs.forEach(function (layer, innerIndex) {
+        if (layer.root.tt == 1) {
+          var layerIndex = _this.root.layers.indexOf(layer.root);
+
+          if (layerIndex > 0) {
+            var mask = _this.root.layers[layerIndex - 1];
+
+            if (innerIndex == 0 || layerRefs[innerIndex - 1].root != mask) {
+              layerRefs.splice(innerIndex, 0, new _layer.JSMovinLayer(mask));
+            }
+          }
+        }
+      });
+      layerRefs = layerRefs.map(function (layer, innerIndex) {
+        return {
+          layer: layer,
+          innerIndex: innerIndex
+        };
+      }).sort(function (a, b) {
+        var aIndex = _this.root.layers.indexOf(a.layer.root);
+
+        var bIndex = _this.root.layers.indexOf(b.layer.root);
+
+        return aIndex - bIndex || a.innerIndex - b.innerIndex;
+      }).map(function (layerWrapper) {
+        return layerWrapper.layer;
+      });
+      layerRefs.forEach(function (layer) {
+        var layerIndex = _this.root.layers.indexOf(layer.root);
+
+        if (layerIndex > 0) {
+          _this.root.layers.splice(layerIndex, 1);
+        }
+      });
+      var refId = (0, _v["default"])();
+      this.root.assets.push({
+        id: refId,
+        layers: layerRefs.map(function (layerRef) {
+          return layerRef.root;
+        })
+      });
+      return refId;
+    }
+    /**
      * @param layerRefOrIndex a JSMovinLayer or index of layer to remove
      */
 
@@ -534,7 +590,7 @@ exports.MaskType = MaskType;
   MaskType[MaskType["InvertLuma"] = 4] = "InvertLuma";
 })(MaskType || (exports.MaskType = MaskType = {}));
 
-},{"./easing":2,"./layer":5,"./path":6}],5:[function(require,module,exports){
+},{"./easing":2,"./layer":5,"./path":6,"uuid/v4":12}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -1,5 +1,6 @@
-import { Animation, ShapeLayer } from "./animation";
+import { Animation, ShapeLayer, ReferenceID } from "./animation";
 import { JSMovinLayer, LayerFactory } from './layer'
+import uuid from 'uuid/v4';
 
 export default class JSMovin {
     private root: Animation;
@@ -83,6 +84,45 @@ export default class JSMovin {
         }
         this.root.layers!.splice(layerIndex, 0, maskLayer.root)
         return maskLayer
+    }
+
+    /**
+     * @param layerRefs a set of layers to be packed as an asset
+     */
+    makeAsset(layerRefs: JSMovinLayer[]): ReferenceID {
+        layerRefs.forEach((layer, innerIndex) => {
+            if (layer.root.tt == 1) {
+                const layerIndex = this.root.layers!.indexOf(layer.root)
+                if (layerIndex > 0) {
+                    const mask = this.root.layers![layerIndex - 1]
+                    if (innerIndex == 0 || layerRefs[innerIndex - 1].root != mask) {
+                        layerRefs.splice(innerIndex, 0, new JSMovinLayer(mask as ShapeLayer))
+                    }
+                }
+            }
+        })
+        layerRefs = layerRefs.map((layer, innerIndex) => {
+            return {
+                layer,
+                innerIndex
+            }
+        }).sort((a, b) => {
+            const aIndex = this.root.layers!.indexOf(a.layer.root)
+            const bIndex = this.root.layers!.indexOf(b.layer.root)
+            return (aIndex - bIndex) || (a.innerIndex - b.innerIndex)
+        }).map(layerWrapper => layerWrapper.layer)
+        layerRefs.forEach(layer => {
+            const layerIndex = this.root.layers!.indexOf(layer.root)
+            if (layerIndex > 0) {
+                this.root.layers!.splice(layerIndex, 1)
+            }
+        })
+        const refId = uuid()
+        this.root.assets!.push({
+            id: refId,
+            layers: layerRefs.map(layerRef => layerRef.root)
+        })
+        return refId
     }
 
     /**
