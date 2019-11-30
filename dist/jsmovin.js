@@ -1141,27 +1141,38 @@ function () {
 
       switch (domType) {
         case 0:
-          var precompLayer = layer;
           var domLeaves = (0, _helper.getLeafNodes)(dom);
-          var preCompAsset = [];
-          var preCompRefId = (0, _v["default"])();
-          domLeaves.forEach(function (d) {
-            if (d instanceof SVGGraphicsElement && !(d instanceof SVGGElement)) {
-              preCompAsset.unshift(_this.hierarchy(d, assetList, fontList));
-            }
-          });
-          preCompAsset.forEach(function (layer) {
-            layer.root.op = 9e9;
-          });
-          precompLayer.w = coordinate[0] + coordinate[2] + 1;
-          precompLayer.h = coordinate[1] + coordinate[3] + 1;
-          precompLayer.refId = preCompRefId;
-          assetList.push({
-            id: preCompRefId,
-            layers: preCompAsset.map(function (layer) {
-              return layer.root;
-            })
-          });
+
+          if (domLeaves.filter(function (dom) {
+            return dom instanceof SVGTextElement || dom instanceof SVGImageElement;
+          }).length) {
+            var precompLayer = layer;
+            var preCompAsset = [];
+            var preCompRefId = (0, _v["default"])();
+            domLeaves.forEach(function (d) {
+              if (d instanceof SVGGraphicsElement && !(d instanceof SVGGElement)) {
+                preCompAsset.unshift(_this.hierarchy(d, assetList, fontList));
+              }
+            });
+            preCompAsset.forEach(function (layer) {
+              layer.root.op = 9e9;
+            });
+            precompLayer.w = coordinate[0] + coordinate[2] + 1;
+            precompLayer.h = coordinate[1] + coordinate[3] + 1;
+            precompLayer.refId = preCompRefId;
+            assetList.push({
+              id: preCompRefId,
+              layers: preCompAsset.map(function (layer) {
+                return layer.root;
+              })
+            });
+          } else {
+            var _shapeLayer = layer;
+            _shapeLayer.ty = 4;
+            _shapeLayer.ks = this.generateTransform(coordinate);
+            _shapeLayer.shapes = (0, _render.render)(dom);
+          }
+
           break;
 
         case 2:

@@ -412,25 +412,32 @@ export class LayerFactory {
         }
         switch (domType) {
             case 0:
-                const precompLayer = layer as PreCompLayer
                 const domLeaves = getLeafNodes(dom)
-                const preCompAsset: JSMovinLayer[] = []
-                const preCompRefId = uuid()
-                domLeaves.forEach(d => {
-                    if (d instanceof SVGGraphicsElement && !(d instanceof SVGGElement)) {
-                        preCompAsset.unshift(this.hierarchy(d, assetList, fontList))
-                    }
-                })
-                preCompAsset.forEach(layer => {
-                    layer.root.op = 9e9
-                })
-                precompLayer.w = coordinate[0] + coordinate[2] + 1
-                precompLayer.h = coordinate[1] + coordinate[3] + 1
-                precompLayer.refId = preCompRefId
-                assetList.push({
-                    id: preCompRefId,
-                    layers: preCompAsset.map(layer => layer.root)
-                })
+                if (domLeaves.filter(dom => dom instanceof SVGTextElement || dom instanceof SVGImageElement).length) {
+                    const precompLayer = layer as PreCompLayer
+                    const preCompAsset: JSMovinLayer[] = []
+                    const preCompRefId = uuid()
+                    domLeaves.forEach(d => {
+                        if (d instanceof SVGGraphicsElement && !(d instanceof SVGGElement)) {
+                            preCompAsset.unshift(this.hierarchy(d, assetList, fontList))
+                        }
+                    })
+                    preCompAsset.forEach(layer => {
+                        layer.root.op = 9e9
+                    })
+                    precompLayer.w = coordinate[0] + coordinate[2] + 1
+                    precompLayer.h = coordinate[1] + coordinate[3] + 1
+                    precompLayer.refId = preCompRefId
+                    assetList.push({
+                        id: preCompRefId,
+                        layers: preCompAsset.map(layer => layer.root)
+                    })
+                } else {
+                    const shapeLayer = layer as ShapeLayer
+                    shapeLayer.ty = 4
+                    shapeLayer.ks = this.generateTransform(coordinate)
+                    shapeLayer.shapes = render(dom)
+                }
                 break
             case 2:
                 const imageLayer = layer as ImageLayer
