@@ -19,9 +19,9 @@ export default class JSMovin {
     setViewport(width: number, height: number): void;
     /**
      * add a simple graphical layer
-     * @param domOrLayer a SVG element DOM or JSMovinLayer needs to be inserted
+     * @param domLayerOrAssetId a SVG element DOM or JSMovinLayer or asset ID needs to be inserted
      */
-    addLayer(domOrLayer: SVGGraphicsElement | JSMovinLayer): JSMovinLayer;
+    addLayer(domLayerOrAssetId: SVGGraphicsElement | JSMovinLayer | ReferenceID): JSMovinLayer;
     /**
      * @param maskOrDom a SVG element DOM or JSMovinLayer to be the mask
      * @param layerRefOrIndex a JSMovinLayer or index of layer to be the masked layer

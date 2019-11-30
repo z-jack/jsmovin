@@ -1,4 +1,4 @@
-import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape, PreCompLayer } from './animation'
+import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape, PreCompLayer, ReferenceID } from './animation'
 import { EasingFunction, EasingFactory } from './easing'
 import { renderText, render, renderImage, renderPlainGlyph } from './render';
 import { getBoundingBox, getLeafNodes, getBaselineHeight } from './helper'
@@ -367,6 +367,24 @@ export class LayerFactory {
             ]
         }
         return new JSMovinLayer(layer)
+    }
+
+    static ref(id: ReferenceID) {
+        const layer = new JSMovinLayer({
+            ty: 0,
+            ddd: 0,
+            sr: 1,
+            ao: 0,
+            ks: this.generateTransform([0, 0, 0, 0]),
+            ip: 0,
+            op: 1,
+            st: 0,
+            bm: 0,
+            w: 9e9,
+            h: 9e9,
+            refId: id
+        })
+        return layer
     }
 
     static hierarchy(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts) {

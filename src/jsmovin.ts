@@ -44,14 +44,17 @@ export default class JSMovin {
 
     /**
      * add a simple graphical layer
-     * @param domOrLayer a SVG element DOM or JSMovinLayer needs to be inserted
+     * @param domLayerOrAssetId a SVG element DOM or JSMovinLayer or asset ID needs to be inserted
      */
-    addLayer(domOrLayer: SVGGraphicsElement | JSMovinLayer): JSMovinLayer {
+    addLayer(domLayerOrAssetId: SVGGraphicsElement | JSMovinLayer | ReferenceID): JSMovinLayer {
         let layer: JSMovinLayer;
-        if (domOrLayer instanceof SVGGraphicsElement) {
-            layer = LayerFactory.hierarchy(domOrLayer, this.root.assets!, this.root.fonts!)
-        } else {
-            layer = domOrLayer
+        if (domLayerOrAssetId instanceof SVGGraphicsElement) {
+            layer = LayerFactory.hierarchy(domLayerOrAssetId, this.root.assets!, this.root.fonts!)
+        } else if (typeof (domLayerOrAssetId) === 'string') {
+            layer = LayerFactory.ref(domLayerOrAssetId)
+        }
+        else {
+            layer = domLayerOrAssetId
         }
         this.root.layers!.splice(0, 0, layer.root)
         return layer
@@ -116,6 +119,7 @@ export default class JSMovin {
             if (layerIndex > 0) {
                 this.root.layers!.splice(layerIndex, 1)
             }
+            layer.root.op = 9e9
         })
         const refId = uuid()
         this.root.assets!.push({

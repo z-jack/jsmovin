@@ -377,18 +377,20 @@ function () {
     }
     /**
      * add a simple graphical layer
-     * @param domOrLayer a SVG element DOM or JSMovinLayer needs to be inserted
+     * @param domLayerOrAssetId a SVG element DOM or JSMovinLayer or asset ID needs to be inserted
      */
 
   }, {
     key: "addLayer",
-    value: function addLayer(domOrLayer) {
+    value: function addLayer(domLayerOrAssetId) {
       var layer;
 
-      if (domOrLayer instanceof SVGGraphicsElement) {
-        layer = _layer.LayerFactory.hierarchy(domOrLayer, this.root.assets, this.root.fonts);
+      if (domLayerOrAssetId instanceof SVGGraphicsElement) {
+        layer = _layer.LayerFactory.hierarchy(domLayerOrAssetId, this.root.assets, this.root.fonts);
+      } else if (typeof domLayerOrAssetId === 'string') {
+        layer = _layer.LayerFactory.ref(domLayerOrAssetId);
       } else {
-        layer = domOrLayer;
+        layer = domLayerOrAssetId;
       }
 
       this.root.layers.splice(0, 0, layer.root);
@@ -473,6 +475,8 @@ function () {
         if (layerIndex > 0) {
           _this.root.layers.splice(layerIndex, 1);
         }
+
+        layer.root.op = 9e9;
       });
       var refId = (0, _v["default"])();
       this.root.assets.push({
@@ -1085,6 +1089,25 @@ function () {
         shapes: [(0, _render.renderPlainGlyph)('ellipse', [rx, ry])]
       };
       return new JSMovinLayer(layer);
+    }
+  }, {
+    key: "ref",
+    value: function ref(id) {
+      var layer = new JSMovinLayer({
+        ty: 0,
+        ddd: 0,
+        sr: 1,
+        ao: 0,
+        ks: this.generateTransform([0, 0, 0, 0]),
+        ip: 0,
+        op: 1,
+        st: 0,
+        bm: 0,
+        w: 9e9,
+        h: 9e9,
+        refId: id
+      });
+      return layer;
     }
   }, {
     key: "hierarchy",

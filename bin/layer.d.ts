@@ -1,4 +1,4 @@
-import { ShapeLayer, TextLayer, ImageLayer, Assets, Fonts, PreCompLayer } from './animation';
+import { ShapeLayer, TextLayer, ImageLayer, Assets, Fonts, PreCompLayer, ReferenceID } from './animation';
 import { EasingFunction } from './easing';
 declare type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text' | 'fillOpacity' | 'strokeOpacity';
 export declare class JSMovinLayer {
@@ -20,6 +20,7 @@ export declare class LayerFactory {
     static shape(dom: SVGPathElement): JSMovinLayer;
     static rect(left: number, top: number, width: number, height: number): JSMovinLayer;
     static ellipse(cx: number, cy: number, rx: number, ry: number): JSMovinLayer;
+    static ref(id: ReferenceID): JSMovinLayer;
     static hierarchy(dom: SVGGraphicsElement, assetList: Assets, fontList: Fonts): JSMovinLayer;
 }
 export {};
