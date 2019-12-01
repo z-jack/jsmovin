@@ -1997,7 +1997,7 @@ function renderText(dom, fontList) {
       fontFamily = computedStyle.fontFamily.split(',')[0].trim(),
       fontStyle = computedStyle.fontStyle,
       fontWeight = computedStyle.fontWeight,
-      fontColor = (computedStyle.color || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(function (i) {
+      fontColor = (computedStyle.fill || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(function (i) {
     return parseInt(i) / 255;
   });
   var fontName = (0, _v["default"])();

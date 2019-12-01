@@ -361,7 +361,7 @@ export function renderText(dom: SVGTextElement, fontList?: Fonts): [TextData, Fo
         fontFamily = computedStyle.fontFamily.split(',')[0].trim(),
         fontStyle = computedStyle.fontStyle,
         fontWeight = computedStyle.fontWeight,
-        fontColor = (computedStyle.color || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(i => parseInt(i) / 255)
+        fontColor = (computedStyle.fill || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(i => parseInt(i) / 255)
     let fontName = uuid()
     if (fontList) {
         const fontExist = fontList.list!.filter(font => font.fFamily == fontFamily && font.fStyle == fontStyle && font.fWeight == fontWeight)
