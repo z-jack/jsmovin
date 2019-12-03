@@ -71,3 +71,14 @@ export function encodeLineJoin(type?: string | null): number {
             return 2
     }
 }
+
+export function encodeTextAnchor(type?: string | null): number {
+    switch (type) {
+        case 'middle':
+            return 2
+        case 'end':
+            return 1
+        default:
+            return 0
+    }
+}

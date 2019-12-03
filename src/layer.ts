@@ -1,7 +1,7 @@
 import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape, PreCompLayer, ReferenceID } from './animation'
 import { EasingFunction, EasingFactory } from './easing'
 import { renderText, render, renderImage, renderPlainGlyph } from './render';
-import { getBoundingBox, getLeafNodes, getBaselineHeight } from './helper'
+import { getBoundingBox, getLeafNodes, getBaselineHeight, encodeTextAnchor } from './helper'
 import uuid from 'uuid/v4';
 
 type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text' | 'fillOpacity' | 'strokeOpacity'
@@ -453,9 +453,12 @@ export class LayerFactory {
             case 5:
                 const textLayer = layer as TextLayer
 
-                // move textLayer's anchor to left-top
+                // move textLayer's position to text-anchor-related
                 const baseLineHeight = getBaselineHeight(dom as SVGTextElement)
-                textLayer.ks!.a!.k = [0, baseLineHeight - coordinate[3], 0]
+                const textAnchor = encodeTextAnchor(getComputedStyle(dom).textAnchor)
+                const textAnchorWeight = [0, 1, 0.5][textAnchor]
+                textLayer.ks!.p!.k = [coordinate[0] + coordinate[2] * textAnchorWeight, coordinate[1] + coordinate[3] - baseLineHeight, 0]
+                textLayer.ks!.o!.k = ~~(parseFloat(getComputedStyle(dom).fillOpacity || '1') * 100)
 
                 const [textData, font] = renderText(dom as SVGTextElement, fontList)
                 textLayer.t = textData
