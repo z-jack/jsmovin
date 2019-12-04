@@ -22,8 +22,8 @@ export class PathMaker {
 
     private calculateBezierMinMax(p0: number, p1: number, p2: number, p3: number): [number, number] {
         const a = 3 * (p3 - 3 * p2 + 3 * p1 - p0)
-        const b = 2 * (3 * p2 - 6 * p1 + 3 * p0)
-        const c = 3 * p1
+        const b = 6 * (p2 - 2 * p1 + p0)
+        const c = 3 * (p1 - p0)
         let min = Infinity, max = -Infinity
         if (b * b - 4 * a * c >= 0) {
             const sqrt = Math.sqrt(b * b - 4 * a * c)

@@ -3,35 +3,40 @@
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var _jsmovin = _interopRequireWildcard(require("./jsmovin"));
+var JSMovin = _interopRequireWildcard(require("./jsmovin"));
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-Object.defineProperty(window, 'JSMovin', {
-  get: function get() {
-    return _jsmovin["default"];
-  },
-  enumerable: true
-});
-Object.defineProperty(window, 'LayerFactory', {
-  get: function get() {
-    return _jsmovin.LayerFactory;
-  },
-  enumerable: true
-});
-Object.defineProperty(window, 'EasingFactory', {
-  get: function get() {
-    return _jsmovin.EasingFactory;
-  },
-  enumerable: true
-});
-Object.defineProperty(window, 'MaskType', {
-  get: function get() {
-    return _jsmovin.MaskType;
-  },
-  enumerable: true
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+Object.entries(JSMovin).forEach(function (_ref) {
+  var _ref2 = _slicedToArray(_ref, 2),
+      entry = _ref2[0],
+      body = _ref2[1];
+
+  if (entry === 'default') {
+    Object.defineProperty(window, 'JSMovin', {
+      get: function get() {
+        return body;
+      },
+      enumerable: true
+    });
+  } else {
+    Object.defineProperty(window, entry, {
+      get: function get() {
+        return body;
+      },
+      enumerable: true
+    });
+  }
 });
 
 },{"./jsmovin":4}],2:[function(require,module,exports){
@@ -626,14 +631,6 @@ var _v = _interopRequireDefault(require("uuid/v4"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -641,6 +638,14 @@ function _nonIterableRest() { throw new TypeError("Invalid attempt to destructur
 function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -908,6 +913,11 @@ function () {
 
       return [base, k, index];
     }
+  }, {
+    key: "updateTimeRange",
+    value: function updateTimeRange() {
+      this.root.op = Math.max.apply(Math, _toConsumableArray(Object.values(this.timeRange)).concat([1]));
+    }
   }]);
 
   function JSMovinLayer(ref) {
@@ -919,15 +929,24 @@ function () {
 
     _defineProperty(this, "position", void 0);
 
+    _defineProperty(this, "timeRange", {});
+
     this.root = ref;
     this.anchor = [0, 0, 0];
     this.position = [0, 0, 0];
   }
+  /**
+   * 
+   * @param key the name of property to be set
+   * @param value the value to be set
+   */
+
 
   _createClass(JSMovinLayer, [{
     key: "setStaticProperty",
     value: function setStaticProperty(key, value) {
-      this.root.op = 1;
+      this.timeRange[key] = 1;
+      this.updateTimeRange();
       var base, k, index;
 
       var _this$commonPropertyM = this.commonPropertyMapping(key);
@@ -961,6 +980,16 @@ function () {
         if (index >= 0) base[k].k[index] = value;else base[k].k = value;
       }
     }
+    /**
+     * 
+     * @param key the name of property to be set
+     * @param startFrame frame number to start the animation
+     * @param endFrame frame number to end the animation
+     * @param startValue value to be set in start of animation
+     * @param endValue value to be set in end of animation
+     * @param easing easing function, default is linear
+     */
+
   }, {
     key: "setAnimatableProperty",
     value: function setAnimatableProperty(key, startFrame, endFrame, startValue, endValue, easing) {
@@ -968,7 +997,8 @@ function () {
         throw new Error('End frame should be larger than start frame.');
       }
 
-      this.root.op = endFrame + 1;
+      this.timeRange[key] = endFrame + 1;
+      this.updateTimeRange();
 
       if (!easing) {
         easing = _easing.EasingFactory.linear();
@@ -1058,6 +1088,11 @@ function () {
         }
       };
     }
+    /**
+     * create the bounding box of svg element
+     * @param dom svg element needs to calculate the bounding box
+     */
+
   }, {
     key: "boundingBox",
     value: function boundingBox(dom) {
@@ -1066,6 +1101,11 @@ function () {
       });
       return this.rect.apply(this, _toConsumableArray(boundingBox));
     }
+    /**
+     * create the same shape of svg path
+     * @param dom svg path element represent the shape
+     */
+
   }, {
     key: "shape",
     value: function shape(dom) {
@@ -1084,6 +1124,14 @@ function () {
       };
       return new JSMovinLayer(layer);
     }
+    /**
+     * create a rectangle
+     * @param left left of rect
+     * @param top top of rect
+     * @param width width of rect
+     * @param height height of rect
+     */
+
   }, {
     key: "rect",
     value: function rect(left, top, width, height) {
@@ -1101,6 +1149,14 @@ function () {
       };
       return new JSMovinLayer(layer);
     }
+    /**
+     * create a ellipse
+     * @param cx x center of ellipse
+     * @param cy y center of ellipse
+     * @param rx x radius of ellipse
+     * @param ry y radius of ellipse
+     */
+
   }, {
     key: "ellipse",
     value: function ellipse(cx, cy, rx, ry) {
@@ -1118,6 +1174,11 @@ function () {
       };
       return new JSMovinLayer(layer);
     }
+    /**
+     * make a layer by asset ID
+     * @param id asset reference ID
+     */
+
   }, {
     key: "ref",
     value: function ref(id) {
@@ -1137,6 +1198,13 @@ function () {
       });
       return layer;
     }
+    /**
+     * make a complex layer by an arbitrary svg element
+     * @param dom svg element need to be parsed
+     * @param assetList a list contains image/layer asset
+     * @param fontList a list contains font asset
+     */
+
   }, {
     key: "hierarchy",
     value: function hierarchy(dom, assetList, fontList) {
@@ -1311,8 +1379,8 @@ function () {
     key: "calculateBezierMinMax",
     value: function calculateBezierMinMax(p0, p1, p2, p3) {
       var a = 3 * (p3 - 3 * p2 + 3 * p1 - p0);
-      var b = 2 * (3 * p2 - 6 * p1 + 3 * p0);
-      var c = 3 * p1;
+      var b = 6 * (p2 - 2 * p1 + p0);
+      var c = 3 * (p1 - p0);
       var min = Infinity,
           max = -Infinity;
 

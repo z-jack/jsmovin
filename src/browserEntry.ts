@@ -1,7 +1,9 @@
-import JSMovin from './jsmovin'
-import { EasingFactory, MaskType, LayerFactory } from './jsmovin'
+import * as JSMovin from './jsmovin'
 
-Object.defineProperty(window, 'JSMovin', { get: () => JSMovin, enumerable: true })
-Object.defineProperty(window, 'LayerFactory', { get: () => LayerFactory, enumerable: true })
-Object.defineProperty(window, 'EasingFactory', { get: () => EasingFactory, enumerable: true })
-Object.defineProperty(window, 'MaskType', { get: () => MaskType, enumerable: true })
+Object.entries(JSMovin).forEach(([entry, body]) => {
+    if (entry === 'default') {
+        Object.defineProperty(window, 'JSMovin', { get: () => body, enumerable: true })
+    } else {
+        Object.defineProperty(window, entry, { get: () => body, enumerable: true })
+    }
+})
