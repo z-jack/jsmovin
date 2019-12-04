@@ -663,7 +663,7 @@ function () {
       switch (key) {
         case 'a':
         case 'p':
-          return [0, 0, 0];
+          return key == 'a' ? this.anchor : this.position;
 
         case 's':
           return [100, 100, 100];
@@ -713,6 +713,14 @@ function () {
     key: "convertToAnimatableProperty",
     value: function convertToAnimatableProperty(transform, key) {
       if (!transform[key] || !transform[key].a) {
+        if (key == 'a') {
+          this.anchor = transform[key] ? transform[key].k : [0, 0, 0];
+        }
+
+        if (key == 'p') {
+          this.position = transform[key] ? transform[key].k : [0, 0, 0];
+        }
+
         transform[key] = {
           a: 1,
           k: []
@@ -906,6 +914,10 @@ function () {
     _classCallCheck(this, JSMovinLayer);
 
     _defineProperty(this, "root", void 0);
+
+    _defineProperty(this, "anchor", [0, 0, 0]);
+
+    _defineProperty(this, "position", [0, 0, 0]);
 
     this.root = ref;
   }

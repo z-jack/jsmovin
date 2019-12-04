@@ -3,6 +3,8 @@ import { EasingFunction } from './easing';
 declare type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text' | 'fillOpacity' | 'strokeOpacity';
 export declare class JSMovinLayer {
     readonly root: ShapeLayer | TextLayer | ImageLayer | PreCompLayer;
+    private anchor;
+    private position;
     private getDefaultProperty;
     private convertToStaticProperty;
     private convertToAnimatableProperty;

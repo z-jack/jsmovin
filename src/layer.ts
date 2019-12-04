@@ -8,11 +8,13 @@ type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "ro
 
 export class JSMovinLayer {
     public readonly root: ShapeLayer | TextLayer | ImageLayer | PreCompLayer;
+    private anchor = [0, 0, 0]
+    private position = [0, 0, 0]
     private getDefaultProperty(key: string) {
         switch (key) {
             case 'a':
             case 'p':
-                return [0, 0, 0]
+                return key == 'a' ? this.anchor : this.position
             case 's':
                 return [100, 100, 100]
             case 'o':
@@ -52,6 +54,12 @@ export class JSMovinLayer {
     }
     private convertToAnimatableProperty(transform: any, key: string) {
         if (!transform[key] || !transform[key].a) {
+            if (key == 'a') {
+                this.anchor = transform[key] ? transform[key].k : [0, 0, 0]
+            }
+            if (key == 'p') {
+                this.position = transform[key] ? transform[key].k : [0, 0, 0]
+            }
             transform[key] = {
                 a: 1,
                 k: []
