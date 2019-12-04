@@ -8,13 +8,13 @@ type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "ro
 
 export class JSMovinLayer {
     public readonly root: ShapeLayer | TextLayer | ImageLayer | PreCompLayer;
-    private anchor = [0, 0, 0]
-    private position = [0, 0, 0]
+    private anchor: number[]
+    private position: number[]
     private getDefaultProperty(key: string) {
         switch (key) {
             case 'a':
             case 'p':
-                return key == 'a' ? this.anchor : this.position
+                return JSON.parse(JSON.stringify(key == 'a' ? this.anchor : this.position))
             case 's':
                 return [100, 100, 100]
             case 'o':
@@ -210,6 +210,8 @@ export class JSMovinLayer {
 
     constructor(ref: ShapeLayer | TextLayer | ImageLayer | PreCompLayer) {
         this.root = ref
+        this.anchor = [0, 0, 0]
+        this.position = [0, 0, 0]
     }
 
     setStaticProperty(key: SetableKeys, value: any) {

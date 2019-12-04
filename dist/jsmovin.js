@@ -663,7 +663,7 @@ function () {
       switch (key) {
         case 'a':
         case 'p':
-          return key == 'a' ? this.anchor : this.position;
+          return JSON.parse(JSON.stringify(key == 'a' ? this.anchor : this.position));
 
         case 's':
           return [100, 100, 100];
@@ -915,11 +915,13 @@ function () {
 
     _defineProperty(this, "root", void 0);
 
-    _defineProperty(this, "anchor", [0, 0, 0]);
+    _defineProperty(this, "anchor", void 0);
 
-    _defineProperty(this, "position", [0, 0, 0]);
+    _defineProperty(this, "position", void 0);
 
     this.root = ref;
+    this.anchor = [0, 0, 0];
+    this.position = [0, 0, 0];
   }
 
   _createClass(JSMovinLayer, [{
