@@ -19,7 +19,7 @@ export function getBoundingBox(dom: SVGGraphicsElement) {
     return coordinate
 }
 
-export function getLeafNodes(master: SVGGraphicsElement) {
+export function getLeafNodes(master: SVGGraphicsElement): SVGGraphicsElement[] {
     // https://stackoverflow.com/questions/22289391/how-to-create-an-array-of-leaf-nodes-of-an-html-dom-using-javascript
 
     var nodes = Array.prototype.slice.call(master.getElementsByTagName("*"), 0);
@@ -69,5 +69,16 @@ export function encodeLineJoin(type?: string | null): number {
             return 3
         default:
             return 2
+    }
+}
+
+export function encodeTextAnchor(type?: string | null): number {
+    switch (type) {
+        case 'middle':
+            return 2
+        case 'end':
+            return 1
+        default:
+            return 0
     }
 }

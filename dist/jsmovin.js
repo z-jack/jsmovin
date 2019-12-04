@@ -200,6 +200,7 @@ exports.getLeafNodes = getLeafNodes;
 exports.getBaselineHeight = getBaselineHeight;
 exports.encodeLineCap = encodeLineCap;
 exports.encodeLineJoin = encodeLineJoin;
+exports.encodeTextAnchor = encodeTextAnchor;
 
 function calculateBaseTransform(dom, root) {
   // https://github.com/dagrejs/dagre-d3/issues/202
@@ -276,6 +277,19 @@ function encodeLineJoin(type) {
 
     default:
       return 2;
+  }
+}
+
+function encodeTextAnchor(type) {
+  switch (type) {
+    case 'middle':
+      return 2;
+
+    case 'end':
+      return 1;
+
+    default:
+      return 0;
   }
 }
 
@@ -1141,27 +1155,38 @@ function () {
 
       switch (domType) {
         case 0:
-          var precompLayer = layer;
           var domLeaves = (0, _helper.getLeafNodes)(dom);
-          var preCompAsset = [];
-          var preCompRefId = (0, _v["default"])();
-          domLeaves.forEach(function (d) {
-            if (d instanceof SVGGraphicsElement && !(d instanceof SVGGElement)) {
-              preCompAsset.unshift(_this.hierarchy(d, assetList, fontList));
-            }
-          });
-          preCompAsset.forEach(function (layer) {
-            layer.root.op = 9e9;
-          });
-          precompLayer.w = coordinate[0] + coordinate[2] + 1;
-          precompLayer.h = coordinate[1] + coordinate[3] + 1;
-          precompLayer.refId = preCompRefId;
-          assetList.push({
-            id: preCompRefId,
-            layers: preCompAsset.map(function (layer) {
-              return layer.root;
-            })
-          });
+
+          if (domLeaves.filter(function (dom) {
+            return dom instanceof SVGTextElement || dom instanceof SVGImageElement;
+          }).length) {
+            var precompLayer = layer;
+            var preCompAsset = [];
+            var preCompRefId = (0, _v["default"])();
+            domLeaves.forEach(function (d) {
+              if (d instanceof SVGGraphicsElement && !(d instanceof SVGGElement)) {
+                preCompAsset.unshift(_this.hierarchy(d, assetList, fontList));
+              }
+            });
+            preCompAsset.forEach(function (layer) {
+              layer.root.op = 9e9;
+            });
+            precompLayer.w = coordinate[0] + coordinate[2] + 1;
+            precompLayer.h = coordinate[1] + coordinate[3] + 1;
+            precompLayer.refId = preCompRefId;
+            assetList.push({
+              id: preCompRefId,
+              layers: preCompAsset.map(function (layer) {
+                return layer.root;
+              })
+            });
+          } else {
+            var _shapeLayer = layer;
+            _shapeLayer.ty = 4;
+            _shapeLayer.ks = this.generateTransform(coordinate);
+            _shapeLayer.shapes = (0, _render.render)(dom);
+          }
+
           break;
 
         case 2:
@@ -1184,10 +1209,13 @@ function () {
           break;
 
         case 5:
-          var textLayer = layer; // move textLayer's anchor to left-top
+          var textLayer = layer; // move textLayer's position to text-anchor-related
 
           var baseLineHeight = (0, _helper.getBaselineHeight)(dom);
-          textLayer.ks.a.k = [0, baseLineHeight - coordinate[3], 0];
+          var textAnchor = (0, _helper.encodeTextAnchor)(getComputedStyle(dom).textAnchor);
+          var textAnchorWeight = [0, 1, 0.5][textAnchor];
+          textLayer.ks.p.k = [coordinate[0] + coordinate[2] * textAnchorWeight, coordinate[1] + coordinate[3] - baseLineHeight, 0];
+          textLayer.ks.o.k = ~~(parseFloat(getComputedStyle(dom).fillOpacity || '1') * 100);
 
           var _renderText = (0, _render.renderText)(dom, fontList),
               _renderText2 = _slicedToArray(_renderText, 2),
@@ -1986,9 +2014,10 @@ function renderText(dom, fontList) {
       fontFamily = computedStyle.fontFamily.split(',')[0].trim(),
       fontStyle = computedStyle.fontStyle,
       fontWeight = computedStyle.fontWeight,
-      fontColor = (computedStyle.color || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(function (i) {
+      fontColor = (computedStyle.fill || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(function (i) {
     return parseInt(i) / 255;
-  });
+  }),
+      textAnchor = computedStyle.textAnchor;
   var fontName = (0, _v["default"])();
 
   if (fontList) {
@@ -2006,7 +2035,7 @@ function renderText(dom, fontList) {
           s: fontSize,
           f: fontName,
           t: dom.innerHTML,
-          j: 0,
+          j: (0, _helper.encodeTextAnchor)(textAnchor),
           tr: 0,
           ls: 0,
           fc: fontColor

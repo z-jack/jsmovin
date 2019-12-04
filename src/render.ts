@@ -2,7 +2,7 @@ import { GroupShape, TextData, ReferenceID, PathShape, FillShape, StrokeShape, T
 import { PathMaker } from './path'
 import uuid from 'uuid/v4'
 import { parseSVG, MoveToCommand, LineToCommand, HorizontalLineToCommand, VerticalLineToCommand, CurveToCommand, QuadraticCurveToCommand, EllipticalArcCommand } from 'svg-path-parser'
-import { calculateBaseTransform, encodeLineJoin, encodeLineCap } from './helper'
+import { calculateBaseTransform, encodeLineJoin, encodeLineCap, encodeTextAnchor } from './helper'
 
 
 export function render(dom: SVGGraphicsElement, baseDom?: SVGGraphicsElement): GroupShape[] {
@@ -361,7 +361,8 @@ export function renderText(dom: SVGTextElement, fontList?: Fonts): [TextData, Fo
         fontFamily = computedStyle.fontFamily.split(',')[0].trim(),
         fontStyle = computedStyle.fontStyle,
         fontWeight = computedStyle.fontWeight,
-        fontColor = (computedStyle.color || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(i => parseInt(i) / 255)
+        fontColor = (computedStyle.fill || 'rgb(0,0,0)').split('(')[1].split(')')[0].split(',').map(i => parseInt(i) / 255),
+        textAnchor = computedStyle.textAnchor
     let fontName = uuid()
     if (fontList) {
         const fontExist = fontList.list!.filter(font => font.fFamily == fontFamily && font.fStyle == fontStyle && font.fWeight == fontWeight)
@@ -377,7 +378,7 @@ export function renderText(dom: SVGTextElement, fontList?: Fonts): [TextData, Fo
                         s: fontSize,
                         f: fontName,
                         t: dom.innerHTML,
-                        j: 0,
+                        j: encodeTextAnchor(textAnchor),
                         tr: 0,
                         ls: 0,
                         fc: fontColor
