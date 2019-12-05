@@ -82,3 +82,18 @@ export function encodeTextAnchor(type?: string | null): number {
             return 0
     }
 }
+
+export function greatestCommonDivisor(x: number, y: number): number {
+    x = Math.abs(x);
+    y = Math.abs(y);
+    while (y) {
+        var t = y;
+        y = x % y;
+        x = t;
+    }
+    return x;
+}
+
+export function leastCommonMultiple(x: number, y: number): number {
+    return (!x || !y) ? 0 : Math.abs((x * y) / greatestCommonDivisor(x, y));
+}

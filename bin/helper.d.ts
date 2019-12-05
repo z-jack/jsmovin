@@ -5,3 +5,5 @@ export declare function getBaselineHeight(dom: SVGTextElement): number;
 export declare function encodeLineCap(type?: string | null): number;
 export declare function encodeLineJoin(type?: string | null): number;
 export declare function encodeTextAnchor(type?: string | null): number;
+export declare function greatestCommonDivisor(x: number, y: number): number;
+export declare function leastCommonMultiple(x: number, y: number): number;

@@ -11,6 +11,8 @@ export declare class PathMaker {
     constructor(pathData?: string);
     private updateXY;
     private calculateBezierMinMax;
+    private calculateHighlyOrder;
+    private calculateBezierSplit;
     moveTo(x: number, y: number): void;
     moveToRelative(x: number, y: number): void;
     lineTo(x: number, y: number): void;

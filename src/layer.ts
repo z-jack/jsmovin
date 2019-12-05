@@ -1,8 +1,9 @@
 import { ShapeLayer, TextLayer, ImageLayer, Transform, Assets, Fonts, GroupShape, PreCompLayer, ReferenceID } from './animation'
 import { EasingFunction, EasingFactory } from './easing'
 import { renderText, render, renderImage, renderPlainGlyph } from './render';
-import { getBoundingBox, getLeafNodes, getBaselineHeight, encodeTextAnchor } from './helper'
+import { getBoundingBox, getLeafNodes, getBaselineHeight, encodeTextAnchor, leastCommonMultiple } from './helper'
 import uuid from 'uuid/v4';
+import { PathMaker } from './path';
 
 type SetableKeys = "scaleX" | "scaleY" | "anchorX" | "anchorY" | "x" | "y" | "rotate" | "opacity" | 'shape' | 'fillColor' | 'trimStart' | 'trimEnd' | 'trimOffset' | 'strokeColor' | 'strokeWidth' | 'text' | 'fillOpacity' | 'strokeOpacity'
 
@@ -226,6 +227,10 @@ export class JSMovinLayer {
     setStaticProperty(key: SetableKeys, value: any) {
         this.timeRange[key] = 1
         this.updateTimeRange()
+        if (value instanceof PathMaker) {
+            value.uniform()
+            value = value.path
+        }
         let base: any, k: string | undefined, index: number | undefined
         [base, k, index] = this.commonPropertyMapping(key)
         if (!k || index === undefined) {
@@ -269,6 +274,17 @@ export class JSMovinLayer {
         this.updateTimeRange()
         if (!easing) {
             easing = EasingFactory.linear()
+        }
+        if (startValue instanceof PathMaker || endValue instanceof PathMaker) {
+            [startValue, endValue].forEach(v => v instanceof PathMaker && v.uniform())
+            if (startValue instanceof PathMaker && endValue instanceof PathMaker) {
+                const startLineCount = startValue.path.v!.length - 1
+                const endLineCount = endValue.path.v!.length - 1
+                const commonMultiple = leastCommonMultiple(startLineCount, endLineCount)
+                startValue.upsample(Math.round(commonMultiple / startLineCount))
+                endValue.upsample(Math.round(commonMultiple / endLineCount))
+            }
+            [startValue, endValue] = [startValue, endValue].map(v => v instanceof PathMaker ? v.path : v)
         }
         let base: any, k: string | undefined, index: number | undefined, wrap = true;
         [base, k, index] = this.commonPropertyMapping(key)

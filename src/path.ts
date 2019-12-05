@@ -53,6 +53,22 @@ export class PathMaker {
         return [min, max]
     }
 
+    private calculateHighlyOrder(arr: number[], ratio: number): number[] {
+        let result: number[] = []
+        arr.forEach((v, i, a) => {
+            if (i >= a.length - 1) return
+            result.push(v * (1 - ratio) + a[i + 1] * ratio)
+        })
+        return result
+    }
+
+    private calculateBezierSplit(ratio: number, ...order0: number[]): number[] {
+        let order1 = this.calculateHighlyOrder(order0, ratio)
+        let order2 = this.calculateHighlyOrder(order1, ratio)
+        let order3 = this.calculateHighlyOrder(order2, ratio)
+        return [order1[0], order2[0], order3[0], order2[1], order1[2], order0[3]]
+    }
+
     public moveTo(x: number, y: number) {
         if (!this.pathReady) {
             this.path.c = false
@@ -352,18 +368,48 @@ export class PathMaker {
     public upsample(ratio: number) {
         // use De Casteljau's algorithm to do the upsampling
         // Reference: https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+
         if (!Number.isInteger(ratio)) {
             throw new Error('The upsampling ratio should be an integer.')
         }
-        if (ratio <= 1) return
         this.uniform()
+        if (ratio <= 1) return
         const copyPath: PathDef = {
             c: this.path.c,
             i: [],
             o: [],
             v: []
         }
-
+        this.path.v!.forEach((v, i, a) => {
+            if (i <= 0) {
+                copyPath.v!.push(v)
+                copyPath.i!.push(this.path.i![i])
+                return
+            }
+            const oArray = this.path.o!
+            const iArray = this.path.i!
+            let xArray = [a[i - 1][0], oArray[i - 1][0] + a[i - 1][0], iArray[i][0] + v[0], v[0]]
+            let yArray = [a[i - 1][1], oArray[i - 1][1] + a[i - 1][1], iArray[i][1] + v[1], v[1]]
+            for (let index = 1; index < ratio; index++) {
+                const stepRatio = 1 / (ratio - index + 1)
+                const xSplitArray = this.calculateBezierSplit(stepRatio, ...xArray)
+                const ySplitArray = this.calculateBezierSplit(stepRatio, ...yArray)
+                const p0x = xArray[0], p1x = xSplitArray.shift()! - p0x, p3x = xSplitArray[1], p2x = xSplitArray.shift()! - p3x,
+                    p0y = yArray[0], p1y = ySplitArray.shift()! - p0y, p3y = ySplitArray[1], p2y = ySplitArray.shift()! - p3y
+                copyPath.o!.push([p1x, p1y])
+                copyPath.i!.push([p2x, p2y])
+                copyPath.v!.push([p3x, p3y])
+                xArray = xSplitArray
+                yArray = ySplitArray
+            }
+            const p0x = xArray.shift()!, p1x = xArray.shift()! - p0x, p3x = xArray[1], p2x = xArray.shift()! - p3x,
+                p0y = yArray.shift()!, p1y = yArray.shift()! - p0y, p3y = yArray[1], p2y = yArray.shift()! - p3y
+            copyPath.o!.push([p1x, p1y])
+            copyPath.i!.push([p2x, p2y])
+            copyPath.v!.push([p3x, p3y])
+        })
+        this.path = copyPath
+        this.uniform()
     }
 
 }

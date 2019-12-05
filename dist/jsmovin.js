@@ -206,6 +206,8 @@ exports.getBaselineHeight = getBaselineHeight;
 exports.encodeLineCap = encodeLineCap;
 exports.encodeLineJoin = encodeLineJoin;
 exports.encodeTextAnchor = encodeTextAnchor;
+exports.greatestCommonDivisor = greatestCommonDivisor;
+exports.leastCommonMultiple = leastCommonMultiple;
 
 function calculateBaseTransform(dom, root) {
   // https://github.com/dagrejs/dagre-d3/issues/202
@@ -296,6 +298,23 @@ function encodeTextAnchor(type) {
     default:
       return 0;
   }
+}
+
+function greatestCommonDivisor(x, y) {
+  x = Math.abs(x);
+  y = Math.abs(y);
+
+  while (y) {
+    var t = y;
+    y = x % y;
+    x = t;
+  }
+
+  return x;
+}
+
+function leastCommonMultiple(x, y) {
+  return !x || !y ? 0 : Math.abs(x * y / greatestCommonDivisor(x, y));
 }
 
 },{}],4:[function(require,module,exports){
@@ -629,6 +648,8 @@ var _helper = require("./helper");
 
 var _v = _interopRequireDefault(require("uuid/v4"));
 
+var _path = require("./path");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -947,6 +968,12 @@ function () {
     value: function setStaticProperty(key, value) {
       this.timeRange[key] = 1;
       this.updateTimeRange();
+
+      if (value instanceof _path.PathMaker) {
+        value.uniform();
+        value = value.path;
+      }
+
       var base, k, index;
 
       var _this$commonPropertyM = this.commonPropertyMapping(key);
@@ -1002,6 +1029,29 @@ function () {
 
       if (!easing) {
         easing = _easing.EasingFactory.linear();
+      }
+
+      if (startValue instanceof _path.PathMaker || endValue instanceof _path.PathMaker) {
+        [startValue, endValue].forEach(function (v) {
+          return v instanceof _path.PathMaker && v.uniform();
+        });
+
+        if (startValue instanceof _path.PathMaker && endValue instanceof _path.PathMaker) {
+          var startLineCount = startValue.path.v.length - 1;
+          var endLineCount = endValue.path.v.length - 1;
+          var commonMultiple = (0, _helper.leastCommonMultiple)(startLineCount, endLineCount);
+          startValue.upsample(Math.round(commonMultiple / startLineCount));
+          endValue.upsample(Math.round(commonMultiple / endLineCount));
+        }
+
+        var _map = [startValue, endValue].map(function (v) {
+          return v instanceof _path.PathMaker ? v.path : v;
+        });
+
+        var _map2 = _slicedToArray(_map, 2);
+
+        startValue = _map2[0];
+        endValue = _map2[1];
       }
 
       var base,
@@ -1321,7 +1371,7 @@ function () {
 
 exports.LayerFactory = LayerFactory;
 
-},{"./easing":2,"./helper":3,"./render":7,"uuid/v4":12}],6:[function(require,module,exports){
+},{"./easing":2,"./helper":3,"./path":6,"./render":7,"uuid/v4":12}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1414,6 +1464,28 @@ function () {
       min = Math.min(min, p0, p3);
       max = Math.max(max, p0, p3);
       return [min, max];
+    }
+  }, {
+    key: "calculateHighlyOrder",
+    value: function calculateHighlyOrder(arr, ratio) {
+      var result = [];
+      arr.forEach(function (v, i, a) {
+        if (i >= a.length - 1) return;
+        result.push(v * (1 - ratio) + a[i + 1] * ratio);
+      });
+      return result;
+    }
+  }, {
+    key: "calculateBezierSplit",
+    value: function calculateBezierSplit(ratio) {
+      for (var _len = arguments.length, order0 = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        order0[_key - 1] = arguments[_key];
+      }
+
+      var order1 = this.calculateHighlyOrder(order0, ratio);
+      var order2 = this.calculateHighlyOrder(order1, ratio);
+      var order3 = this.calculateHighlyOrder(order2, ratio);
+      return [order1[0], order2[0], order3[0], order2[1], order1[2], order0[3]];
     }
   }, {
     key: "moveTo",
@@ -1674,20 +1746,71 @@ function () {
   }, {
     key: "upsample",
     value: function upsample(ratio) {
+      var _this3 = this;
+
       // use De Casteljau's algorithm to do the upsampling
       // Reference: https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
       if (!Number.isInteger(ratio)) {
         throw new Error('The upsampling ratio should be an integer.');
       }
 
-      if (ratio <= 1) return;
       this.uniform();
+      if (ratio <= 1) return;
       var copyPath = {
         c: this.path.c,
         i: [],
         o: [],
         v: []
       };
+      this.path.v.forEach(function (v, i, a) {
+        if (i <= 0) {
+          copyPath.v.push(v);
+          copyPath.i.push(_this3.path.i[i]);
+          return;
+        }
+
+        var oArray = _this3.path.o;
+        var iArray = _this3.path.i;
+        var xArray = [a[i - 1][0], oArray[i - 1][0] + a[i - 1][0], iArray[i][0] + v[0], v[0]];
+        var yArray = [a[i - 1][1], oArray[i - 1][1] + a[i - 1][1], iArray[i][1] + v[1], v[1]];
+
+        for (var index = 1; index < ratio; index++) {
+          var stepRatio = 1 / (ratio - index + 1);
+
+          var xSplitArray = _this3.calculateBezierSplit.apply(_this3, [stepRatio].concat(_toConsumableArray(xArray)));
+
+          var ySplitArray = _this3.calculateBezierSplit.apply(_this3, [stepRatio].concat(_toConsumableArray(yArray)));
+
+          var _p0x = xArray[0],
+              _p1x = xSplitArray.shift() - _p0x,
+              _p3x = xSplitArray[1],
+              _p2x = xSplitArray.shift() - _p3x,
+              _p0y = yArray[0],
+              _p1y = ySplitArray.shift() - _p0y,
+              _p3y = ySplitArray[1],
+              _p2y = ySplitArray.shift() - _p3y;
+
+          copyPath.o.push([_p1x, _p1y]);
+          copyPath.i.push([_p2x, _p2y]);
+          copyPath.v.push([_p3x, _p3y]);
+          xArray = xSplitArray;
+          yArray = ySplitArray;
+        }
+
+        var p0x = xArray.shift(),
+            p1x = xArray.shift() - p0x,
+            p3x = xArray[1],
+            p2x = xArray.shift() - p3x,
+            p0y = yArray.shift(),
+            p1y = yArray.shift() - p0y,
+            p3y = yArray[1],
+            p2y = yArray.shift() - p3y;
+        copyPath.o.push([p1x, p1y]);
+        copyPath.i.push([p2x, p2y]);
+        copyPath.v.push([p3x, p3y]);
+      });
+      this.path = copyPath;
+      this.uniform();
     }
   }], [{
     key: "a2c",
