@@ -1,4 +1,5 @@
 import { PathDef } from './animation'
+import { parseSVG, MoveToCommand, LineToCommand, HorizontalLineToCommand, VerticalLineToCommand, CurveToCommand, QuadraticCurveToCommand, EllipticalArcCommand } from 'svg-path-parser';
 
 export class PathMaker {
     public path: PathDef = {
@@ -12,6 +13,17 @@ export class PathMaker {
     private currentY: number = 0;
     private offsetX: number = Infinity;
     private offsetY: number = Infinity;
+
+    // for discontinuous paths
+    private pathReady = false
+    private pathStart: [number, number] = [0, 0]
+    private pathChain: [number, number][] = []
+
+    constructor(pathData?: string) {
+        if (pathData) {
+            this.parse(pathData)
+        }
+    }
 
     private updateXY(x: number, y: number) {
         this.currentX = x
@@ -42,14 +54,25 @@ export class PathMaker {
     }
 
     public moveTo(x: number, y: number) {
-        this.path.c = false
-        this.path.i = [[0, 0]]
-        this.path.o = []
-        this.path.v = [[x, y]]
-        this.currentX = x
-        this.currentY = y
-        this.offsetX = x
-        this.offsetY = y
+        if (!this.pathReady) {
+            this.path.c = false
+            this.path.i = [[0, 0]]
+            this.path.o = []
+            this.path.v = [[x, y]]
+            this.currentX = x
+            this.currentY = y
+            this.offsetX = x
+            this.offsetY = y
+            this.pathReady = true
+        } else {
+            this.lineTo(...this.pathStart)
+            this.lineTo(x, y)
+            this.pathChain.push(this.pathStart)
+        }
+        this.pathStart = [x, y]
+    }
+    public moveToRelative(x: number, y: number) {
+        this.moveTo(this.currentX + x, this.currentY + y)
     }
     public lineTo(x: number, y: number) {
         this.path.i!.push([0, 0])
@@ -238,6 +261,13 @@ export class PathMaker {
     }
 
     public uniform() {
+        if (this.pathChain.length && !(this.currentX == this.pathStart[0] && this.currentY == this.pathStart[1])) {
+            this.lineTo(...this.pathStart)
+        }
+        while (this.pathChain.length) {
+            const pathRef = this.pathChain.pop()!
+            this.lineTo(...pathRef)
+        }
         while (this.path.o!.length < this.path.i!.length)
             this.path.o!.push([0, 0])
         this.path.v!.forEach(value => {
@@ -247,4 +277,93 @@ export class PathMaker {
         this.offsetX = 0
         this.offsetY = 0
     }
+
+    public parse(pathData: string) {
+        const pathDataSeries = parseSVG(pathData)
+        let pathDataWithType;
+        pathDataSeries.forEach(pathDataItem => {
+            switch (pathDataItem.code) {
+                case 'M':
+                    pathDataWithType = pathDataItem as MoveToCommand
+                    this.moveTo(pathDataWithType.x, pathDataWithType.y)
+                    break
+                case 'm':
+                    pathDataWithType = pathDataItem as MoveToCommand
+                    this.moveToRelative(pathDataWithType.x, pathDataWithType.y)
+                case 'L':
+                    pathDataWithType = pathDataItem as LineToCommand
+                    this.lineTo(pathDataWithType.x, pathDataWithType.y)
+                    break
+                case 'l':
+                    pathDataWithType = pathDataItem as LineToCommand
+                    this.lineToRelative(pathDataWithType.x, pathDataWithType.y)
+                    break
+                case 'H':
+                    pathDataWithType = pathDataItem as HorizontalLineToCommand
+                    this.horizontalTo(pathDataWithType.x)
+                    break
+                case 'h':
+                    pathDataWithType = pathDataItem as HorizontalLineToCommand
+                    this.horizontalToRelative(pathDataWithType.x)
+                    break
+                case 'V':
+                    pathDataWithType = pathDataItem as VerticalLineToCommand
+                    this.verticalTo(pathDataWithType.y)
+                    break
+                case 'v':
+                    pathDataWithType = pathDataItem as VerticalLineToCommand
+                    this.verticalToRelative(pathDataWithType.y)
+                    break
+                case 'C':
+                    pathDataWithType = pathDataItem as CurveToCommand
+                    this.cubicBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y)
+                    break
+                case 'c':
+                    pathDataWithType = pathDataItem as CurveToCommand
+                    this.cubicBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y)
+                    break
+                case 'Q':
+                    pathDataWithType = pathDataItem as QuadraticCurveToCommand
+                    this.quadraticBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y)
+                    break
+                case 'q':
+                    pathDataWithType = pathDataItem as QuadraticCurveToCommand
+                    this.quadraticBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y)
+                    break
+                case 'A':
+                    pathDataWithType = pathDataItem as EllipticalArcCommand
+                    this.arcTo(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y)
+                    break
+                case 'a':
+                    pathDataWithType = pathDataItem as EllipticalArcCommand
+                    this.arcToRelative(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y)
+                    break
+                case 'Z':
+                case 'z':
+                    this.closePath()
+                    break
+                default:
+                    console.error(pathDataItem)
+                    throw new Error('No implementation found for this path command.')
+            }
+        })
+    }
+
+    public upsample(ratio: number) {
+        // use De Casteljau's algorithm to do the upsampling
+        // Reference: https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+        if (!Number.isInteger(ratio)) {
+            throw new Error('The upsampling ratio should be an integer.')
+        }
+        if (ratio <= 1) return
+        this.uniform()
+        const copyPath: PathDef = {
+            c: this.path.c,
+            i: [],
+            o: [],
+            v: []
+        }
+
+    }
+
 }

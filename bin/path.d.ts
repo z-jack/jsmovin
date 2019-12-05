@@ -5,9 +5,14 @@ export declare class PathMaker {
     private currentY;
     private offsetX;
     private offsetY;
+    private pathReady;
+    private pathStart;
+    private pathChain;
+    constructor(pathData?: string);
     private updateXY;
     private calculateBezierMinMax;
     moveTo(x: number, y: number): void;
+    moveToRelative(x: number, y: number): void;
     lineTo(x: number, y: number): void;
     lineToRelative(x: number, y: number): void;
     horizontalTo(x: number): void;
@@ -23,4 +28,6 @@ export declare class PathMaker {
     private static a2c;
     closePath(): void;
     uniform(): void;
+    parse(pathData: string): void;
+    upsample(ratio: number): void;
 }

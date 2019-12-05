@@ -1329,6 +1329,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.PathMaker = void 0;
 
+var _svgPathParser = require("svg-path-parser");
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -1348,7 +1350,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var PathMaker =
 /*#__PURE__*/
 function () {
-  function PathMaker() {
+  // for discontinuous paths
+  function PathMaker(pathData) {
     _classCallCheck(this, PathMaker);
 
     _defineProperty(this, "path", {
@@ -1365,6 +1368,16 @@ function () {
     _defineProperty(this, "offsetX", Infinity);
 
     _defineProperty(this, "offsetY", Infinity);
+
+    _defineProperty(this, "pathReady", false);
+
+    _defineProperty(this, "pathStart", [0, 0]);
+
+    _defineProperty(this, "pathChain", []);
+
+    if (pathData) {
+      this.parse(pathData);
+    }
   }
 
   _createClass(PathMaker, [{
@@ -1405,14 +1418,28 @@ function () {
   }, {
     key: "moveTo",
     value: function moveTo(x, y) {
-      this.path.c = false;
-      this.path.i = [[0, 0]];
-      this.path.o = [];
-      this.path.v = [[x, y]];
-      this.currentX = x;
-      this.currentY = y;
-      this.offsetX = x;
-      this.offsetY = y;
+      if (!this.pathReady) {
+        this.path.c = false;
+        this.path.i = [[0, 0]];
+        this.path.o = [];
+        this.path.v = [[x, y]];
+        this.currentX = x;
+        this.currentY = y;
+        this.offsetX = x;
+        this.offsetY = y;
+        this.pathReady = true;
+      } else {
+        this.lineTo.apply(this, _toConsumableArray(this.pathStart));
+        this.lineTo(x, y);
+        this.pathChain.push(this.pathStart);
+      }
+
+      this.pathStart = [x, y];
+    }
+  }, {
+    key: "moveToRelative",
+    value: function moveToRelative(x, y) {
+      this.moveTo(this.currentX + x, this.currentY + y);
     }
   }, {
     key: "lineTo",
@@ -1507,6 +1534,15 @@ function () {
     value: function uniform() {
       var _this = this;
 
+      if (this.pathChain.length && !(this.currentX == this.pathStart[0] && this.currentY == this.pathStart[1])) {
+        this.lineTo.apply(this, _toConsumableArray(this.pathStart));
+      }
+
+      while (this.pathChain.length) {
+        var pathRef = this.pathChain.pop();
+        this.lineTo.apply(this, _toConsumableArray(pathRef));
+      }
+
       while (this.path.o.length < this.path.i.length) {
         this.path.o.push([0, 0]);
       }
@@ -1517,6 +1553,141 @@ function () {
       });
       this.offsetX = 0;
       this.offsetY = 0;
+    }
+  }, {
+    key: "parse",
+    value: function parse(pathData) {
+      var _this2 = this;
+
+      var pathDataSeries = (0, _svgPathParser.parseSVG)(pathData);
+      var pathDataWithType;
+      pathDataSeries.forEach(function (pathDataItem) {
+        switch (pathDataItem.code) {
+          case 'M':
+            pathDataWithType = pathDataItem;
+
+            _this2.moveTo(pathDataWithType.x, pathDataWithType.y);
+
+            break;
+
+          case 'm':
+            pathDataWithType = pathDataItem;
+
+            _this2.moveToRelative(pathDataWithType.x, pathDataWithType.y);
+
+          case 'L':
+            pathDataWithType = pathDataItem;
+
+            _this2.lineTo(pathDataWithType.x, pathDataWithType.y);
+
+            break;
+
+          case 'l':
+            pathDataWithType = pathDataItem;
+
+            _this2.lineToRelative(pathDataWithType.x, pathDataWithType.y);
+
+            break;
+
+          case 'H':
+            pathDataWithType = pathDataItem;
+
+            _this2.horizontalTo(pathDataWithType.x);
+
+            break;
+
+          case 'h':
+            pathDataWithType = pathDataItem;
+
+            _this2.horizontalToRelative(pathDataWithType.x);
+
+            break;
+
+          case 'V':
+            pathDataWithType = pathDataItem;
+
+            _this2.verticalTo(pathDataWithType.y);
+
+            break;
+
+          case 'v':
+            pathDataWithType = pathDataItem;
+
+            _this2.verticalToRelative(pathDataWithType.y);
+
+            break;
+
+          case 'C':
+            pathDataWithType = pathDataItem;
+
+            _this2.cubicBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y);
+
+            break;
+
+          case 'c':
+            pathDataWithType = pathDataItem;
+
+            _this2.cubicBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y);
+
+            break;
+
+          case 'Q':
+            pathDataWithType = pathDataItem;
+
+            _this2.quadraticBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y);
+
+            break;
+
+          case 'q':
+            pathDataWithType = pathDataItem;
+
+            _this2.quadraticBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y);
+
+            break;
+
+          case 'A':
+            pathDataWithType = pathDataItem;
+
+            _this2.arcTo(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y);
+
+            break;
+
+          case 'a':
+            pathDataWithType = pathDataItem;
+
+            _this2.arcToRelative(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y);
+
+            break;
+
+          case 'Z':
+          case 'z':
+            _this2.closePath();
+
+            break;
+
+          default:
+            console.error(pathDataItem);
+            throw new Error('No implementation found for this path command.');
+        }
+      });
+    }
+  }, {
+    key: "upsample",
+    value: function upsample(ratio) {
+      // use De Casteljau's algorithm to do the upsampling
+      // Reference: https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm
+      if (!Number.isInteger(ratio)) {
+        throw new Error('The upsampling ratio should be an integer.');
+      }
+
+      if (ratio <= 1) return;
+      this.uniform();
+      var copyPath = {
+        c: this.path.c,
+        i: [],
+        o: [],
+        v: []
+      };
     }
   }], [{
     key: "a2c",
@@ -1634,7 +1805,7 @@ function () {
 
 exports.PathMaker = PathMaker;
 
-},{}],7:[function(require,module,exports){
+},{"svg-path-parser":8}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1648,8 +1819,6 @@ exports.renderImage = renderImage;
 var _path = require("./path");
 
 var _v = _interopRequireDefault(require("uuid/v4"));
-
-var _svgPathParser = require("svg-path-parser");
 
 var _helper = require("./helper");
 
@@ -1826,115 +1995,9 @@ function renderGlyph(dom, baseDom) {
     postActions(_pathMaker2);
   } else if (dom instanceof SVGPathElement) {
     var pathData = dom.getAttribute('d') || '';
-    var pathDataSeries = (0, _svgPathParser.parseSVG)(pathData);
 
-    var _pathMaker3 = new _path.PathMaker();
+    var _pathMaker3 = new _path.PathMaker(pathData);
 
-    var pathDataWithType;
-    pathDataSeries.forEach(function (pathDataItem) {
-      switch (pathDataItem.code) {
-        case 'M':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.moveTo(pathDataWithType.x, pathDataWithType.y);
-
-          break;
-
-        case 'L':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.lineTo(pathDataWithType.x, pathDataWithType.y);
-
-          break;
-
-        case 'l':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.lineToRelative(pathDataWithType.x, pathDataWithType.y);
-
-          break;
-
-        case 'H':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.horizontalTo(pathDataWithType.x);
-
-          break;
-
-        case 'h':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.horizontalToRelative(pathDataWithType.x);
-
-          break;
-
-        case 'V':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.verticalTo(pathDataWithType.y);
-
-          break;
-
-        case 'v':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.verticalToRelative(pathDataWithType.y);
-
-          break;
-
-        case 'C':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.cubicBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y);
-
-          break;
-
-        case 'c':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.cubicBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y);
-
-          break;
-
-        case 'Q':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.quadraticBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y);
-
-          break;
-
-        case 'q':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.quadraticBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y);
-
-          break;
-
-        case 'A':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.arcTo(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y);
-
-          break;
-
-        case 'a':
-          pathDataWithType = pathDataItem;
-
-          _pathMaker3.arcToRelative(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y);
-
-          break;
-
-        case 'Z':
-        case 'z':
-          _pathMaker3.closePath();
-
-          break;
-
-        default:
-          console.error(pathDataItem);
-          throw new Error('No implementation found for this path command.');
-      }
-    });
     postActions(_pathMaker3);
   } else if (dom instanceof SVGPolygonElement || dom instanceof SVGPolylineElement) {
     var points = dom.points;
@@ -2171,7 +2234,7 @@ function renderImage(dom, assetList) {
   return [id, asset];
 }
 
-},{"./helper":3,"./path":6,"svg-path-parser":8,"uuid/v4":12}],8:[function(require,module,exports){
+},{"./helper":3,"./path":6,"uuid/v4":12}],8:[function(require,module,exports){
 // v1.0 exported just the parser function. To maintain backwards compatibility,
 // we export additional named features as properties of that function.
 var parserFunction = require('./parser.js').parse;

@@ -1,7 +1,6 @@
 import { GroupShape, TextData, ReferenceID, PathShape, FillShape, StrokeShape, TransformShape, ImageAsset, Font1, Fonts, Assets } from './animation'
 import { PathMaker } from './path'
 import uuid from 'uuid/v4'
-import { parseSVG, MoveToCommand, LineToCommand, HorizontalLineToCommand, VerticalLineToCommand, CurveToCommand, QuadraticCurveToCommand, EllipticalArcCommand } from 'svg-path-parser'
 import { calculateBaseTransform, encodeLineJoin, encodeLineCap, encodeTextAnchor } from './helper'
 
 
@@ -148,72 +147,7 @@ function renderGlyph(dom: SVGGraphicsElement, baseDom?: SVGGraphicsElement): Gro
         postActions(pathMaker)
     } else if (dom instanceof SVGPathElement) {
         const pathData = dom.getAttribute('d') || ''
-        const pathDataSeries = parseSVG(pathData)
-        const pathMaker = new PathMaker()
-        let pathDataWithType;
-        pathDataSeries.forEach(pathDataItem => {
-            switch (pathDataItem.code) {
-                case 'M':
-                    pathDataWithType = pathDataItem as MoveToCommand
-                    pathMaker.moveTo(pathDataWithType.x, pathDataWithType.y)
-                    break
-                case 'L':
-                    pathDataWithType = pathDataItem as LineToCommand
-                    pathMaker.lineTo(pathDataWithType.x, pathDataWithType.y)
-                    break
-                case 'l':
-                    pathDataWithType = pathDataItem as LineToCommand
-                    pathMaker.lineToRelative(pathDataWithType.x, pathDataWithType.y)
-                    break
-                case 'H':
-                    pathDataWithType = pathDataItem as HorizontalLineToCommand
-                    pathMaker.horizontalTo(pathDataWithType.x)
-                    break
-                case 'h':
-                    pathDataWithType = pathDataItem as HorizontalLineToCommand
-                    pathMaker.horizontalToRelative(pathDataWithType.x)
-                    break
-                case 'V':
-                    pathDataWithType = pathDataItem as VerticalLineToCommand
-                    pathMaker.verticalTo(pathDataWithType.y)
-                    break
-                case 'v':
-                    pathDataWithType = pathDataItem as VerticalLineToCommand
-                    pathMaker.verticalToRelative(pathDataWithType.y)
-                    break
-                case 'C':
-                    pathDataWithType = pathDataItem as CurveToCommand
-                    pathMaker.cubicBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y)
-                    break
-                case 'c':
-                    pathDataWithType = pathDataItem as CurveToCommand
-                    pathMaker.cubicBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x2, pathDataWithType.y2, pathDataWithType.x, pathDataWithType.y)
-                    break
-                case 'Q':
-                    pathDataWithType = pathDataItem as QuadraticCurveToCommand
-                    pathMaker.quadraticBezierCurveTo(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y)
-                    break
-                case 'q':
-                    pathDataWithType = pathDataItem as QuadraticCurveToCommand
-                    pathMaker.quadraticBezierCurveToRelative(pathDataWithType.x1, pathDataWithType.y1, pathDataWithType.x, pathDataWithType.y)
-                    break
-                case 'A':
-                    pathDataWithType = pathDataItem as EllipticalArcCommand
-                    pathMaker.arcTo(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y)
-                    break
-                case 'a':
-                    pathDataWithType = pathDataItem as EllipticalArcCommand
-                    pathMaker.arcToRelative(pathDataWithType.rx, pathDataWithType.ry, pathDataWithType.xAxisRotation, ~~pathDataWithType.largeArc, ~~pathDataWithType.sweep, pathDataWithType.x, pathDataWithType.y)
-                    break
-                case 'Z':
-                case 'z':
-                    pathMaker.closePath()
-                    break
-                default:
-                    console.error(pathDataItem)
-                    throw new Error('No implementation found for this path command.')
-            }
-        })
+        const pathMaker = new PathMaker(pathData)
         postActions(pathMaker)
     } else if (dom instanceof SVGPolygonElement || dom instanceof SVGPolylineElement) {
         const points = dom.points
