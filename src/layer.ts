@@ -280,9 +280,19 @@ export class JSMovinLayer {
             if (startValue instanceof PathMaker && endValue instanceof PathMaker) {
                 const startLineCount = startValue.path.v!.length - 1
                 const endLineCount = endValue.path.v!.length - 1
-                const commonMultiple = leastCommonMultiple(startLineCount, endLineCount)
-                startValue.upsample(Math.round(commonMultiple / startLineCount))
-                endValue.upsample(Math.round(commonMultiple / endLineCount))
+                if (!(startLineCount <= 0 && endLineCount <= 0)) {
+                    if (Math.min(startLineCount, endLineCount) <= 0 && Math.max(startLineCount, endLineCount) > 0) {
+                        let needCopy = startLineCount <= 0 ? startValue : endValue
+                        let needLength = Math.max(startLineCount, endLineCount);
+                        ['i', 'o', 'v'].forEach(key => {
+                            needCopy.path[key] = Array(needLength).fill(needCopy.path[key].length ? needCopy.path[key][0] : [0, 0])
+                        })
+                    } else {
+                        const commonMultiple = leastCommonMultiple(startLineCount, endLineCount)
+                        startValue.upsample(Math.round(commonMultiple / startLineCount))
+                        endValue.upsample(Math.round(commonMultiple / endLineCount))
+                    }
+                }
             }
             [startValue, endValue] = [startValue, endValue].map(v => v instanceof PathMaker ? v.path : v)
         }

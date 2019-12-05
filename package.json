@@ -1,6 +1,6 @@
 {
   "name": "jsmovin",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "To generate \"AE bodymovin\" JSON format using JavaScript.",
   "repository": "github:z-jack/jsmovin",
   "author": "z-jack <emailjiong@126.com>",

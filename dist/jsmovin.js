@@ -1039,9 +1039,20 @@ function () {
         if (startValue instanceof _path.PathMaker && endValue instanceof _path.PathMaker) {
           var startLineCount = startValue.path.v.length - 1;
           var endLineCount = endValue.path.v.length - 1;
-          var commonMultiple = (0, _helper.leastCommonMultiple)(startLineCount, endLineCount);
-          startValue.upsample(Math.round(commonMultiple / startLineCount));
-          endValue.upsample(Math.round(commonMultiple / endLineCount));
+
+          if (!(startLineCount <= 0 && endLineCount <= 0)) {
+            if (Math.min(startLineCount, endLineCount) <= 0 && Math.max(startLineCount, endLineCount) > 0) {
+              var needCopy = startLineCount <= 0 ? startValue : endValue;
+              var needLength = Math.max(startLineCount, endLineCount);
+              ['i', 'o', 'v'].forEach(function (key) {
+                needCopy.path[key] = Array(needLength).fill(needCopy.path[key].length ? needCopy.path[key][0] : [0, 0]);
+              });
+            } else {
+              var commonMultiple = (0, _helper.leastCommonMultiple)(startLineCount, endLineCount);
+              startValue.upsample(Math.round(commonMultiple / startLineCount));
+              endValue.upsample(Math.round(commonMultiple / endLineCount));
+            }
+          }
         }
 
         var _map = [startValue, endValue].map(function (v) {
