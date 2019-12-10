@@ -323,7 +323,7 @@ export class JSMovinLayer {
         if (base && k && index !== undefined) {
             this.convertToAnimatableProperty(base, k)
             this.addKeyframe(base, k, index, startFrame, startValue, easing, wrap)
-            this.addKeyframe(base, k, index, endFrame, endValue, undefined, wrap)
+            this.addKeyframe(base, k, index, endFrame, endValue, EasingFactory.linear(), wrap)
         }
     }
 }
