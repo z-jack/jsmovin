@@ -44,13 +44,14 @@ function addVisualEncodings(items: VisualGroupItem[], styles: CSSStyleDeclaratio
             }
         })
     }
-    let posX = 0, posY = 0
+    let posX = 0, posY = 0, opacity = 100
     if (dom && baseDom) {
         const baseTransform = calculateBaseTransform(dom, baseDom)
         const baseBBox = baseDom.getBBox()
         const refBBox = dom.getBBox()
         posX = baseTransform.e + refBBox.x - baseBBox.x
         posY = baseTransform.f + refBBox.y - baseBBox.y
+        opacity = parseFloat(styles.opacity || '1') * 100
     }
     items.push({
         ty: "tr",
@@ -76,7 +77,7 @@ function addVisualEncodings(items: VisualGroupItem[], styles: CSSStyleDeclaratio
             k: 0
         },
         o: {
-            k: parseFloat(styles.opacity || '1') * 100
+            k: opacity
         },
         sk: {
             k: 0

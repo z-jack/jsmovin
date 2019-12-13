@@ -270,7 +270,7 @@ export class JSMovinLayer {
         if (endFrame <= startFrame) {
             throw new Error('End frame should be larger than start frame.')
         }
-        this.timeRange[key] = endFrame + 1
+        this.timeRange[key] = Math.max(this.timeRange[key] || 0, endFrame + 1)
         this.updateTimeRange()
         if (!easing) {
             easing = EasingFactory.linear()

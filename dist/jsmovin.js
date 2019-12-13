@@ -1024,7 +1024,7 @@ function () {
         throw new Error('End frame should be larger than start frame.');
       }
 
-      this.timeRange[key] = endFrame + 1;
+      this.timeRange[key] = Math.max(this.timeRange[key] || 0, endFrame + 1);
       this.updateTimeRange();
 
       if (!easing) {
@@ -2011,7 +2011,8 @@ function addVisualEncodings(items, styles, dom, baseDom) {
   }
 
   var posX = 0,
-      posY = 0;
+      posY = 0,
+      opacity = 100;
 
   if (dom && baseDom) {
     var baseTransform = (0, _helper.calculateBaseTransform)(dom, baseDom);
@@ -2019,6 +2020,7 @@ function addVisualEncodings(items, styles, dom, baseDom) {
     var refBBox = dom.getBBox();
     posX = baseTransform.e + refBBox.x - baseBBox.x;
     posY = baseTransform.f + refBBox.y - baseBBox.y;
+    opacity = parseFloat(styles.opacity || '1') * 100;
   }
 
   items.push({
@@ -2036,7 +2038,7 @@ function addVisualEncodings(items, styles, dom, baseDom) {
       k: 0
     },
     o: {
-      k: parseFloat(styles.opacity || '1') * 100
+      k: opacity
     },
     sk: {
       k: 0
